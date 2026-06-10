@@ -1,0 +1,626 @@
+"""
+batch_manager.py -- State management and execution engine for video batches.
+"""
+from __future__ import annotations
+
+import os
+import json
+import shutil
+import logging
+import threading
+import sys
+import subprocess
+from datetime import datetime, date
+import collections
+
+# ── Add notion_pipeline to sys.path so we can import shared modules ──────────
+_PIPELINE_DIR = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "YouTube Downloads", "notion_pipeline"))
+if _PIPELINE_DIR not in sys.path:
+    sys.path.insert(0, _PIPELINE_DIR)
+
+# Import existing pipeline components
+import state_manager
+import notion_client
+import uploader
+
+log = logging.getLogger(__name__)
+
+BATCHES_JSON = os.path.join(os.path.dirname(__file__), "batches.json")
+_batches_lock = threading.Lock()
+
+class LogBuffer:
+    def __init__(self, maxlen=2000):
+        self.buffer = collections.deque(maxlen=maxlen)
+        self.lock = threading.Lock()
+
+    def write(self, line):
+        with self.lock:
+            self.buffer.append(line.rstrip())
+
+    def get_since(self, index):
+        with self.lock:
+            lines = list(self.buffer)
+            if index < 0:
+                index = 0
+            if index >= len(lines):
+                return [], len(lines)
+            return lines[index:], len(lines)
+
+    def clear(self):
+        with self.lock:
+            self.buffer.clear()
+
+# Global log buffer
+global_log_buffer = LogBuffer()
+
+class BufferLogHandler(logging.Handler):
+    def __init__(self, buffer):
+        super().__init__()
+        self.buffer = buffer
+
+    def emit(self, record):
+        try:
+            msg = self.format(record)
+            self.buffer.write(msg)
+        except Exception:
+            self.handleError(record)
+
+# Register logging handler to redirect all process logs to the buffer
+handler = BufferLogHandler(global_log_buffer)
+handler.setFormatter(logging.Formatter("%(asctime)s  %(levelname)-8s  %(message)s"))
+logging.getLogger().addHandler(handler)
+
+# State lock status
+pipeline_running = False
+pipeline_run_thread = None
+active_pipeline_process = None
+pipeline_paused = False
+upload_running = False
+upload_paused = False
+upload_batch_name = None
+
+# Batch CRUD helper functions
+def load_batches() -> dict:
+    with _batches_lock:
+        if os.path.isfile(BATCHES_JSON):
+            try:
+                with open(BATCHES_JSON, "r", encoding="utf-8") as f:
+                    return json.load(f)
+            except Exception as e:
+                log.error(f"Error reading batches.json: {e}")
+        return {}
+
+def save_batches(batches: dict):
+    with _batches_lock:
+        tmp_file = BATCHES_JSON + ".tmp"
+        try:
+            with open(tmp_file, "w", encoding="utf-8") as f:
+                json.dump(batches, f, indent=2, ensure_ascii=False)
+            os.replace(tmp_file, BATCHES_JSON)
+        except Exception as e:
+            log.error(f"Error saving batches.json: {e}")
+            if os.path.isfile(tmp_file):
+                try:
+                    os.remove(tmp_file)
+                except:
+                    pass
+
+def get_active_uploaded_batch() -> str | None:
+    """Return the name of a batch that has been uploaded but not yet confirmed (Mark Uploaded).
+    This is the only state that blocks new first-review uploads.
+    Second reviews (pending_second_review) do NOT block."""
+    batches = load_batches()
+    for name, b in batches.items():
+        if b.get("upload_completed") and b.get("status") == "pending_first_review":
+            return name
+    return None
+
+def scan_and_register_batches():
+    """Scan state.json for batched videos and update batches.json."""
+    log.info("Scanning state.json to identify batches...")
+    state = state_manager.get_all()
+    batches = load_batches()
+    
+    # Group videos by batch
+    grouped = {}
+    for page_id, v in state.items():
+        if not isinstance(v, dict):
+            continue
+        batch_name = v.get("batch")
+        if batch_name and batch_name.startswith("Batch_"):
+            if v.get("pipeline_status") != "failed":
+                grouped.setdefault(batch_name, []).append(v)
+
+    # Register each batch
+    changed = False
+    for batch_name, v_list in grouped.items():
+        if batch_name not in batches:
+            # Check if all videos are uploaded in state.json
+            all_uploaded = all(v.get("pipeline_status") == "uploaded" for v in v_list)
+            
+            # Determine initial status
+            # If the files exist in the batches folder, it's pending review.
+            batch_dir = os.path.join(uploader.BATCHES_DIR, batch_name)
+            if all_uploaded:
+                status = "finalized"
+            elif os.path.isdir(batch_dir):
+                status = "pending_first_review"
+            else:
+                # If files are gone and not all uploaded, it could be legacy/unknown
+                status = "pending_first_review"
+            
+            # Extract metadata
+            upload_job_id = None
+            upload_date = None
+            for v in v_list:
+                if v.get("job_id"):
+                    upload_job_id = v.get("job_id")
+                if v.get("upload_date"):
+                    upload_date = v.get("upload_date")
+
+            batches[batch_name] = {
+                "batch_name": batch_name,
+                "status": status,
+                "created_at": datetime.now().isoformat(),
+                "videos": [
+                    {
+                        "page_id": v["page_id"],
+                        "video_name": v.get("video_name", ""),
+                        "age_group": v.get("age_group", ""),
+                        "category": v.get("category", ""),
+                        "local_file": v.get("local_file", ""),
+                        "drive_link": v.get("drive_link", ""),
+                        "pipeline_status": v.get("pipeline_status", "")
+                    } for v in v_list
+                ],
+                "upload_job_id": upload_job_id,
+                "upload_date": upload_date,
+                "finalized_date": None
+            }
+            changed = True
+            log.info(f"Registered new batch: {batch_name} with status {status}")
+        else:
+            # Update video list and pipeline statuses in batches.json
+            batch_record = batches[batch_name]
+            updated_videos = []
+            for v in v_list:
+                updated_videos.append({
+                    "page_id": v["page_id"],
+                    "video_name": v.get("video_name", ""),
+                    "age_group": v.get("age_group", ""),
+                    "category": v.get("category", ""),
+                    "local_file": v.get("local_file", ""),
+                    "drive_link": v.get("drive_link", ""),
+                    "pipeline_status": v.get("pipeline_status", "")
+                })
+            batch_record["videos"] = updated_videos
+            
+            # Sync metadata if it was updated in state.json
+            for v in v_list:
+                if v.get("job_id") and not batch_record.get("upload_job_id"):
+                    batch_record["upload_job_id"] = v.get("job_id")
+                    changed = True
+                if v.get("upload_date") and not batch_record.get("upload_date"):
+                    batch_record["upload_date"] = v.get("upload_date")
+                    changed = True
+                    
+            if all(v.get("pipeline_status") == "uploaded" for v in v_list) and batch_record["status"] != "finalized":
+                batch_record["status"] = "finalized"
+                if not batch_record.get("finalized_date"):
+                    batch_record["finalized_date"] = datetime.now().isoformat()
+                changed = True
+                
+    if changed:
+        save_batches(batches)
+
+def mark_batch_uploaded(batch_name: str, job_id: str | None = None) -> tuple[bool, str]:
+    """Confirm a batch as uploaded, moving it to second review.
+    Second reviews do NOT block other uploads — multiple can exist simultaneously."""
+    batches = load_batches()
+    if batch_name not in batches:
+        return False, f"Batch '{batch_name}' not found."
+
+    b = batches[batch_name]
+    if b["status"] == "finalized":
+        return False, f"Batch '{batch_name}' is already finalized."
+
+    upload_date = date.today().isoformat()
+    b["status"] = "pending_second_review"
+    b["upload_job_id"] = job_id or b.get("upload_job_id") or "MANUAL"
+    b["upload_date"] = upload_date
+    b["upload_completed"] = False  # Clear the blocking flag
+
+    # Update pipeline_status of videos in batches.json (preserve bad status)
+    for v in b["videos"]:
+        if v["pipeline_status"] != "bad":
+            v["pipeline_status"] = "uploaded_pending_final_review"
+
+    save_batches(batches)
+    log.info(f"[OK] Batch '{batch_name}' marked as Uploaded (Pending Second Review) with Job ID: {b['upload_job_id']}")
+    return True, f"Batch '{batch_name}' marked as uploaded successfully."
+
+def mark_video_bad(batch_name: str, page_id: str, bad: bool = True, reason: str = "") -> tuple[bool, str]:
+    """Toggle a single video's status to 'bad' (or back to 'batched').
+    Bad videos are skipped during finalization and reset to pending for redo.
+    When marking bad, also updates Notion with Re-do=true and reason."""
+    batches = load_batches()
+    if batch_name not in batches:
+        return False, f"Batch '{batch_name}' not found."
+
+    b = batches[batch_name]
+    if b["status"] == "finalized":
+        return False, f"Batch '{batch_name}' is already finalized."
+
+    for v in b["videos"]:
+        if v["page_id"] == page_id:
+            if bad:
+                v["pipeline_status"] = "bad"
+                v["redo_reason"] = reason
+                save_batches(batches)
+                # Sync to Notion: Re-do = true, reason for re-do = reason
+                notion_success = notion_client.mark_redo_in_notion(page_id, reason)
+                if notion_success:
+                    global_log_buffer.write(f"[NOTION] Marked '{v['video_name']}' for re-do: {reason}")
+                else:
+                    global_log_buffer.write(f"[WARNING] Saved locally but Notion sync failed for '{v['video_name']}'")
+                log.info(f"Video '{v['video_name']}' in {batch_name} marked as bad: {reason}")
+                return True, f"'{v['video_name']}' marked as bad — will be skipped during finalization."
+            else:
+                v["pipeline_status"] = "batched"
+                v.pop("redo_reason", None)
+                save_batches(batches)
+                # Clear Notion: Re-do = false, reason = cleared
+                notion_success = notion_client.clear_redo_in_notion(page_id)
+                if notion_success:
+                    global_log_buffer.write(f"[NOTION] Cleared re-do for '{v['video_name']}'")
+                else:
+                    global_log_buffer.write(f"[WARNING] Saved locally but Notion clear failed for '{v['video_name']}'")
+                log.info(f"Video '{v['video_name']}' in {batch_name} unmarked (restored to batched)")
+                return True, f"'{v['video_name']}' restored to batched."
+
+    return False, f"Video with page_id '{page_id}' not found in batch '{batch_name}'."
+
+def run_automated_upload_thread(batch_name: str):
+    """Target function for Selenium upload in a background thread.
+    After upload succeeds, sets upload_completed=True but does NOT move
+    the batch to second review — the user must click 'Mark Uploaded' to confirm."""
+    global upload_running, upload_batch_name
+    upload_running = True
+    upload_batch_name = batch_name
+    
+    global_log_buffer.write(f"\n============================================================")
+    global_log_buffer.write(f"STARTING AUTOMATED UPLOAD FOR BATCH: {batch_name}")
+    global_log_buffer.write(f"============================================================\n")
+    
+    try:
+        results = uploader.run_all([batch_name], headless=False)
+        job_id = results.get(batch_name)
+        if job_id:
+            global_log_buffer.write(f"[SUCCESS] Selenium upload complete for {batch_name}. Job ID: {job_id}")
+            global_log_buffer.write(f"[INFO] Click 'Mark Uploaded' to confirm and unblock uploads.")
+            # Store job_id and flag as uploaded, but keep in first review for user confirmation
+            with _batches_lock:
+                batches = load_batches()
+                if batch_name in batches:
+                    batches[batch_name]["upload_completed"] = True
+                    batches[batch_name]["upload_job_id"] = job_id
+                    save_batches(batches)
+        else:
+            global_log_buffer.write(f"[ERROR] Selenium upload failed to return a Job ID for {batch_name}.")
+    except Exception as e:
+        log.error(f"Error in automated upload background thread: {e}")
+        global_log_buffer.write(f"[EXCEPTION] Automated upload error: {e}")
+    finally:
+        upload_running = False
+        upload_batch_name = None
+
+def start_automated_upload(batch_name: str) -> tuple[bool, str]:
+    """Start automated upload in background thread.
+    Blocked only if another batch is uploaded but awaiting user confirmation."""
+    active = get_active_uploaded_batch()
+    if active and active != batch_name:
+        return False, f"Cannot upload '{batch_name}': Batch '{active}' was uploaded but not yet confirmed. Click 'Mark Uploaded' on it first."
+
+    batches = load_batches()
+    if batch_name not in batches:
+        return False, f"Batch '{batch_name}' not found."
+
+    b = batches[batch_name]
+    if b["status"] == "finalized":
+        return False, f"Batch '{batch_name}' is already finalized."
+
+    # Validate that files exist
+    csv_file = os.path.join(uploader.BATCHES_DIR, f"{batch_name}.csv")
+    zip_file = os.path.join(uploader.BATCHES_DIR, f"{batch_name}.zip")
+    if not os.path.isfile(csv_file) or not os.path.isfile(zip_file):
+        return False, f"Missing ZIP or CSV file for {batch_name} in batches folder."
+
+    # Run in thread
+    t = threading.Thread(target=run_automated_upload_thread, args=(batch_name,))
+    t.daemon = True
+    t.start()
+    return True, f"Automated upload started for {batch_name}. Monitor the terminal below for logs."
+
+def finalize_batch(batch_name: str) -> tuple[bool, str]:
+    """Real Finalization Step: Sync to Notion, update state.json, and delete local files."""
+    batches = load_batches()
+    if batch_name not in batches:
+        return False, f"Batch '{batch_name}' not found."
+
+    b = batches[batch_name]
+    if b["status"] == "finalized":
+        return True, f"Batch '{batch_name}' is already finalized."
+
+    upload_date = b.get("upload_date") or date.today().isoformat()
+    job_id = b.get("upload_job_id") or "MANUAL"
+
+    log.info(f"Starting finalization for batch {batch_name}...")
+    global_log_buffer.write(f"\n[FINALIZING] Syncing batch '{batch_name}' ({len(b['videos'])} videos) to Notion...")
+
+    success_count = 0
+    fail_count = 0
+    bad_count = 0
+
+    # Separate bad videos from good ones
+    good_videos = [v for v in b["videos"] if v.get("pipeline_status") != "bad"]
+    bad_videos = [v for v in b["videos"] if v.get("pipeline_status") == "bad"]
+
+    # Reset bad videos to pending so they get re-processed in a future pipeline run
+    for v in bad_videos:
+        page_id = v["page_id"]
+        video_name = v["video_name"]
+        state_manager.upsert(page_id, pipeline_status="pending", batch="", local_file="")
+        global_log_buffer.write(f"[SKIP] Bad video '{video_name}' — reset to pending for redo.")
+        bad_count += 1
+
+    # 1. Update Notion and update state.json for good videos only
+    for v in good_videos:
+        page_id = v["page_id"]
+        video_name = v["video_name"]
+        
+        global_log_buffer.write(f"[NOTION] Updating: {video_name}...")
+        notion_success = notion_client.mark_uploaded_in_notion(page_id, upload_date)
+        
+        if notion_success:
+            state_manager.mark_uploaded(page_id, job_id, upload_date)
+            v["pipeline_status"] = "uploaded"
+            success_count += 1
+        else:
+            global_log_buffer.write(f"[ERROR] Failed to update Notion for {video_name} (ID: {page_id})")
+            fail_count += 1
+
+    # 2. Delete local files
+    global_log_buffer.write(f"[CLEANUP] Deleting local files for batch {batch_name}...")
+    for v in b["videos"]:
+        local_file = v.get("local_file")
+        if local_file and os.path.isfile(local_file):
+            try:
+                os.remove(local_file)
+                log.info(f"Deleted local download: {local_file}")
+            except Exception as e:
+                log.error(f"Failed to delete download {local_file}: {e}")
+
+    # Delete batch directory
+    batch_dir = os.path.join(uploader.BATCHES_DIR, batch_name)
+    if os.path.isdir(batch_dir):
+        try:
+            shutil.rmtree(batch_dir)
+            log.info(f"Deleted batch directory: {batch_dir}")
+        except Exception as e:
+            log.error(f"Failed to delete batch directory {batch_dir}: {e}")
+
+    # Delete CSV and ZIP
+    csv_file = os.path.join(uploader.BATCHES_DIR, f"{batch_name}.csv")
+    zip_file = os.path.join(uploader.BATCHES_DIR, f"{batch_name}.zip")
+    for fpath in (csv_file, zip_file):
+        if os.path.isfile(fpath):
+            try:
+                os.remove(fpath)
+                log.info(f"Deleted batch file: {fpath}")
+            except Exception as e:
+                log.error(f"Failed to delete file {fpath}: {e}")
+
+    # Update status in batches.json
+    b["status"] = "finalized"
+    b["finalized_date"] = datetime.now().isoformat()
+    save_batches(batches)
+
+    bad_msg = f", {bad_count} bad (reset to pending)" if bad_count else ""
+    global_log_buffer.write(f"[SUCCESS] Finalization complete for '{batch_name}': {success_count} synced, {fail_count} failed{bad_msg}. Local files cleaned up.")
+    return True, f"Batch '{batch_name}' finalized: {success_count} uploaded, {fail_count} failed{bad_msg}."
+
+# Pipeline background execution
+def run_pipeline_thread(batch_only: bool = False):
+    global pipeline_running, active_pipeline_process
+    log_mode = "BATCH-ONLY MODE (processing existing downloads)" if batch_only else "NORMAL MODE (fetching new from Notion)"
+    global_log_buffer.write(f"\n============================================================")
+    global_log_buffer.write(f"STARTING PIPELINE RUN: {log_mode}")
+    global_log_buffer.write(f"============================================================\n")
+
+    try:
+        # Run pipeline.py as a subprocess to capture console logs
+        # Using sys.executable to run inside the same virtual environment!
+        cmd = [sys.executable, "pipeline.py", "--skip-upload"]
+        if batch_only:
+            cmd.append("--batch-only")
+            
+        proc = subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            bufsize=1,
+            cwd=_PIPELINE_DIR
+        )
+        active_pipeline_process = proc
+        
+        # Read stdout in real time
+        for line in proc.stdout:
+            global_log_buffer.write(line.strip())
+            
+        proc.wait()
+        global_log_buffer.write(f"\n[PIPELINE] Execution finished. Exit code: {proc.returncode}")
+        
+        # Scan and register any new batches generated
+        scan_and_register_batches()
+        
+    except Exception as e:
+        log.error(f"Error running pipeline subprocess: {e}")
+        global_log_buffer.write(f"[EXCEPTION] Subprocess failed: {e}")
+    finally:
+        pipeline_running = False
+        active_pipeline_process = None
+        pipeline_paused = False
+
+def start_pipeline_batching(batch_only: bool = False) -> tuple[bool, str]:
+    global pipeline_running
+    global pipeline_run_thread
+    
+    if pipeline_running:
+        return False, "Pipeline is already running in the background."
+
+    pipeline_running = True
+    pipeline_run_thread = threading.Thread(target=run_pipeline_thread, args=(batch_only,))
+    pipeline_run_thread.daemon = True
+    pipeline_run_thread.start()
+    return True, "Pipeline started in the background. Monitor logs below."
+
+def stop_pipeline_batching() -> tuple[bool, str]:
+    global active_pipeline_process, pipeline_running, pipeline_paused
+    if not pipeline_running or not active_pipeline_process:
+        return False, "Pipeline batcher is not currently running."
+    
+    try:
+        global_log_buffer.write("[ABORT] Stopping pipeline batcher subprocess...")
+        # If suspended, resume first so it can terminate properly
+        if pipeline_paused:
+            PROCESS_SUSPEND_RESUME = 0x0800
+            handle = ctypes.windll.kernel32.OpenProcess(PROCESS_SUSPEND_RESUME, False, active_pipeline_process.pid)
+            if handle:
+                ctypes.windll.ntdll.NtResumeProcess(handle)
+                ctypes.windll.kernel32.CloseHandle(handle)
+            pipeline_paused = False
+            
+        active_pipeline_process.terminate()
+        try:
+            active_pipeline_process.wait(timeout=3)
+        except subprocess.TimeoutExpired:
+            active_pipeline_process.kill()
+            active_pipeline_process.wait()
+        global_log_buffer.write("[ABORTED] Pipeline batcher stopped by user.")
+    except Exception as e:
+        log.error(f"Error stopping pipeline batcher: {e}")
+        return False, f"Failed to stop pipeline batcher: {e}"
+    finally:
+        pipeline_running = False
+        active_pipeline_process = None
+        pipeline_paused = False
+    return True, "Pipeline batcher successfully stopped."
+
+def pause_pipeline_batching() -> tuple[bool, str]:
+    global active_pipeline_process, pipeline_running, pipeline_paused
+    if not pipeline_running or not active_pipeline_process:
+        return False, "Pipeline batcher is not currently running."
+    if pipeline_paused:
+        return False, "Pipeline batcher is already paused."
+        
+    try:
+        global_log_buffer.write("[PAUSE] Pausing pipeline batcher subprocess...")
+        PROCESS_SUSPEND_RESUME = 0x0800
+        handle = ctypes.windll.kernel32.OpenProcess(PROCESS_SUSPEND_RESUME, False, active_pipeline_process.pid)
+        if handle:
+            ret = ctypes.windll.ntdll.NtSuspendProcess(handle)
+            ctypes.windll.kernel32.CloseHandle(handle)
+            if ret == 0:
+                pipeline_paused = True
+                global_log_buffer.write("[PAUSED] Pipeline batcher suspended. Click Resume to continue.")
+                return True, "Pipeline batcher successfully paused."
+            else:
+                return False, f"NtSuspendProcess failed with code {ret}."
+        else:
+            return False, "Failed to open process handle."
+    except Exception as e:
+        log.error(f"Error pausing pipeline batcher: {e}")
+        return False, f"Failed to pause pipeline batcher: {e}"
+
+def resume_pipeline_batching() -> tuple[bool, str]:
+    global active_pipeline_process, pipeline_running, pipeline_paused
+    if not pipeline_running or not active_pipeline_process:
+        return False, "Pipeline batcher is not currently running."
+    if not pipeline_paused:
+        return False, "Pipeline batcher is not currently paused."
+        
+    try:
+        global_log_buffer.write("[RESUME] Resuming pipeline batcher subprocess...")
+        PROCESS_SUSPEND_RESUME = 0x0800
+        handle = ctypes.windll.kernel32.OpenProcess(PROCESS_SUSPEND_RESUME, False, active_pipeline_process.pid)
+        if handle:
+            ret = ctypes.windll.ntdll.NtResumeProcess(handle)
+            ctypes.windll.kernel32.CloseHandle(handle)
+            if ret == 0:
+                pipeline_paused = False
+                global_log_buffer.write("[RESUMED] Pipeline batcher resumed.")
+                return True, "Pipeline batcher successfully resumed."
+            else:
+                return False, f"NtResumeProcess failed with code {ret}."
+        else:
+            return False, "Failed to open process handle."
+    except Exception as e:
+        log.error(f"Error resuming pipeline batcher: {e}")
+        return False, f"Failed to resume pipeline batcher: {e}"
+
+def stop_automated_upload() -> tuple[bool, str]:
+    global upload_running, upload_batch_name, upload_paused
+    if not upload_running:
+        return False, "Automated upload is not currently running."
+    
+    try:
+        global_log_buffer.write("[ABORT] Stopping Selenium automated upload...")
+        # Unblock event so thread wakes up and quits
+        uploader.upload_resume_event.set()
+        uploader.abort()
+        global_log_buffer.write("[ABORTED] Selenium automated upload stopped by user.")
+    except Exception as e:
+        log.error(f"Error stopping automated upload: {e}")
+        return False, f"Failed to stop automated upload: {e}"
+    finally:
+        upload_running = False
+        upload_batch_name = None
+        upload_paused = False
+    return True, "Automated upload successfully stopped."
+
+def pause_automated_upload() -> tuple[bool, str]:
+    global upload_running, upload_paused
+    if not upload_running:
+        return False, "Automated upload is not currently running."
+    if upload_paused:
+        return False, "Automated upload is already paused."
+        
+    try:
+        global_log_buffer.write("[PAUSE] Pausing Selenium automated upload...")
+        uploader.upload_resume_event.clear()
+        upload_paused = True
+        global_log_buffer.write("[PAUSED] Selenium automated upload paused. Click Resume to continue.")
+        return True, "Automated upload successfully paused."
+    except Exception as e:
+        log.error(f"Error pausing automated upload: {e}")
+        return False, f"Failed to pause automated upload: {e}"
+
+def resume_automated_upload() -> tuple[bool, str]:
+    global upload_running, upload_paused
+    if not upload_running:
+        return False, "Automated upload is not currently running."
+    if not upload_paused:
+        return False, "Automated upload is not currently paused."
+        
+    try:
+        global_log_buffer.write("[RESUME] Resuming Selenium automated upload...")
+        uploader.upload_resume_event.set()
+        upload_paused = False
+        global_log_buffer.write("[RESUMED] Selenium automated upload resumed.")
+        return True, "Automated upload successfully resumed."
+    except Exception as e:
+        log.error(f"Error resuming automated upload: {e}")
+        return False, f"Failed to resume automated upload: {e}"

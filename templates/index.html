@@ -1,0 +1,1710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BabyBillion Pipeline</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Google+Sans+Mono:wght@400;500&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    
+    <style>
+        /* ═══════════════════════════════════════════════════════════════
+           Material You Dark Theme — Tonal Palette
+           ═══════════════════════════════════════════════════════════════ */
+        :root {
+            /* M3 Dark Scheme */
+            --md-sys-color-background: #131316;
+            --md-sys-color-on-background: #E4E1E6;
+            --md-sys-color-surface: #131316;
+            --md-sys-color-surface-dim: #131316;
+            --md-sys-color-surface-container-lowest: #0E0E11;
+            --md-sys-color-surface-container-low: #1B1B1F;
+            --md-sys-color-surface-container: #201F23;
+            --md-sys-color-surface-container-high: #2A292D;
+            --md-sys-color-surface-container-highest: #353438;
+            --md-sys-color-on-surface: #E4E1E6;
+            --md-sys-color-on-surface-variant: #C7C5CA;
+            --md-sys-color-outline: #918F94;
+            --md-sys-color-outline-variant: #46464A;
+
+            /* Primary */
+            --md-sys-color-primary: #B4C5FF;
+            --md-sys-color-on-primary: #1B3060;
+            --md-sys-color-primary-container: #334778;
+            --md-sys-color-on-primary-container: #DBE1FF;
+
+            /* Secondary */
+            --md-sys-color-secondary: #BFC6DC;
+            --md-sys-color-on-secondary: #293042;
+            --md-sys-color-secondary-container: #3F4759;
+            --md-sys-color-on-secondary-container: #DBE1F9;
+
+            /* Tertiary */
+            --md-sys-color-tertiary: #DEBCE0;
+            --md-sys-color-on-tertiary: #3F2844;
+            --md-sys-color-tertiary-container: #573E5C;
+
+            /* Error */
+            --md-sys-color-error: #FFB4AB;
+            --md-sys-color-on-error: #690005;
+            --md-sys-color-error-container: #93000A;
+
+            /* Custom semantic */
+            --md-custom-color-success: #A8DAB5;
+            --md-custom-color-success-container: #1B3A26;
+            --md-custom-color-warning: #F0C878;
+            --md-custom-color-warning-container: #3D3018;
+
+            /* Elevation (M3 uses surface tint) */
+            --md-sys-elevation-1: 0 1px 3px 1px rgba(0,0,0,0.15), 0 1px 2px 0 rgba(0,0,0,0.3);
+            --md-sys-elevation-2: 0 2px 6px 2px rgba(0,0,0,0.15), 0 1px 2px 0 rgba(0,0,0,0.3);
+            --md-sys-elevation-3: 0 4px 8px 3px rgba(0,0,0,0.15), 0 1px 3px 0 rgba(0,0,0,0.3);
+
+            /* Shape */
+            --md-sys-shape-xs: 4px;
+            --md-sys-shape-sm: 8px;
+            --md-sys-shape-md: 12px;
+            --md-sys-shape-lg: 16px;
+            --md-sys-shape-xl: 28px;
+            --md-sys-shape-full: 100px;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', 'Roboto', system-ui, sans-serif;
+            background: var(--md-sys-color-background);
+            color: var(--md-sys-color-on-background);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           TOP APP BAR
+           ═══════════════════════════════════════════════════════════════ */
+        header {
+            padding: 0.75rem 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--md-sys-color-surface-container-low);
+            border-bottom: 1px solid var(--md-sys-color-outline-variant);
+            z-index: 10;
+            position: sticky;
+            top: 0;
+            gap: 1rem;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .logo-icon {
+            width: 32px; height: 32px;
+            border-radius: var(--md-sys-shape-sm);
+            background: var(--md-sys-color-primary-container);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .logo-icon svg { width: 18px; height: 18px; stroke: var(--md-sys-color-on-primary-container); }
+
+        .logo-text h1 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--md-sys-color-on-surface);
+            line-height: 1.2;
+        }
+        .logo-text p {
+            font-size: 0.68rem;
+            color: var(--md-sys-color-outline);
+            font-weight: 400;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           BUTTONS — M3 Filled, Tonal, Outlined, Text
+           ═══════════════════════════════════════════════════════════════ */
+        .btn {
+            font-family: 'Inter', 'Roboto', sans-serif;
+            font-weight: 500;
+            font-size: 0.8rem;
+            padding: 0.5rem 1rem;
+            border-radius: var(--md-sys-shape-full);
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s ease, box-shadow 0.2s ease, opacity 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            letter-spacing: 0.01em;
+        }
+        .btn:active:not(:disabled) { opacity: 0.85; }
+        .btn:disabled { opacity: 0.38; cursor: not-allowed; }
+
+        /* Filled */
+        .btn-primary {
+            background: var(--md-sys-color-primary);
+            color: var(--md-sys-color-on-primary);
+        }
+        .btn-primary:hover:not(:disabled) {
+            box-shadow: var(--md-sys-elevation-1);
+        }
+
+        /* Tonal */
+        .btn-secondary {
+            background: var(--md-sys-color-surface-container-high);
+            color: var(--md-sys-color-on-surface);
+        }
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--md-sys-color-surface-container-highest);
+        }
+
+        /* Filled - Success */
+        .btn-success {
+            background: var(--md-custom-color-success);
+            color: #0F1F15;
+        }
+        .btn-success:hover:not(:disabled) {
+            box-shadow: var(--md-sys-elevation-1);
+        }
+
+        /* Filled - Danger */
+        .btn-danger {
+            background: var(--md-sys-color-error);
+            color: var(--md-sys-color-on-error);
+        }
+        .btn-danger:hover:not(:disabled) {
+            box-shadow: var(--md-sys-elevation-1);
+        }
+
+        /* Filled - Amber/Warning */
+        .btn-amber {
+            background: var(--md-custom-color-warning);
+            color: #1F1A0E;
+        }
+        .btn-amber:hover:not(:disabled) {
+            box-shadow: var(--md-sys-elevation-1);
+        }
+
+        .spinner {
+            width: 14px; height: 14px;
+            border: 2px solid rgba(0,0,0,0.2);
+            border-radius: 50%;
+            border-top-color: currentColor;
+            animation: spin 0.7s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ═══════════════════════════════════════════════════════════════
+           STATUS CHIP
+           ═══════════════════════════════════════════════════════════════ */
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0.3rem 0.7rem;
+            border-radius: var(--md-sys-shape-sm);
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            transition: all 0.2s;
+            margin-right: 4px;
+        }
+        .status-pill.idle {
+            background: var(--md-custom-color-success-container);
+            color: var(--md-custom-color-success);
+        }
+        .status-pill.batching {
+            background: rgba(181, 197, 255, 0.12);
+            color: var(--md-sys-color-primary);
+        }
+        .status-pill.uploading {
+            background: rgba(181, 197, 255, 0.12);
+            color: var(--md-sys-color-primary);
+        }
+        .status-pill.paused {
+            background: var(--md-custom-color-warning-container);
+            color: var(--md-custom-color-warning);
+        }
+
+        .status-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .status-pill.idle .status-dot { background: var(--md-custom-color-success); animation: dotPulse 2.5s ease-in-out infinite; }
+        .status-pill.batching .status-dot { background: var(--md-sys-color-primary); animation: dotPulse 1.5s ease-in-out infinite; }
+        .status-pill.uploading .status-dot { background: var(--md-sys-color-primary); animation: dotPulse 1.5s ease-in-out infinite; }
+        .status-pill.paused .status-dot { background: var(--md-custom-color-warning); animation: dotPulse 1.5s ease-in-out infinite; }
+
+        @keyframes dotPulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           LAYOUT
+           ═══════════════════════════════════════════════════════════════ */
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            padding: 1rem;
+            gap: 0;
+            max-height: calc(100vh - 56px);
+            overflow: hidden;
+        }
+
+        .dashboard-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            overflow-y: auto;
+            padding-right: 4px;
+            min-height: 0;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           WARNING BANNER
+           ═══════════════════════════════════════════════════════════════ */
+        .warning-banner {
+            background: rgba(255, 180, 171, 0.08);
+            border: 1px solid rgba(255, 180, 171, 0.2);
+            border-radius: var(--md-sys-shape-md);
+            padding: 0.65rem 1rem;
+            display: flex;
+            align-items: center;
+            color: var(--md-sys-color-error);
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        .warning-banner.hidden { display: none; }
+
+        /* ═══════════════════════════════════════════════════════════════
+           TABS — M3 style
+           ═══════════════════════════════════════════════════════════════ */
+        .controls-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 1px solid var(--md-sys-color-outline-variant);
+            margin-bottom: 0.25rem;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .tabs-header { display: flex; gap: 0; }
+
+        .tab-btn {
+            font-family: 'Inter', 'Roboto', sans-serif;
+            background: none;
+            border: none;
+            color: var(--md-sys-color-outline);
+            padding: 0.65rem 1rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            position: relative;
+            transition: color 0.2s;
+        }
+        .tab-btn:hover { color: var(--md-sys-color-on-surface); }
+        .tab-btn.active { color: var(--md-sys-color-primary); }
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 12px; right: 12px;
+            height: 3px;
+            background: var(--md-sys-color-primary);
+            border-radius: 3px 3px 0 0;
+        }
+
+        .tab-badge {
+            background: var(--md-sys-color-surface-container-high);
+            border-radius: var(--md-sys-shape-full);
+            padding: 1px 7px;
+            font-size: 0.68rem;
+            font-weight: 500;
+            margin-left: 4px;
+            color: var(--md-sys-color-on-surface-variant);
+        }
+        .tab-btn.active .tab-badge {
+            background: rgba(180, 197, 255, 0.15);
+            color: var(--md-sys-color-primary);
+        }
+
+        /* ── Search ───────────────────────────────────────────────── */
+        .search-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.35rem;
+        }
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            color: var(--md-sys-color-outline);
+            pointer-events: none;
+        }
+        .search-input {
+            width: 240px;
+            padding: 0.45rem 0.8rem 0.45rem 2.1rem;
+            border-radius: var(--md-sys-shape-full);
+            background: var(--md-sys-color-surface-container-high);
+            border: none;
+            color: var(--md-sys-color-on-surface);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            outline: none;
+            transition: all 0.25s ease;
+        }
+        .search-input::placeholder { color: var(--md-sys-color-outline); }
+        .search-input:focus {
+            background: var(--md-sys-color-surface-container-highest);
+            outline: 2px solid var(--md-sys-color-primary);
+            outline-offset: 0;
+            width: 300px;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           CARDS — M3 Filled Card
+           ═══════════════════════════════════════════════════════════════ */
+        .batches-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2.5rem 1rem;
+            background: var(--md-sys-color-surface-container);
+            border-radius: var(--md-sys-shape-md);
+            color: var(--md-sys-color-outline);
+        }
+        .empty-state svg { width: 36px; height: 36px; stroke: var(--md-sys-color-outline); margin-bottom: 0.75rem; opacity: 0.5; }
+
+        .batch-card {
+            background: var(--md-sys-color-surface-container);
+            border-radius: var(--md-sys-shape-md);
+            overflow: hidden;
+            transition: background 0.15s, box-shadow 0.15s;
+        }
+        .batch-card:hover {
+            background: var(--md-sys-color-surface-container-high);
+            box-shadow: var(--md-sys-elevation-1);
+        }
+
+        .batch-summary {
+            padding: 0.5rem 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .batch-meta-left {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .batch-title {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--md-sys-color-on-surface);
+        }
+
+        .batch-status-badge {
+            padding: 0.15rem 0.5rem;
+            border-radius: var(--md-sys-shape-full);
+            font-size: 0.65rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+        }
+        .status-review {
+            background: var(--md-custom-color-warning-container);
+            color: var(--md-custom-color-warning);
+        }
+        .status-uploaded {
+            background: rgba(180, 197, 255, 0.12);
+            color: var(--md-sys-color-primary);
+        }
+        .status-finalized {
+            background: var(--md-custom-color-success-container);
+            color: var(--md-custom-color-success);
+        }
+
+        .batch-meta-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--md-sys-color-outline);
+            font-size: 0.75rem;
+        }
+        .batch-meta-item { display: flex; align-items: center; gap: 4px; }
+        .batch-meta-item svg { width: 14px; height: 14px; stroke: var(--md-sys-color-outline); }
+
+        .expand-arrow {
+            transition: transform 0.25s ease;
+            opacity: 0.5;
+        }
+        .batch-card.expanded .expand-arrow { transform: rotate(180deg); }
+
+        /* Smooth expand — CSS grid row trick avoids the max-height glitch */
+        .batch-details {
+            border-top: 1px solid var(--md-sys-color-outline-variant);
+            background: var(--md-sys-color-surface-container-low);
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.3s ease;
+        }
+        .batch-card.expanded .batch-details {
+            grid-template-rows: 1fr;
+        }
+        .batch-details > .batch-details-inner {
+            overflow: hidden;
+            padding: 0 0.75rem;
+            transition: padding 0.3s ease;
+        }
+        .batch-card.expanded .batch-details > .batch-details-inner {
+            padding: 0.5rem 0.75rem;
+        }
+
+        /* Action panel */
+        .batch-action-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--md-sys-color-surface-container);
+            padding: 0.5rem 0.625rem;
+            border-radius: var(--md-sys-shape-sm);
+            margin-bottom: 0.5rem;
+            gap: 0.75rem;
+        }
+        .panel-info { display: flex; flex-direction: column; gap: 1px; }
+        .panel-info-title {
+            font-size: 0.65rem;
+            color: var(--md-sys-color-outline);
+            font-weight: 500;
+            letter-spacing: 0.03em;
+        }
+        .panel-info-value {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--md-sys-color-on-surface-variant);
+        }
+        .panel-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+        /* ═══════════════════════════════════════════════════════════════
+           VIDEO GRID
+           ═══════════════════════════════════════════════════════════════ */
+        .video-grid-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 0.5fr 1fr 0.5fr 1fr 0.7fr 0.6fr 0.5fr;
+            padding: 0.25rem 0.5rem;
+            color: var(--md-sys-color-outline);
+            font-size: 0.58rem;
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            border-bottom: 1px solid var(--md-sys-color-outline-variant);
+        }
+
+        .video-item {
+            display: grid;
+            grid-template-columns: 2fr 1fr 0.5fr 1fr 0.5fr 1fr 0.7fr 0.6fr 0.5fr;
+            padding: 0.3rem 0.5rem;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            font-size: 0.75rem;
+            transition: background 0.1s;
+        }
+        .video-item:hover { background: rgba(255,255,255,0.025); }
+
+        .video-name-cell {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            color: var(--md-sys-color-on-surface);
+            overflow: hidden;
+        }
+
+        .play-icon-btn {
+            background: var(--md-sys-color-primary-container);
+            border: none;
+            color: var(--md-sys-color-on-primary-container);
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: background 0.15s;
+        }
+        .play-icon-btn:hover {
+            background: var(--md-sys-color-primary);
+            color: var(--md-sys-color-on-primary);
+        }
+
+        .video-meta-cell {
+            color: var(--md-sys-color-on-surface-variant);
+            font-size: 0.68rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            min-width: 0;
+        }
+        /* Editable title (contenteditable) */
+        .video-meta-cell.text-edit {
+            cursor: text;
+            padding: 1px 4px;
+            border-radius: 3px;
+            border: 1px solid transparent;
+            transition: border-color 0.15s, background 0.15s;
+        }
+        .video-meta-cell.text-edit:hover {
+            border-color: var(--md-sys-color-outline-variant);
+            background: rgba(255,255,255,0.03);
+        }
+        .video-meta-cell.text-edit:focus {
+            outline: none;
+            border-color: var(--md-sys-color-primary);
+            background: var(--md-sys-color-surface-container-high);
+            white-space: normal;
+            overflow: visible;
+        }
+        /* Dropdown trigger cell */
+        .cell-dropdown-trigger {
+            cursor: pointer;
+            padding: 1px 4px;
+            border-radius: 3px;
+            border: 1px solid transparent;
+            transition: border-color 0.15s, background 0.15s;
+            position: relative;
+        }
+        .cell-dropdown-trigger:hover {
+            border-color: var(--md-sys-color-outline-variant);
+            background: rgba(255,255,255,0.04);
+        }
+        .cell-dropdown-trigger.active {
+            border-color: var(--md-sys-color-primary);
+            background: var(--md-sys-color-surface-container-high);
+        }
+        /* Dropdown overlay */
+        .cell-dropdown-panel {
+            position: fixed;
+            background: var(--md-sys-color-surface-container-high);
+            border: 1px solid var(--md-sys-color-outline-variant);
+            border-radius: var(--md-sys-shape-sm);
+            box-shadow: var(--md-sys-elevation-2);
+            z-index: 9999;
+            min-width: 160px;
+            max-width: 280px;
+            max-height: 220px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .cell-dropdown-search {
+            padding: 5px 8px;
+            border: none;
+            border-bottom: 1px solid var(--md-sys-color-outline-variant);
+            background: transparent;
+            color: var(--md-sys-color-on-surface);
+            font-size: 0.68rem;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+        }
+        .cell-dropdown-list {
+            overflow-y: auto;
+            flex: 1;
+        }
+        .cell-dropdown-item {
+            padding: 4px 8px;
+            font-size: 0.68rem;
+            cursor: pointer;
+            color: var(--md-sys-color-on-surface-variant);
+            transition: background 0.1s;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .cell-dropdown-item:hover {
+            background: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container);
+        }
+        .cell-dropdown-item.selected {
+            color: var(--md-sys-color-primary);
+            font-weight: 600;
+        }
+        .cell-saving {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        /* ── Bad video row ─────────────────────────────────────── */
+        .video-item.bad {
+            opacity: 0.4;
+            background: rgba(255, 180, 171, 0.04);
+        }
+        .video-item.bad .video-name-cell {
+            text-decoration: line-through;
+            text-decoration-color: var(--md-sys-color-error);
+        }
+        .mark-bad-btn {
+            background: none;
+            border: none;
+            color: var(--md-sys-color-outline);
+            cursor: pointer;
+            font-size: 0.75rem;
+            padding: 1px 3px;
+            margin-left: 4px;
+            opacity: 0;
+            transition: opacity 0.15s, color 0.15s;
+            line-height: 1;
+            border-radius: 3px;
+            vertical-align: middle;
+        }
+        .video-item:hover .mark-bad-btn {
+            opacity: 0.6;
+        }
+        .mark-bad-btn:hover {
+            opacity: 1 !important;
+            color: var(--md-sys-color-error);
+            background: rgba(255, 180, 171, 0.1);
+        }
+        .video-item.bad .mark-bad-btn {
+            opacity: 1;
+            color: var(--md-sys-color-primary);
+        }
+        .video-item.bad .mark-bad-btn:hover {
+            color: var(--md-sys-color-primary);
+            background: rgba(180, 197, 255, 0.1);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           CONSOLE DRAWER — Collapsible bottom panel
+           ═══════════════════════════════════════════════════════════════ */
+        .log-section {
+            flex-shrink: 0;
+            background: var(--md-sys-color-surface-container-lowest);
+            border-radius: var(--md-sys-shape-md) var(--md-sys-shape-md) 0 0;
+            display: grid;
+            grid-template-rows: auto 0fr;
+            margin-top: 0.5rem;
+            transition: grid-template-rows 0.3s ease;
+        }
+        .log-section.expanded {
+            grid-template-rows: auto 1fr;
+        }
+        .log-terminal-wrap {
+            overflow: hidden;
+            min-height: 0;
+        }
+        .log-section.expanded .log-terminal-wrap {
+            min-height: 184px;
+        }
+
+        .log-header {
+            padding: 0.45rem 0.875rem;
+            background: var(--md-sys-color-surface-container-low);
+            border-bottom: 1px solid var(--md-sys-color-outline-variant);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            user-select: none;
+        }
+        .log-header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .log-header h2 {
+            font-size: 0.72rem;
+            font-weight: 500;
+            color: var(--md-sys-color-outline);
+            letter-spacing: 0.03em;
+        }
+        .log-badge {
+            font-size: 0.6rem;
+            font-weight: 500;
+            color: var(--md-sys-color-on-surface-variant);
+            background: var(--md-sys-color-surface-container-high);
+            padding: 1px 6px;
+            border-radius: var(--md-sys-shape-full);
+            max-width: 400px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .expand-console-icon {
+            width: 16px; height: 16px;
+            transition: transform 0.2s ease;
+            color: var(--md-sys-color-outline);
+        }
+        .log-section.expanded .expand-console-icon {
+            transform: rotate(180deg);
+        }
+
+        .log-controls {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+        .log-controls label {
+            font-size: 0.68rem;
+            color: var(--md-sys-color-outline);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+        }
+        .log-controls label input[type="checkbox"] {
+            accent-color: var(--md-sys-color-primary);
+            width: 13px; height: 13px;
+        }
+
+        .log-terminal {
+            flex: 1;
+            padding: 0.5rem 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.68rem;
+            line-height: 1.5;
+            color: var(--md-sys-color-on-surface-variant);
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+            scroll-behavior: smooth;
+            min-height: 0;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           VIDEO MODAL — Fixed: object-fit contain
+           ═══════════════════════════════════════════════════════════════ */
+        /* ═══════════════════════════════════════════════════════════════
+           VIDEO MODAL — Plyr player in overlay
+           ═══════════════════════════════════════════════════════════════ */
+        .video-modal {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.80);
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .video-modal.active { display: flex; }
+
+        .video-modal-inner {
+            position: relative;
+            width: 50vw;
+            max-width: 720px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            background: var(--md-sys-color-surface-container-high);
+            border-radius: var(--md-sys-shape-xl);
+            overflow: hidden;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+        }
+
+        .video-modal-header {
+            padding: 0.7rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--md-sys-color-outline-variant);
+            flex-shrink: 0;
+        }
+        .video-modal-header .modal-title {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--md-sys-color-on-surface);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .video-modal-header .modal-close {
+            background: var(--md-sys-color-surface-container-highest);
+            border: none;
+            color: var(--md-sys-color-on-surface-variant);
+            font-size: 1.1rem;
+            cursor: pointer;
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s;
+            flex-shrink: 0;
+        }
+        .video-modal-header .modal-close:hover {
+            background: var(--md-sys-color-outline-variant);
+        }
+
+        /* Plyr overrides to match our dark theme */
+        .video-modal-inner .plyr {
+            border-radius: 0 0 var(--md-sys-shape-xl) var(--md-sys-shape-xl);
+            --plyr-color-main: var(--md-sys-color-primary);
+        }
+        .video-modal-inner .plyr__video-wrapper {
+            max-height: calc(85vh - 48px);
+        }
+        .video-modal-inner video {
+            max-height: calc(85vh - 48px);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           SCROLLBAR
+           ═══════════════════════════════════════════════════════════════ */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--md-sys-color-outline-variant); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--md-sys-color-outline); }
+
+        /* Checkbox label */
+        .header-checkbox-label {
+            font-size: 0.75rem;
+            color: var(--md-sys-color-outline);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            user-select: none;
+            padding: 0.3rem 0.5rem;
+            border-radius: var(--md-sys-shape-sm);
+        }
+        .header-checkbox-label:hover { background: rgba(255,255,255,0.04); }
+        .header-checkbox-label input[type="checkbox"] {
+            accent-color: var(--md-sys-color-primary);
+        }
+
+        /* Batch size selector */
+        .batch-size-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.72rem;
+            color: var(--md-sys-color-outline);
+        }
+        .batch-size-select {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 500;
+            padding: 0.25rem 0.4rem;
+            border-radius: var(--md-sys-shape-sm);
+            border: 1px solid var(--md-sys-color-outline-variant);
+            background: var(--md-sys-color-surface-container-high);
+            color: var(--md-sys-color-on-surface);
+            cursor: pointer;
+            outline: none;
+        }
+        .batch-size-select:focus { border-color: var(--md-sys-color-primary); }
+
+        @media (max-width: 768px) {
+            header { flex-direction: column; gap: 0.5rem; align-items: flex-start; }
+            .header-actions { width: 100%; justify-content: flex-start; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-section">
+            <div class="logo-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.25-2.5 3.5-2.5 3.5s2.25-1 3.5-2.5Z"/><path d="M12 10 9 13l-4-1 4-4Z"/><path d="M14 8V5L9 9Z"/><path d="M12 10a8 8 0 0 1 8-8v2c0 2-1 4-3 6Z"/><path d="M12 10v4h4a8 8 0 0 0-4-4Z"/><path d="m14 14-3 3-4-1 4-4Z"/><path d="M16 12v3l5-5Z"/></svg>
+            </div>
+            <div class="logo-text">
+                <h1>BabyBillion Pipeline</h1>
+                <p>Video processing &amp; upload management</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <div id="pipeline-status-indicator" class="status-pill idle">
+                <span class="status-dot"></span>
+                <span id="pipeline-status-text">System Idle</span>
+            </div>
+            <div class="batch-size-group">
+                <span>Batch</span>
+                <select id="batch-size-select" class="batch-size-select" onchange="setBatchSize(this.value)">
+                    <option value="10">10 MB</option>
+                    <option value="20">20 MB</option>
+                    <option value="30" selected>30 MB</option>
+                    <option value="50">50 MB</option>
+                    <option value="75">75 MB</option>
+                    <option value="100">100 MB</option>
+                </select>
+            </div>
+            <label class="header-checkbox-label">
+                <input type="checkbox" id="batch-only-chk"> Batch-only
+            </label>
+            <button id="run-pipeline-btn" class="btn btn-primary" onclick="runPipelineBatching()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                Fetch &amp; Batch
+            </button>
+            <button id="stop-btn" class="btn btn-danger" onclick="stopActiveOperation()" style="display: none;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg>
+                Stop
+            </button>
+            <button id="pause-btn" class="btn btn-amber" onclick="togglePauseOperation()" style="display: none;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
+                Pause
+            </button>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="dashboard-content">
+            <div id="upload-lock-banner" class="warning-banner hidden">
+                <span style="display: flex; align-items: center; gap: 8px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
+                    <strong>Upload pending confirmation:</strong>&nbsp;Batch <span id="locked-batch-name" style="font-weight: 700;"></span> was uploaded. Click 'Mark Uploaded' to confirm and unblock new uploads.
+                </span>
+            </div>
+
+            <div class="controls-bar">
+                <div class="tabs-header">
+                    <button class="tab-btn active" onclick="switchTab('pending')">Pending Review <span id="badge-pending" class="tab-badge">0</span></button>
+                    <button class="tab-btn" onclick="switchTab('uploaded')">Uploaded <span id="badge-uploaded" class="tab-badge">0</span></button>
+                    <button class="tab-btn" onclick="switchTab('finalized')">Finalized <span id="badge-finalized" class="tab-badge">0</span></button>
+                </div>
+                <div class="search-wrapper">
+                    <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input type="text" id="search-input" class="search-input" placeholder="Search videos, IDs, categories..." oninput="handleSearch(this.value)">
+                </div>
+            </div>
+
+            <div id="batches-container" class="batches-list"></div>
+        </div>
+
+        <div id="log-section" class="log-section">
+            <div class="log-header" onclick="toggleConsole()">
+                <div class="log-header-left">
+                    <svg class="expand-console-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+                    <h2>Console</h2>
+                    <span id="log-badge" class="log-badge"></span>
+                </div>
+                <div class="log-controls" onclick="event.stopPropagation()">
+                    <label><input type="checkbox" id="autoscroll-chk" checked> Auto-scroll</label>
+                    <button class="btn btn-secondary" style="padding: 0.15rem 0.5rem; font-size: 0.65rem; border-radius: var(--md-sys-shape-sm);" onclick="clearLogs()">Clear</button>
+                </div>
+            </div>
+            <div class="log-terminal-wrap">
+                <div id="terminal" class="log-terminal"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="video-modal" class="video-modal" onclick="if(event.target===this)closeVideoModal()">
+        <div class="video-modal-inner">
+            <div class="video-modal-header">
+                <span id="video-modal-title" class="modal-title">Video Preview</span>
+                <button class="modal-close" onclick="closeVideoModal()">&times;</button>
+            </div>
+            <video id="video-element" playsinline controls></video>
+        </div>
+    </div>
+    <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+
+    <script>
+        let searchQuery = '';
+        let currentTab = 'pending';
+        let logIndex = 0;
+        let activeUploadedBatch = null;
+        let isPipelineRunning = false;
+        let isPipelinePaused = false;
+        let isUploadRunning = false;
+        let isUploadPaused = false;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchBatches();
+            syncBatchSize();
+            loadCsvOptions();
+            setInterval(fetchBatches, 5000);
+            setInterval(fetchLogs, 1500);
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeVideoModal(); closeDropdown(); } });
+        });
+
+        function syncBatchSize() {
+            fetch('/api/batch-size').then(r=>r.json()).then(d => {
+                const sel = document.getElementById('batch-size-select');
+                const val = String(d.batch_size_mb);
+                // Set select to current value, or add a custom option if needed
+                if (sel.querySelector(`option[value="${val}"]`)) {
+                    sel.value = val;
+                } else {
+                    const opt = document.createElement('option');
+                    opt.value = val; opt.textContent = `${val} MB`; opt.selected = true;
+                    sel.appendChild(opt);
+                }
+            }).catch(e => console.error('Failed to sync batch size:', e));
+        }
+
+        function setBatchSize(mb) {
+            fetch('/api/batch-size', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({batch_size_mb: parseInt(mb)})
+            }).then(r=>r.json()).then(d => {
+                if (d.error) { alert(d.error); syncBatchSize(); }
+                else appendTerminalText(`\n[SYSTEM] ${d.message}\n`);
+            }).catch(e => console.error('Failed to set batch size:', e));
+        }
+
+        function handleSearch(value) { searchQuery = value; renderCurrentTab(); }
+
+        // ── Inline CSV editing ──────────────────────────────────────
+        let csvOptions = null;
+        let activeDropdownEl = null;
+
+        // Load options once on page load
+        function loadCsvOptions() {
+            fetch('/api/csv-options').then(r=>r.json()).then(d => { csvOptions = d; })
+                .catch(e => console.error('Failed to load CSV options:', e));
+        }
+
+        function getOptionsForField(field, currentAge, currentParent) {
+            if (!csvOptions) return [];
+            switch(field) {
+                case 'age_groups': return csvOptions.age_groups || [];
+                case 'categories_name': {
+                    // categories_name = Parent Category column
+                    const cats = csvOptions.categories_by_age[currentAge] || [];
+                    const parents = [...new Set(cats.map(c => c.parent).filter(Boolean))];
+                    // Also include standalone categories (no parent) as options
+                    const standalone = cats.filter(c => !c.parent).map(c => c.category);
+                    return [...parents, ...standalone];
+                }
+                case 'playlist_name': {
+                    // playlist_name = Categories column, filtered by parent if set
+                    const cats = csvOptions.categories_by_age[currentAge] || [];
+                    if (currentParent) {
+                        // Show only categories under this parent
+                        return cats.filter(c => c.parent === currentParent).map(c => c.category);
+                    }
+                    // If no parent set, show all categories
+                    return cats.map(c => c.category);
+                }
+                case 'channel_name': return csvOptions.channel_names || [];
+                case 'content_types': return csvOptions.content_types || [];
+                case 'content_formats': return csvOptions.content_formats || [];
+                case 'tags': return csvOptions.tags || [];
+                default: return [];
+            }
+        }
+
+        function openDropdown(triggerEl, batch, video, field, currentVal) {
+            closeDropdown();
+            const row = triggerEl.closest('.video-item');
+            const dropdownTriggers = row ? row.querySelectorAll('.cell-dropdown-trigger') : [];
+            // Column order: [0]=categories_name, [1]=age_groups, [2]=playlist_name, [3]=content_formats, [4]=content_types
+            let currentAge = currentVal;
+            let currentParent = '';
+            if (field !== 'age_groups') {
+                currentAge = dropdownTriggers[1] ? dropdownTriggers[1].textContent.trim() : '';
+            }
+            if (field === 'playlist_name') {
+                currentParent = dropdownTriggers[0] ? dropdownTriggers[0].textContent.trim() : '';
+            }
+
+            const options = getOptionsForField(field, currentAge, currentParent);
+            if (options.length === 0) return;
+
+            triggerEl.classList.add('active');
+            activeDropdownEl = triggerEl;
+
+            const panel = document.createElement('div');
+            panel.className = 'cell-dropdown-panel';
+            panel.id = 'active-cell-dropdown';
+
+            const search = document.createElement('input');
+            search.className = 'cell-dropdown-search';
+            search.placeholder = 'Search...';
+            search.type = 'text';
+            panel.appendChild(search);
+
+            const list = document.createElement('div');
+            list.className = 'cell-dropdown-list';
+            panel.appendChild(list);
+
+            function renderItems(filter) {
+                const q = (filter || '').toLowerCase();
+                list.innerHTML = '';
+                const filtered = options.filter(o => o.toLowerCase().includes(q));
+                if (filtered.length === 0) {
+                    list.innerHTML = '<div style="padding:6px 8px;font-size:0.65rem;color:var(--md-sys-color-outline)">No matches</div>';
+                    return;
+                }
+                filtered.forEach(opt => {
+                    const item = document.createElement('div');
+                    item.className = 'cell-dropdown-item' + (opt === currentVal ? ' selected' : '');
+                    item.textContent = opt || '(empty)';
+                    item.onclick = (e) => {
+                        e.stopPropagation();
+                        selectDropdownValue(batch, video, field, opt, triggerEl);
+                    };
+                    list.appendChild(item);
+                });
+            }
+            renderItems('');
+            search.oninput = () => renderItems(search.value);
+
+            document.body.appendChild(panel);
+
+            // Position below the trigger
+            const rect = triggerEl.getBoundingClientRect();
+            panel.style.top = (rect.bottom + 2) + 'px';
+            panel.style.left = rect.left + 'px';
+            // Keep within viewport
+            const pr = panel.getBoundingClientRect();
+            if (pr.right > window.innerWidth) panel.style.left = (window.innerWidth - pr.width - 8) + 'px';
+            if (pr.bottom > window.innerHeight) panel.style.top = (rect.top - pr.height - 2) + 'px';
+
+            search.focus();
+
+            // Close on outside click
+            setTimeout(() => {
+                document.addEventListener('click', closeDropdownOutside);
+                document.addEventListener('keydown', closeDropdownEsc);
+            }, 10);
+        }
+
+        function closeDropdown() {
+            const panel = document.getElementById('active-cell-dropdown');
+            if (panel) panel.remove();
+            if (activeDropdownEl) {
+                activeDropdownEl.classList.remove('active');
+                activeDropdownEl = null;
+            }
+            document.removeEventListener('click', closeDropdownOutside);
+            document.removeEventListener('keydown', closeDropdownEsc);
+        }
+        function closeDropdownOutside(e) {
+            const panel = document.getElementById('active-cell-dropdown');
+            if (panel && !panel.contains(e.target) && e.target !== activeDropdownEl) closeDropdown();
+        }
+        function closeDropdownEsc(e) { if (e.key === 'Escape') closeDropdown(); }
+
+        function selectDropdownValue(batch, video, field, value, triggerEl) {
+            closeDropdown();
+            const span = triggerEl.querySelector('span');
+            const original = span ? span.textContent : '';
+            if (value === original) return;
+
+            triggerEl.classList.add('cell-saving');
+            fetch(`/api/batches/${batch}/update-csv`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({video_name: video, field: field, value: value})
+            }).then(r => r.json()).then(d => {
+                triggerEl.classList.remove('cell-saving');
+                if (d.error) {
+                    triggerEl.style.borderColor = 'var(--md-sys-color-error)';
+                    setTimeout(() => triggerEl.style.borderColor = '', 1500);
+                    appendTerminalText(`\n[ERROR] ${d.error}\n`);
+                } else {
+                    if (span) span.textContent = value;
+                    triggerEl.title = value;
+                    triggerEl.style.borderColor = 'var(--md-custom-color-success)';
+                    setTimeout(() => triggerEl.style.borderColor = '', 1000);
+                }
+            }).catch(e => {
+                triggerEl.classList.remove('cell-saving');
+                console.error('Save failed:', e);
+            });
+        }
+
+        function saveTextField(el) {
+            const batch = el.dataset.batch;
+            const video = el.dataset.video;
+            const field = el.dataset.field;
+            const original = el.dataset.original || '';
+            const newVal = el.textContent.trim();
+            if (newVal === original) return;
+
+            el.classList.add('cell-saving');
+            fetch(`/api/batches/${batch}/update-csv`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({video_name: video, field: field, value: newVal})
+            }).then(r => r.json()).then(d => {
+                el.classList.remove('cell-saving');
+                if (d.error) {
+                    el.textContent = original;
+                    el.style.borderColor = 'var(--md-sys-color-error)';
+                    setTimeout(() => el.style.borderColor = '', 1500);
+                    appendTerminalText(`\n[ERROR] ${d.error}\n`);
+                } else {
+                    el.dataset.original = newVal;
+                    el.title = newVal;
+                    el.style.borderColor = 'var(--md-custom-color-success)';
+                    setTimeout(() => el.style.borderColor = '', 1000);
+                }
+            }).catch(e => {
+                el.classList.remove('cell-saving');
+                el.textContent = original;
+                console.error('Save failed:', e);
+            });
+        }
+
+        function copyToClipboard(text, element, event) {
+            if (event) event.stopPropagation();
+            navigator.clipboard.writeText(text).then(() => {
+                const originalHTML = element.innerHTML;
+                element.style.color = 'var(--md-custom-color-success)';
+                element.innerHTML = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Copied!`;
+                setTimeout(() => { element.style.color = ''; element.innerHTML = originalHTML; }, 1200);
+            }).catch(err => console.error('Copy failed:', err));
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            currentTab = tabName;
+            renderCurrentTab();
+        }
+
+        let cacheData = { pending: [], uploaded: [], finalized: [] };
+
+        function fetchBatches() {
+            fetch('/api/batches').then(res => res.json()).then(data => {
+                cacheData = data;
+                activeUploadedBatch = data.active_uploaded_batch;
+                isPipelineRunning = data.pipeline_running;
+                isPipelinePaused = data.pipeline_paused;
+                isUploadRunning = data.upload_running;
+                isUploadPaused = data.upload_paused;
+                const uploadBatchName = data.upload_batch_name;
+
+                document.getElementById('badge-pending').innerText = data.pending.length;
+                document.getElementById('badge-uploaded').innerText = data.uploaded.length;
+                document.getElementById('badge-finalized').innerText = data.finalized.length;
+
+                const si = document.getElementById('pipeline-status-indicator');
+                const st = document.getElementById('pipeline-status-text');
+                if (isPipelineRunning) {
+                    si.className = isPipelinePaused ? 'status-pill paused' : 'status-pill batching';
+                    st.innerText = isPipelinePaused ? 'Batcher Paused' : 'Batching...';
+                } else if (isUploadRunning) {
+                    si.className = isUploadPaused ? 'status-pill paused' : 'status-pill uploading';
+                    st.innerText = isUploadPaused ? `Paused — ${uploadBatchName}` : `Uploading ${uploadBatchName}`;
+                } else {
+                    si.className = 'status-pill idle';
+                    st.innerText = 'System Idle';
+                }
+
+                const runBtn = document.getElementById('run-pipeline-btn');
+                const stopBtn = document.getElementById('stop-btn');
+                const pauseBtn = document.getElementById('pause-btn');
+
+                if (isPipelineRunning) {
+                    runBtn.disabled = true;
+                    runBtn.innerHTML = `<span class="spinner"></span> Batching...`;
+                    stopBtn.style.display = 'inline-flex';
+                    stopBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg> Stop`;
+                    pauseBtn.style.display = 'inline-flex';
+                    pauseBtn.innerHTML = isPipelinePaused
+                        ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg> Resume`
+                        : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg> Pause`;
+                } else if (isUploadRunning) {
+                    runBtn.disabled = true;
+                    runBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg> Fetch & Batch`;
+                    stopBtn.style.display = 'inline-flex';
+                    stopBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg> Stop`;
+                    pauseBtn.style.display = 'inline-flex';
+                    pauseBtn.innerHTML = isUploadPaused
+                        ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg> Resume`
+                        : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg> Pause`;
+                } else {
+                    runBtn.disabled = false;
+                    runBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg> Fetch & Batch`;
+                    stopBtn.style.display = 'none';
+                    pauseBtn.style.display = 'none';
+                }
+
+                const lockBanner = document.getElementById('upload-lock-banner');
+                if (activeUploadedBatch) {
+                    lockBanner.classList.remove('hidden');
+                    document.getElementById('locked-batch-name').innerText = activeUploadedBatch;
+                } else { lockBanner.classList.add('hidden'); }
+
+                renderCurrentTab();
+            }).catch(err => console.error("Error fetching batches:", err));
+        }
+
+        function isUserEditing() {
+            // Check if user has focus on a contenteditable cell or a dropdown is open
+            if (document.getElementById('active-cell-dropdown')) return true;
+            const active = document.activeElement;
+            if (active && (active.classList.contains('text-edit') || active.classList.contains('cell-dropdown-search'))) return true;
+            return false;
+        }
+
+        function renderCurrentTab() {
+            if (isUserEditing()) return; // Don't wipe DOM during active edits
+            const container = document.getElementById('batches-container');
+            let batches = cacheData[currentTab] || [];
+
+            if (searchQuery.trim() !== '') {
+                const q = searchQuery.toLowerCase().trim();
+                batches = batches.map(b => {
+                    const fv = b.videos ? b.videos.filter(v =>
+                        (v.video_name && v.video_name.toLowerCase().includes(q)) ||
+                        (v.page_id && v.page_id.toLowerCase().includes(q)) ||
+                        (v.category && v.category.toLowerCase().includes(q)) ||
+                        (v.age_group && v.age_group.toLowerCase().includes(q))
+                    ) : [];
+                    const nm = b.batch_name.toLowerCase().includes(q);
+                    if (nm || fv.length > 0) return { ...b, videos: nm ? b.videos : fv };
+                    return null;
+                }).filter(b => b !== null);
+            }
+
+            if (batches.length === 0) {
+                container.innerHTML = `<div class="empty-state">
+                    <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"/></svg>
+                    <p style="font-size:0.82rem">${searchQuery.trim() !== '' ? 'No results match your search.' : 'No batches in this category.'}</p>
+                </div>`;
+                return;
+            }
+
+            const expanded = Array.from(document.querySelectorAll('.batch-card.expanded')).map(c => c.id);
+            let html = '';
+            batches.forEach((b, idx) => {
+                const isExp = expanded.includes(b.batch_name) || (currentTab === 'pending' && idx === 0 && expanded.length === 0) || (searchQuery.trim() !== '');
+                let sc = 'status-review', sl = 'Pending', jb = '';
+                if (b.status === 'pending_second_review') {
+                    sc = 'status-uploaded'; sl = 'Uploaded';
+                    if (b.upload_job_id) jb = `<span style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;background:rgba(180,197,255,0.1);padding:2px 6px;border-radius:var(--md-sys-shape-sm);color:var(--md-sys-color-primary);cursor:pointer;display:inline-flex;align-items:center;gap:3px" onclick="copyToClipboard('${b.upload_job_id}',this,event)" title="Copy CMS ID: ${b.upload_job_id}"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>${b.upload_job_id.substring(0,8)}…</span>`;
+                } else if (b.status === 'finalized') { sc = 'status-finalized'; sl = 'Finalized'; }
+                const ds = b.created_at ? new Date(b.created_at).toLocaleString() : '';
+                const cnt = b.videos ? b.videos.length : 0;
+
+                html += `<div id="${b.batch_name}" class="batch-card ${isExp?'expanded':''}" data-status="${b.status}">
+                    <div class="batch-summary" onclick="toggleBatchCard('${b.batch_name}')">
+                        <div class="batch-meta-left">
+                            <span class="batch-title">${b.batch_name}</span>
+                            <span class="batch-status-badge ${sc}">${sl}</span>
+                            ${jb}
+                        </div>
+                        <div class="batch-meta-right">
+                            <div class="batch-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg><span>${cnt}</span></div>
+                            <div class="batch-meta-item"><span>${b.zip_size_mb} MB</span></div>
+                            ${ds?`<span style="font-size:0.7rem;opacity:0.5">${ds}</span>`:''}
+                            <svg class="expand-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                        </div>
+                    </div>
+                    <div class="batch-details"><div class="batch-details-inner">
+                        ${renderActionPanel(b)}
+                        <div class="video-grid-header"><div>video_name</div><div>categories_name</div><div>age_groups</div><div>channel_name</div><div>tags</div><div>playlist_name</div><div>content_formats</div><div>content_types</div><div style="text-align:right;padding-right:0.4rem">Status</div></div>
+                        <div class="video-grid-rows">${b.videos.map(v => {
+                            const esc = (s) => (s||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+                            return `
+                            <div class="video-item${v.pipeline_status === 'bad' ? ' bad' : ''}" ${v.pipeline_status === 'bad' && v.redo_reason ? `title="Re-do reason: ${(v.redo_reason||'').replace(/"/g,'&quot;')}"` : ''}>
+                                <div class="video-name-cell">
+                                    ${b.local_folder_exists ? `<button class="play-icon-btn" onclick="playVideo('${b.batch_name}','${v.video_name}.mp4')" title="Preview"><svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></button>` : `<div style="width:22px;height:22px;display:flex;align-items:center;justify-content:center;opacity:0.2"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2"/></svg></div>`}
+                                    <div style="display:flex;flex-direction:column;gap:1px;min-width:0">
+                                        <div class="video-meta-cell text-edit" contenteditable="true" data-batch="${b.batch_name}" data-video="${v.video_name}" data-field="video_name" data-original="${esc(v.video_name)}" onblur="saveTextField(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}" onfocus="this.dataset.original=this.textContent.trim()" style="font-weight:500" title="${esc(v.video_name)}">${esc(v.video_name)}</div>
+                                        <span style="font-family:'JetBrains Mono',monospace;font-size:0.55rem;color:var(--md-sys-color-outline);cursor:pointer;display:inline-flex;align-items:center;gap:3px;padding:1px 3px;border-radius:3px;background:rgba(255,255,255,0.03)" onclick="copyToClipboard('${v.page_id}',this,event)" title="Copy Page ID">${v.page_id}</span>
+                                    </div>
+                                </div>
+                                <div class="video-meta-cell cell-dropdown-trigger" onclick="openDropdown(this,'${b.batch_name}','${esc(v.video_name)}','categories_name','${esc(v.categories_name)}')" title="${esc(v.categories_name)}"><span>${v.categories_name||''}</span></div>
+                                <div class="video-meta-cell cell-dropdown-trigger" onclick="openDropdown(this,'${b.batch_name}','${esc(v.video_name)}','age_groups','${esc(v.age_group)}')"><span>${v.age_group||''}</span></div>
+                                <div class="video-meta-cell text-edit" contenteditable="true" data-batch="${b.batch_name}" data-video="${v.video_name}" data-field="channel_name" data-original="${esc(v.channel_name)}" onblur="saveTextField(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}" onfocus="this.dataset.original=this.textContent.trim()" title="${esc(v.channel_name)}">${v.channel_name||''}</div>
+                                <div class="video-meta-cell text-edit" contenteditable="true" data-batch="${b.batch_name}" data-video="${v.video_name}" data-field="tags" data-original="${esc(v.tags)}" onblur="saveTextField(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}" onfocus="this.dataset.original=this.textContent.trim()" title="${esc(v.tags)}">${v.tags||''}</div>
+                                <div class="video-meta-cell cell-dropdown-trigger" onclick="openDropdown(this,'${b.batch_name}','${esc(v.video_name)}','playlist_name','${esc(v.playlist_name||v.category)}')" title="${esc(v.playlist_name||v.category)}"><span>${v.playlist_name||v.category||''}</span></div>
+                                <div class="video-meta-cell cell-dropdown-trigger" onclick="openDropdown(this,'${b.batch_name}','${esc(v.video_name)}','content_formats','${esc(v.content_formats)}')" style="font-size:0.62rem"><span>${v.content_formats||''}</span></div>
+                                <div class="video-meta-cell cell-dropdown-trigger" onclick="openDropdown(this,'${b.batch_name}','${esc(v.video_name)}','content_types','${esc(v.content_types)}')" style="font-size:0.62rem"><span>${v.content_types||''}</span></div>
+                                <div class="video-meta-cell" style="text-align:right;padding-right:0.4rem;text-transform:capitalize;font-weight:500;font-size:0.62rem;display:flex;align-items:center;justify-content:flex-end;gap:2px">${v.pipeline_status === 'bad'
+                                    ? `<span style="color:var(--md-sys-color-error)">Bad</span><button class="mark-bad-btn" onclick="event.stopPropagation();toggleBadVideo('${b.batch_name}','${v.page_id}',false)" title="Restore — undo bad mark">↺</button>`
+                                    : `<span style="color:${v.pipeline_status==='uploaded'?'var(--md-custom-color-success)':'var(--md-sys-color-outline)'}">${v.pipeline_status.replace(/_/g,' ')}</span>${b.status !== 'finalized' ? `<button class="mark-bad-btn" onclick="event.stopPropagation();toggleBadVideo('${b.batch_name}','${v.page_id}',true)" title="Mark as bad — will be skipped during finalization">✕</button>` : ''}`
+                                }</div>
+                            </div>`}).join('')}
+                        </div>
+                    </div></div>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function toggleBatchCard(n) { const c = document.getElementById(n); if (c) c.classList.toggle('expanded'); }
+
+        function toggleBadVideo(batchName, pageId, bad) {
+            let reason = '';
+            if (bad) {
+                reason = prompt('Reason for re-do (will be saved to Notion):');
+                if (reason === null) return; // user cancelled
+            }
+            fetch(`/api/batches/${batchName}/mark-bad`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({page_id: pageId, bad: bad, reason: reason})
+            }).then(r => r.json()).then(d => {
+                if (d.error) appendTerminalText(`\n[ERROR] ${d.error}\n`);
+                else { appendTerminalText(`\n[SYSTEM] ${d.message}\n`); fetchBatches(); }
+            }).catch(e => { console.error('Toggle bad failed:', e); appendTerminalText(`\n[ERROR] Failed to toggle bad status.\n`); });
+        }
+
+        function renderActionPanel(batch) {
+            const ur = cacheData.upload_running;
+            const ul = (activeUploadedBatch !== null && activeUploadedBatch !== batch.batch_name) || ur;
+            const sb = isPipelineRunning || ur;
+
+            if (batch.status === 'pending_first_review' && batch.upload_completed) {
+                // Upload completed via Selenium, awaiting user confirmation
+                return `<div class="batch-action-panel" style="border:2px solid var(--md-sys-color-primary); background: rgba(var(--md-sys-color-primary-rgb, 103,80,164), 0.08);">
+                    <div class="panel-info"><span class="panel-info-title" style="color:var(--md-sys-color-primary)">✓ Upload Complete — Confirm to Proceed</span><span class="panel-info-value">Job ID: ${batch.upload_job_id||'—'}. Review the CMS, then click Mark Uploaded.</span></div>
+                    <div class="panel-actions">
+                        <button class="btn btn-success" onclick="markUploadedManually('${batch.batch_name}')" style="font-weight:700; font-size:0.95rem; padding: 8px 20px;">✓ Mark Uploaded</button>
+                        <button class="btn btn-secondary" onclick="triggerAutomatedUpload('${batch.batch_name}')">↻ Re-upload</button>
+                    </div></div>`;
+            } else if (batch.status === 'pending_first_review') {
+                return `<div class="batch-action-panel">
+                    <div class="panel-info"><span class="panel-info-title">Stage 1 — Local Review</span><span class="panel-info-value">Review files, then upload or mark as uploaded.</span></div>
+                    <div class="panel-actions">
+                        ${batch.local_folder_exists ? `<button class="btn btn-secondary" onclick="openBatchFolder('${batch.batch_name}')" ${sb?'disabled':''}><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> Open</button>` : ''}
+                        <button class="btn btn-primary" onclick="triggerAutomatedUpload('${batch.batch_name}')" ${ul||isPipelineRunning?'disabled':''}>Auto Upload</button>
+                        <button class="btn btn-success" onclick="markUploadedManually('${batch.batch_name}')" ${ul||isPipelineRunning?'disabled':''}>Mark Uploaded</button>
+                        <button class="btn btn-secondary" onclick="regenerateCsv('${batch.batch_name}')" ${sb?'disabled':''} style="margin-left:auto"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg> Regen CSV</button>
+                        <button class="btn btn-danger" onclick="deleteBatch('${batch.batch_name}')" ${sb?'disabled':''}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Delete</button>
+                    </div></div>`;
+            } else if (batch.status === 'pending_second_review') {
+                return `<div class="batch-action-panel">
+                    <div class="panel-info"><span class="panel-info-title" style="color:var(--md-sys-color-primary)">Stage 2 — Awaiting Approval</span><span class="panel-info-value">Job ID: ${batch.upload_job_id||'Manual'}. Review in CMS, then finalize.</span></div>
+                    <div class="panel-actions">
+                        ${batch.local_folder_exists ? `<button class="btn btn-secondary" onclick="openBatchFolder('${batch.batch_name}')" ${sb?'disabled':''}>Open</button>` : ''}
+                        <button class="btn btn-danger" onclick="finalizeBatchReal('${batch.batch_name}')" ${sb?'disabled':''}>Finalize &amp; Sync</button>
+                        <button class="btn btn-secondary" onclick="regenerateCsv('${batch.batch_name}')" ${sb?'disabled':''} style="margin-left:auto"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg> Regen CSV</button>
+                        <button class="btn btn-danger" onclick="deleteBatch('${batch.batch_name}')" ${sb?'disabled':''}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Delete</button>
+                    </div></div>`;
+            } else {
+                return `<div class="batch-action-panel">
+                    <div class="panel-info"><span class="panel-info-title" style="color:var(--md-custom-color-success)">Archive</span><span class="panel-info-value">Finalized ${batch.finalized_date?new Date(batch.finalized_date).toLocaleString():''}. Notion synced.</span></div></div>`;
+            }
+        }
+
+        // ── Button actions ──────────────────────────────────────────
+        function regenerateCsv(batchName) {
+            if (!confirm(`Regenerate CSV for ${batchName}? This will overwrite all current edits with fresh category mappings.`)) return;
+            appendTerminalText(`\n[SYSTEM] Regenerating CSV for ${batchName}...\n`);
+            fetch(`/api/batches/${batchName}/regenerate-csv`, {method:'POST'})
+                .then(r => r.json()).then(d => {
+                    appendTerminalText(d.error ? `[ERROR] ${d.error}\n` : `[SUCCESS] ${d.message}\n`);
+                    fetchBatches();
+                }).catch(e => appendTerminalText(`[ERROR] Request failed.\n`));
+        }
+
+        function deleteBatch(batchName) {
+            if (!confirm(`DELETE batch ${batchName}?\n\nThis will:\n• Remove the batch folder, CSV, and ZIP\n• Reset all videos to 'pending' for re-download & re-batching\n\nThis cannot be undone.`)) return;
+            appendTerminalText(`\n[SYSTEM] Deleting batch ${batchName}...\n`);
+            fetch(`/api/batches/${batchName}/delete`, {method:'POST'})
+                .then(r => r.json()).then(d => {
+                    appendTerminalText(d.error ? `[ERROR] ${d.error}\n` : `[SUCCESS] ${d.message}\n`);
+                    fetchBatches();
+                }).catch(e => appendTerminalText(`[ERROR] Request failed.\n`));
+        }
+
+        function stopActiveOperation() {
+            const b = document.getElementById('stop-btn'); if (b.disabled) return;
+            if (!isPipelineRunning && !isUploadRunning) { fetchBatches(); return; }
+            b.disabled = true; b.innerHTML = `<span class="spinner"></span> Stopping...`;
+            const ep = isPipelineRunning ? '/api/batches/stop-pipeline' : '/api/batches/stop-upload';
+            const at = isPipelineRunning ? 'pipeline batcher' : 'automated upload';
+            showLogTerminal(); appendTerminalText(`\n[SYSTEM] Requesting stop for ${at}...\n`);
+            fetch(ep, {method:'POST'}).then(r=>r.json()).then(d => {
+                appendTerminalText(d.error ? `[ERROR] ${d.error}\n` : `[SUCCESS] ${d.message}\n`);
+                b.disabled = false; isUploadRunning = false; isPipelineRunning = false; fetchBatches();
+            }).catch(e => { appendTerminalText(`[ERROR] Stop request failed.\n`); b.disabled = false; fetchBatches(); });
+        }
+
+        function togglePauseOperation() {
+            const b = document.getElementById('pause-btn'); if (b.disabled) return;
+            if (!isPipelineRunning && !isUploadRunning) { fetchBatches(); return; }
+            b.disabled = true;
+            let ep, at;
+            if (isPipelineRunning) { ep = isPipelinePaused?'/api/batches/resume-pipeline':'/api/batches/pause-pipeline'; at = isPipelinePaused?'resuming':'pausing'; }
+            else if (isUploadRunning) { ep = isUploadPaused?'/api/batches/resume-upload':'/api/batches/pause-upload'; at = isUploadPaused?'resuming':'pausing'; }
+            else { b.disabled = false; fetchBatches(); return; }
+            showLogTerminal(); appendTerminalText(`\n[SYSTEM] Requesting ${at}...\n`);
+            fetch(ep, {method:'POST'}).then(r=>r.json()).then(d => {
+                appendTerminalText(d.error ? `[ERROR] ${d.error}\n` : `[SUCCESS] ${d.message}\n`);
+                b.disabled = false; fetchBatches();
+            }).catch(e => { appendTerminalText(`[ERROR] Request failed.\n`); b.disabled = false; fetchBatches(); });
+        }
+
+        function runPipelineBatching() {
+            if (isPipelineRunning) return;
+            const bo = document.getElementById('batch-only-chk').checked;
+            showLogTerminal();
+            appendTerminalText(`\n[SYSTEM] Starting pipeline (${bo?'batch-only':'full'})...\n`);
+            isPipelineRunning = true;
+            const rb = document.getElementById('run-pipeline-btn'); rb.disabled = true; rb.innerHTML = `<span class="spinner"></span> Starting...`;
+            const si = document.getElementById('pipeline-status-indicator'); si.className = 'status-pill batching';
+            document.getElementById('pipeline-status-text').innerText = 'Starting...';
+            renderCurrentTab();
+            fetch('/api/batches/run-pipeline', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({batch_only:bo})})
+                .then(r=>r.json()).then(d => {
+                    if (d.error) { appendTerminalText(`[ERROR] ${d.error}\n`); isPipelineRunning = false; fetchBatches(); }
+                    else appendTerminalText(`[INFO] ${d.message}\n`);
+                }).catch(e => { appendTerminalText(`[ERROR] Failed to start.\n`); isPipelineRunning = false; fetchBatches(); });
+        }
+
+        function openBatchFolder(n) { fetch(`/api/batches/${n}/open-folder`,{method:'POST'}).then(r=>r.json()).then(d=>{if(d.error)alert(d.error)}); }
+
+        function triggerAutomatedUpload(n) {
+            if (activeUploadedBatch && activeUploadedBatch !== n) { alert(`Batch '${activeUploadedBatch}' was uploaded but not yet confirmed. Click 'Mark Uploaded' on it first.`); return; }
+            if (!confirm(`Upload ${n} via Selenium?`)) return;
+            showLogTerminal(); appendTerminalText(`\n[SYSTEM] Starting upload for ${n}...\n`);
+            // Update all state immediately so buttons work
+            cacheData.upload_running = true; cacheData.upload_batch_name = n;
+            isUploadRunning = true; isUploadPaused = false;
+            const si = document.getElementById('pipeline-status-indicator'); si.className = 'status-pill uploading';
+            document.getElementById('pipeline-status-text').innerText = `Uploading ${n}...`;
+            // Show Stop/Pause buttons immediately
+            const stopBtn = document.getElementById('stop-btn');
+            const pauseBtn = document.getElementById('pause-btn');
+            stopBtn.style.display = 'inline-flex';
+            stopBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg> Stop`;
+            pauseBtn.style.display = 'inline-flex';
+            pauseBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg> Pause`;
+            document.getElementById('run-pipeline-btn').disabled = true;
+            renderCurrentTab();
+            fetch(`/api/batches/${n}/upload`,{method:'POST'}).then(r=>r.json()).then(d => {
+                if (d.error) { appendTerminalText(`[ERROR] ${d.error}\n`); cacheData.upload_running = false; isUploadRunning = false; fetchBatches(); }
+                else appendTerminalText(`[INFO] ${d.message}\n`);
+            }).catch(e => { appendTerminalText(`[ERROR] Upload request failed.\n`); });
+        }
+
+        function markUploadedManually(n) {
+            // No blocking for Mark Uploaded — second reviews can happen in bulk
+            // Check if batch already has a job ID from auto-upload
+            const batch = [...(cacheData.pending||[]), ...(cacheData.uploaded||[])].find(b => b.batch_name === n);
+            let jid = '';
+            if (batch && batch.upload_completed && batch.upload_job_id) {
+                // Auto-upload already captured the job ID, no need to prompt
+                jid = batch.upload_job_id;
+            } else {
+                jid = prompt(`Enter Job ID (UUID) or leave blank for "MANUAL":`);
+                if (jid === null) return;
+            }
+            fetch(`/api/batches/${n}/mark-uploaded`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({job_id:jid})})
+                .then(r=>r.json()).then(d => {
+                    if (d.error) alert(d.error);
+                    else { appendTerminalText(`\n[SYSTEM] ${n} marked uploaded.\n`); fetchBatches(); }
+                }).catch(e => console.error(e));
+        }
+
+        function finalizeBatchReal(n) {
+            if (!confirm(`Finalize ${n}?\n\nThis will update Notion and delete local files. Irreversible.`)) return;
+            showLogTerminal(); appendTerminalText(`\n[SYSTEM] Finalizing ${n}...\n`);
+            fetch(`/api/batches/${n}/finalize`,{method:'POST'}).then(r=>r.json()).then(d => {
+                appendTerminalText(d.error ? `[ERROR] ${d.error}\n` : `[INFO] ${d.message}\n`);
+                if (!d.error) fetchBatches();
+            }).catch(e => { appendTerminalText(`[ERROR] Finalization failed.\n`); });
+        }
+
+        // ── Video player (Plyr) ─────────────────────────────────────
+        let plyrInstance = null;
+        function playVideo(bn, fn) {
+            document.getElementById('video-modal-title').innerText = `${fn} — ${bn}`;
+            const v = document.getElementById('video-element');
+            v.src = `/videos/${bn}/${fn}`;
+            if (!plyrInstance) {
+                plyrInstance = new Plyr(v, {
+                    controls: ['play-large','play','progress','current-time','duration','mute','volume','fullscreen'],
+                    resetOnEnd: true,
+                });
+            }
+            document.getElementById('video-modal').classList.add('active');
+            v.play();
+        }
+        function closeVideoModal() {
+            if (plyrInstance) { plyrInstance.pause(); }
+            const v = document.getElementById('video-element');
+            v.pause(); v.removeAttribute('src'); v.load();
+            document.getElementById('video-modal').classList.remove('active');
+        }
+
+        // ── Console drawer ────────────────────────────────────────
+        let lastLogLine = '';
+
+        function toggleConsole() {
+            document.getElementById('log-section').classList.toggle('expanded');
+        }
+
+        function updateLogBadge(text) {
+            const badge = document.getElementById('log-badge');
+            // Strip brackets and clean up for badge display
+            const clean = text.replace(/\n/g, '').trim();
+            if (clean) { badge.textContent = clean; lastLogLine = clean; }
+        }
+
+        function fetchLogs() {
+            fetch(`/api/logs?index=${logIndex}`).then(r=>r.json()).then(d => {
+                if (d.lines && d.lines.length > 0) {
+                    const t = document.getElementById('terminal');
+                    d.lines.forEach(l => {
+                        const s = document.createElement('span');
+                        if (l.includes('[ERROR]')||l.includes('ERROR')) s.style.color = 'var(--md-sys-color-error)';
+                        else if (l.includes('[SUCCESS]')) s.style.color = 'var(--md-custom-color-success)';
+                        else if (l.includes('[INFO]')) s.style.color = 'var(--md-sys-color-primary)';
+                        else if (l.includes('[SYSTEM]')) s.style.color = 'var(--md-sys-color-tertiary)';
+                        else if (l.includes('[WARNING]')||l.includes('WARNING')) s.style.color = 'var(--md-custom-color-warning)';
+                        s.textContent = l + '\n'; t.appendChild(s);
+                    });
+                    logIndex = d.next_index;
+                    updateLogBadge(d.lines[d.lines.length - 1]);
+                    if (document.getElementById('autoscroll-chk').checked) t.scrollTop = t.scrollHeight;
+                }
+            }).catch(e => console.error("Log fetch error:", e));
+        }
+
+        function appendTerminalText(text) {
+            const t = document.getElementById('terminal');
+            const s = document.createElement('span');
+            if (text.includes('[ERROR]')) s.style.color = 'var(--md-sys-color-error)';
+            else if (text.includes('[SUCCESS]')) s.style.color = 'var(--md-custom-color-success)';
+            else if (text.includes('[SYSTEM]')) s.style.color = 'var(--md-sys-color-tertiary)';
+            else if (text.includes('[INFO]')) s.style.color = 'var(--md-sys-color-primary)';
+            s.textContent = text; t.appendChild(s);
+            updateLogBadge(text);
+            if (document.getElementById('autoscroll-chk').checked) t.scrollTop = t.scrollHeight;
+        }
+        function clearLogs() { document.getElementById('terminal').innerHTML = ''; document.getElementById('log-badge').textContent = ''; }
+        function showLogTerminal() {
+            document.getElementById('log-section').classList.add('expanded');
+            document.getElementById('terminal').scrollTop = document.getElementById('terminal').scrollHeight;
+        }
+    </script>
+</body>
+</html>
