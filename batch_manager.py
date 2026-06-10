@@ -373,21 +373,33 @@ def finalize_batch(batch_name: str) -> tuple[bool, str]:
         global_log_buffer.write(f"[SKIP] Bad video '{video_name}' — reset to pending for redo.")
         bad_count += 1
 
-    # 1. Update Notion and update state.json for good videos only
+    # 1. Update state.json first, then Notion (so sibling check sees current upload)
     for v in good_videos:
         page_id = v["page_id"]
         video_name = v["video_name"]
-        
-        global_log_buffer.write(f"[NOTION] Updating: {video_name}...")
+        lang_suffix = v.get("lang_suffix", "")
+
+        # Mark state as uploaded first (so sibling check sees it)
+        state_manager.mark_uploaded(page_id, job_id, upload_date)
+        v["pipeline_status"] = "uploaded"
+
+        # Check if ALL language variants for this page are now uploaded
+        state_all = state_manager.get_all()
+        siblings = [
+            rec for rec in state_all.values()
+            if isinstance(rec, dict) and rec.get("page_id") == page_id
+        ]
+        all_done = all(rec.get("pipeline_status") == "uploaded" for rec in siblings) if siblings else True
+
+        global_log_buffer.write(f"[NOTION] Updating: {video_name} (check_upload={all_done})...")
         notion_success = notion_client.mark_uploaded_in_notion(
             page_id, upload_date,
             video_name=video_name,
-            lang_suffix=v.get("lang_suffix", ""),
+            lang_suffix=lang_suffix,
+            check_upload=all_done,
         )
         
         if notion_success:
-            state_manager.mark_uploaded(page_id, job_id, upload_date)
-            v["pipeline_status"] = "uploaded"
             success_count += 1
         else:
             global_log_buffer.write(f"[ERROR] Failed to update Notion for {video_name} (ID: {page_id})")

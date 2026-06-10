@@ -68,6 +68,23 @@ def _state_key(v: dict) -> str:
     return v["page_id"] + v.get("lang_suffix", "")
 
 
+def _all_page_variants_uploaded(page_id: str) -> bool:
+    """Check if ALL language variants for a Notion page are uploaded.
+
+    Scans state.json for all records with the same page_id.
+    Returns True only when every sibling has pipeline_status == 'uploaded'.
+    If only one variant exists, returns True as soon as it's uploaded.
+    """
+    state = sm.get_all()
+    siblings = [
+        rec for rec in state.values()
+        if isinstance(rec, dict) and rec.get("page_id") == page_id
+    ]
+    if not siblings:
+        return True  # no records found — safe to mark
+    return all(rec.get("pipeline_status") == "uploaded" for rec in siblings)
+
+
 # ════════════════════════════════════════════════════════════════════════════════
 #  STAGE 1 -- Fetch from Notion
 # ════════════════════════════════════════════════════════════════════════════════
@@ -413,14 +430,16 @@ def stage_track(batch_job_map: dict[str, str | None], all_videos: list[dict]):
             rec = sm.get(state_key)
             real_page_id = rec.get("page_id", state_key) if rec else state_key
 
-            # Update Notion
+            # Update Notion — only check Upload box if ALL variants for this page are done
             log.info(f"    Notifying Notion for page {real_page_id} …")
             video_name = rec.get("video_name", "") if rec else ""
             lang_suffix = rec.get("lang_suffix", "") if rec else ""
+            all_done = _all_page_variants_uploaded(real_page_id)
             success = nc.mark_uploaded_in_notion(
                 real_page_id, today,
                 video_name=video_name,
                 lang_suffix=lang_suffix,
+                check_upload=all_done,
             )
             if success:
                 notion_updated += 1
@@ -588,10 +607,12 @@ def run_parallel_pipeline(all_videos: list[dict], headless: bool = False, skip_u
                     try:
                         video_name = verified_rec.get("video_name", "")
                         lang_suffix = verified_rec.get("lang_suffix", "")
+                        all_done = _all_page_variants_uploaded(real_page_id)
                         success = nc.mark_uploaded_in_notion(
                             real_page_id, today,
                             video_name=video_name,
                             lang_suffix=lang_suffix,
+                            check_upload=all_done,
                         )
                         if not success:
                             raise RuntimeError("mark_uploaded_in_notion returned False")

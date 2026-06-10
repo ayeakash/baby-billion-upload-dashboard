@@ -396,12 +396,17 @@ def mark_uploaded_in_notion(
     upload_date: str | None = None,
     video_name: str | None = None,
     lang_suffix: str | None = None,
+    check_upload: bool = True,
     retries: int = 3,
 ) -> bool:
     """
-    Update Notion page: set Upload = Yes, Upload Date = today.
-    If video_name and lang_suffix are provided, also writes the final title
-    to "Hindi Title on App" or "English Title on App".
+    Update Notion page after a successful upload.
+
+    If check_upload is True:  set Upload = Yes, Upload Date = today + title.
+    If check_upload is False: only write the title field (Upload stays unchecked).
+
+    Use check_upload=False when a page has multiple language variants and
+    not all of them have been uploaded yet.
     Returns True on success.
     """
     _check_config()
@@ -410,37 +415,58 @@ def mark_uploaded_in_notion(
 
     url = f"{BASE}/pages/{page_id}"
 
+    # Build title-only properties
+    def _title_props() -> dict:
+        props = {}
+        if video_name and lang_suffix:
+            if lang_suffix == "___ln_Hi":
+                props[PROP_HINDI_TITLE_ON_APP] = {
+                    "rich_text": [{"text": {"content": video_name}}]
+                }
+            elif lang_suffix == "___ln_En":
+                props[PROP_ENGLISH_TITLE_ON_APP] = {
+                    "rich_text": [{"text": {"content": video_name}}]
+                }
+        return props
+
     for attempt in range(1, retries + 1):
-        # Try as select first
-        for prop_type in ("select", "checkbox"):
-            patch = _build_upload_patch(upload_date, prop_type)
+        if check_upload:
+            # Full update: Upload checkbox + date + title
+            for prop_type in ("select", "checkbox"):
+                patch = _build_upload_patch(upload_date, prop_type)
+                patch["properties"].update(_title_props())
 
-            # Add title-on-app field based on language
-            if video_name and lang_suffix:
-                if lang_suffix == "___ln_Hi":
-                    patch["properties"][PROP_HINDI_TITLE_ON_APP] = {
-                        "rich_text": [{"text": {"content": video_name}}]
-                    }
-                elif lang_suffix == "___ln_En":
-                    patch["properties"][PROP_ENGLISH_TITLE_ON_APP] = {
-                        "rich_text": [{"text": {"content": video_name}}]
-                    }
-
-            resp  = requests.patch(url, headers=_headers(), json=patch, timeout=30)
-            if resp.status_code == 200:
-                title_info = ""
-                if video_name and lang_suffix:
-                    field = "Hindi" if lang_suffix == "___ln_Hi" else "English"
-                    title_info = f", {field} Title='{video_name}'"
-                log.info(f"[OK] Notion updated: {page_id} (Upload=Yes, Date={upload_date}{title_info})")
+                resp = requests.patch(url, headers=_headers(), json=patch, timeout=30)
+                if resp.status_code == 200:
+                    title_info = ""
+                    if video_name and lang_suffix:
+                        field = "Hindi" if lang_suffix == "___ln_Hi" else "English"
+                        title_info = f", {field} Title='{video_name}'"
+                    log.info(f"[OK] Notion updated: {page_id} (Upload=Yes, Date={upload_date}{title_info})")
+                    return True
+                elif resp.status_code == 400:
+                    log.debug(f"PATCH attempt with {prop_type} failed (400), trying next type …")
+                    continue
+                else:
+                    log.warning(f"Notion PATCH attempt {attempt} failed: {resp.status_code} {resp.text[:200]}")
+                    break
+        else:
+            # Title-only update (Upload stays unchecked — waiting for other variant)
+            t_props = _title_props()
+            if not t_props:
+                log.info(f"[OK] Notion: no title to write for {page_id} (check_upload=False, no lang)")
                 return True
-            elif resp.status_code == 400:
-                # Probably wrong property type -- try the other
-                log.debug(f"PATCH attempt with {prop_type} failed (400), trying next type …")
-                continue
+
+            resp = requests.patch(url, headers=_headers(), json={"properties": t_props}, timeout=30)
+            if resp.status_code == 200:
+                field = "Hindi" if lang_suffix == "___ln_Hi" else "English"
+                log.info(
+                    f"[OK] Notion title written: {page_id} ({field} Title='{video_name}') "
+                    f"— Upload checkbox deferred (waiting for other variant)"
+                )
+                return True
             else:
-                log.warning(f"Notion PATCH attempt {attempt} failed: {resp.status_code} {resp.text[:200]}")
-                break   # non-400 error -> retry outer loop
+                log.warning(f"Notion title-only PATCH attempt {attempt} failed: {resp.status_code} {resp.text[:200]}")
 
     log.error(f"[FAIL] Failed to update Notion page {page_id} after {retries} attempts.")
     return False
