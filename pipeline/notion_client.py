@@ -30,11 +30,60 @@ from config import (
 
 log = logging.getLogger(__name__)
 
-NOTION_VERSION = "2022-06-28"
+NOTION_VERSION = "2025-09-03"
 BASE = "https://api.notion.com/v1"
+
+# Cached data source ID (resolved from database on first connect)
+_data_source_id: str | None = None
 
 # Cached after first successful detection
 _upload_prop_type: str | None = None   # "select" | "checkbox" | "rich_text"
+
+
+def _resolve_data_source_id() -> str:
+    """
+    Discover the data source ID from the database.
+    With Notion API 2025-09-03, databases are containers for data sources.
+    Queries must target /v1/data_sources/{id}/query instead of /v1/databases/{id}/query.
+    """
+    global _data_source_id
+    if _data_source_id:
+        return _data_source_id
+
+    _check_config()
+    url = f"{BASE}/databases/{NOTION_DATABASE_ID}"
+    resp = requests.get(url, headers=_headers(), timeout=15)
+    resp.raise_for_status()
+    db = resp.json()
+    data_sources = db.get("data_sources", [])
+
+    if not data_sources:
+        # Fallback: database has no multi-source — use database ID directly
+        log.warning("No data_sources found in database response — using database ID as fallback")
+        _data_source_id = NOTION_DATABASE_ID
+        return _data_source_id
+
+    # Pick the first data source that has content (non-empty query)
+    for ds in data_sources:
+        ds_id = ds.get("id")
+        if ds_id:
+            test_url = f"{BASE}/data_sources/{ds_id}/query"
+            test_resp = requests.post(test_url, headers=_headers(), json={"page_size": 1}, timeout=15)
+            if test_resp.status_code == 200 and test_resp.json().get("results"):
+                _data_source_id = ds_id
+                log.info(f"Resolved data source: {ds_id}")
+                return _data_source_id
+
+    # If no data source had results, just use the first one
+    _data_source_id = data_sources[0].get("id", NOTION_DATABASE_ID)
+    log.info(f"Using first data source: {_data_source_id}")
+    return _data_source_id
+
+
+def _query_url() -> str:
+    """Return the correct query URL for the current Notion API."""
+    ds_id = _resolve_data_source_id()
+    return f"{BASE}/data_sources/{ds_id}/query"
 
 
 def _headers():
@@ -110,7 +159,7 @@ def _prop_value(properties: dict, name: str) -> str:
 
 def _detect_upload_prop_type() -> str:
     """
-    Inspect the database schema to determine whether the Upload property
+    Inspect the data source schema to determine whether the Upload property
     is a 'select', 'checkbox', or 'rich_text'. Caches the result.
     """
     global _upload_prop_type
@@ -118,19 +167,20 @@ def _detect_upload_prop_type() -> str:
         return _upload_prop_type
 
     try:
-        url  = f"{BASE}/databases/{NOTION_DATABASE_ID}"
+        ds_id = _resolve_data_source_id()
+        url  = f"{BASE}/data_sources/{ds_id}"
         resp = requests.get(url, headers=_headers(), timeout=15)
         resp.raise_for_status()
         schema = resp.json().get("properties", {})
         prop   = schema.get(PROP_UPLOAD, {})
-        ptype  = prop.get("type", "select")
+        ptype  = prop.get("type", "checkbox")  # default to checkbox for new API
         _upload_prop_type = ptype
         log.info(f"Upload property type detected: '{ptype}'")
         return ptype
     except Exception as e:
-        log.warning(f"Could not detect Upload property type: {e} -- defaulting to 'select'")
-        _upload_prop_type = "select"
-        return "select"
+        log.warning(f"Could not detect Upload property type: {e} -- defaulting to 'checkbox'")
+        _upload_prop_type = "checkbox"
+        return "checkbox"
 
 
 def _build_upload_not_done_filter(prop_type: str) -> dict:
@@ -161,7 +211,7 @@ def query_ready_to_upload() -> list[dict]:
     _check_config()
     upload_type = _detect_upload_prop_type()
 
-    url     = f"{BASE}/databases/{NOTION_DATABASE_ID}/query"
+    url     = _query_url()
     results = []
     cursor  = None
 
@@ -296,7 +346,7 @@ def query_failed_to_upload() -> list[dict]:
     """
     _check_config()
 
-    url     = f"{BASE}/databases/{NOTION_DATABASE_ID}/query"
+    url     = _query_url()
     results = []
     cursor  = None
 
@@ -790,7 +840,7 @@ def query_pending_review() -> list[dict]:
     """
     _check_config()
 
-    url     = f"{BASE}/databases/{NOTION_DATABASE_ID}/query"
+    url     = _query_url()
     results = []
     cursor  = None
 
