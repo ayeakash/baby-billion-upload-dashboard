@@ -239,14 +239,18 @@ def stage_fetch(dry_run: bool = False) -> list[dict]:
     log.info(f"  {len(sane_videos)} videos passed sanity check — entering pipeline.")
 
     for v in sane_videos:
-        sm.upsert(_state_key(v),
-                  page_id=v["page_id"],
-                  video_name=v["video_name"],
-                  age_group=normalize_age(v["age_group"]),
-                  category=v["category"],
-                  drive_link=v["drive_link"],
-                  lang_suffix=v.get("lang_suffix", ""),
-                  pipeline_status="pending")
+        state_key = _state_key(v)
+        fields = dict(
+            video_name=v["video_name"],
+            age_group=normalize_age(v["age_group"]),
+            category=v["category"],
+            drive_link=v["drive_link"],
+            lang_suffix=v.get("lang_suffix", ""),
+            pipeline_status="pending",
+        )
+        # Store the real Notion page_id as a field (state_key may include lang suffix)
+        fields["page_id"] = v["page_id"]
+        sm.upsert(state_key, **fields)
 
     if dry_run:
         log.info("\n-- DRY RUN: would process --")

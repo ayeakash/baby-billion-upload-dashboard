@@ -456,9 +456,13 @@ def run_pipeline_thread(batch_only: bool = False):
     try:
         # Run pipeline.py as a subprocess to capture console logs
         # Using sys.executable to run inside the same virtual environment!
-        cmd = [sys.executable, "pipeline.py", "--skip-upload"]
+        cmd = [sys.executable, "-u", "pipeline.py", "--skip-upload"]
         if batch_only:
             cmd.append("--batch-only")
+
+        # Force unbuffered output so logs appear in real-time
+        env = os.environ.copy()
+        env["PYTHONUNBUFFERED"] = "1"
             
         proc = subprocess.Popen(
             cmd,
@@ -468,7 +472,8 @@ def run_pipeline_thread(batch_only: bool = False):
             encoding="utf-8",
             errors="replace",
             bufsize=1,
-            cwd=_PIPELINE_DIR
+            cwd=_PIPELINE_DIR,
+            env=env
         )
         active_pipeline_process = proc
         
