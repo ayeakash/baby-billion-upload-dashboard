@@ -490,6 +490,30 @@ def play_video(batch_name, filename):
     response.headers["Accept-Ranges"] = "bytes"
     return response
 
+# ── Cross-computer review routes ──────────────────────────────────────────────
+
+@app.route("/api/pending-reviews")
+def get_pending_reviews():
+    """Return pages awaiting reviewer finalization (Status = 'Uploaded - Pending Review')."""
+    try:
+        reviews = batch_manager.get_pending_reviews()
+        return jsonify({"ok": True, "reviews": reviews})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+@app.route("/api/pending-reviews/<page_id>/finalize", methods=["POST"])
+def finalize_one_review(page_id):
+    """Finalize a single page: check Upload box + set Upload Date."""
+    ok, msg = batch_manager.finalize_review(page_id)
+    return jsonify({"ok": ok, "message": msg})
+
+@app.route("/api/pending-reviews/finalize-all", methods=["POST"])
+def finalize_all_reviews():
+    """Finalize all pending review pages at once."""
+    success, failed, msg = batch_manager.finalize_all_reviews()
+    return jsonify({"ok": True, "success": success, "failed": failed, "message": msg})
+
 if __name__ == "__main__":
     # Start flask app locally
     app.run(host="127.0.0.1", port=5000, debug=False)
+

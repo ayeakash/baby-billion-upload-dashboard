@@ -640,3 +640,47 @@ def resume_automated_upload() -> tuple[bool, str]:
     except Exception as e:
         log.error(f"Error resuming automated upload: {e}")
         return False, f"Failed to resume automated upload: {e}"
+
+
+# ── Cross-computer review workflow ────────────────────────────────────────────
+
+def get_pending_reviews() -> list[dict]:
+    """Query Notion for pages awaiting reviewer finalization."""
+    try:
+        return notion_client.query_pending_review()
+    except Exception as e:
+        log.error(f"Failed to query pending reviews: {e}")
+        return []
+
+
+def finalize_review(page_id: str) -> tuple[bool, str]:
+    """Reviewer finalizes a page: check Upload box + set Upload Date."""
+    try:
+        success = notion_client.finalize_in_notion(page_id)
+        if success:
+            return True, f"Page {page_id} finalized successfully."
+        else:
+            return False, f"Failed to finalize page {page_id}."
+    except Exception as e:
+        log.error(f"Error finalizing {page_id}: {e}")
+        return False, f"Error finalizing page: {e}"
+
+
+def finalize_all_reviews() -> tuple[int, int, str]:
+    """Finalize ALL pending review pages at once. Returns (success_count, fail_count, message)."""
+    pages = get_pending_reviews()
+    if not pages:
+        return 0, 0, "No pending reviews found."
+
+    success = 0
+    failed = 0
+    for p in pages:
+        ok, msg = finalize_review(p["page_id"])
+        if ok:
+            success += 1
+        else:
+            failed += 1
+            log.warning(f"Finalize failed for {p['video_name']}: {msg}")
+
+    return success, failed, f"Finalized {success}/{success + failed} pages."
+

@@ -997,6 +997,7 @@
                     <button class="tab-btn active" onclick="switchTab('pending')">Pending Review <span id="badge-pending" class="tab-badge">0</span></button>
                     <button class="tab-btn" onclick="switchTab('uploaded')">Uploaded <span id="badge-uploaded" class="tab-badge">0</span></button>
                     <button class="tab-btn" onclick="switchTab('finalized')">Finalized <span id="badge-finalized" class="tab-badge">0</span></button>
+                    <button class="tab-btn" onclick="switchTab('notion-reviews')" id="tab-notion-reviews">Notion Reviews <span id="badge-notion-reviews" class="tab-badge">0</span></button>
                 </div>
                 <div class="search-wrapper">
                     <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -1005,6 +1006,7 @@
             </div>
 
             <div id="batches-container" class="batches-list"></div>
+            <div id="notion-reviews-container" class="batches-list" style="display:none;"></div>
         </div>
 
         <div id="log-section" class="log-section">
@@ -1291,10 +1293,114 @@
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             event.currentTarget.classList.add('active');
             currentTab = tabName;
-            renderCurrentTab();
+            if (tabName === 'notion-reviews') {
+                document.getElementById('batches-container').style.display = 'none';
+                document.getElementById('notion-reviews-container').style.display = '';
+                fetchNotionReviews();
+            } else {
+                document.getElementById('batches-container').style.display = '';
+                document.getElementById('notion-reviews-container').style.display = 'none';
+                renderCurrentTab();
+            }
+        }
+
+        function fetchNotionReviews() {
+            notionReviewsLoading = true;
+            renderNotionReviews();
+            fetch('/api/pending-reviews').then(r => r.json()).then(data => {
+                notionReviewsLoading = false;
+                if (data.ok) {
+                    notionReviews = data.reviews;
+                    document.getElementById('badge-notion-reviews').innerText = notionReviews.length;
+                } else {
+                    notionReviews = [];
+                }
+                renderNotionReviews();
+            }).catch(() => { notionReviewsLoading = false; renderNotionReviews(); });
+        }
+
+        function renderNotionReviews() {
+            const container = document.getElementById('notion-reviews-container');
+            if (notionReviewsLoading) {
+                container.innerHTML = `<div class="empty-state"><span class="spinner" style="width:20px;height:20px;border-width:2px;display:inline-block;margin-bottom:8px"></span><p style="font-size:0.82rem">Loading from Notion…</p></div>`;
+                return;
+            }
+            if (notionReviews.length === 0) {
+                container.innerHTML = `<div class="empty-state">
+                    <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <p style="font-size:0.82rem">No pages pending review in Notion.</p>
+                </div>`;
+                return;
+            }
+            let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
+                <span style="font-size:0.75rem;color:var(--md-sys-color-outline)">${notionReviews.length} page(s) pending review</span>
+                <button class="btn btn-success" onclick="finalizeAllReviews()" id="finalize-all-btn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Finalize All
+                </button>
+            </div>`;
+            html += `<div style="display:grid;grid-template-columns:2fr 2fr 2fr 1fr 1fr 0.8fr;padding:0.25rem 0.5rem;color:var(--md-sys-color-outline);font-size:0.6rem;font-weight:500;letter-spacing:0.04em;border-bottom:1px solid var(--md-sys-color-outline-variant)">
+                <span>VIDEO NAME</span><span>HINDI TITLE</span><span>ENGLISH TITLE</span><span>AGE GROUP</span><span>CATEGORY</span><span></span>
+            </div>`;
+            notionReviews.forEach(r => {
+                const shortId = r.page_id.replace(/-/g,'').substring(0,12) + '…';
+                html += `<div class="video-item" style="grid-template-columns:2fr 2fr 2fr 1fr 1fr 0.8fr">
+                    <div class="video-name-cell" title="${r.page_id}">
+                        <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.video_name || '—'}</span>
+                    </div>
+                    <div class="video-meta-cell" style="color:${r.hindi_title ? 'var(--md-custom-color-success)' : 'var(--md-sys-color-outline)'}">${r.hindi_title || '—'}</div>
+                    <div class="video-meta-cell" style="color:${r.english_title ? 'var(--md-custom-color-success)' : 'var(--md-sys-color-outline)'}">${r.english_title || '—'}</div>
+                    <div class="video-meta-cell">${r.age_group || '—'}</div>
+                    <div class="video-meta-cell">${r.category || '—'}</div>
+                    <div>
+                        <button class="btn btn-primary" style="font-size:0.65rem;padding:0.3rem 0.6rem" onclick="finalizeOneReview('${r.page_id}', this)">
+                            Finalize
+                        </button>
+                    </div>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function finalizeOneReview(pageId, btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span>';
+            fetch(`/api/pending-reviews/${pageId}/finalize`, { method: 'POST' })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.ok) {
+                        notionReviews = notionReviews.filter(r => r.page_id !== pageId);
+                        document.getElementById('badge-notion-reviews').innerText = notionReviews.length;
+                        renderNotionReviews();
+                    } else {
+                        btn.disabled = false;
+                        btn.innerHTML = 'Retry';
+                        alert('Failed: ' + data.message);
+                    }
+                }).catch(() => { btn.disabled = false; btn.innerHTML = 'Retry'; });
+        }
+
+        function finalizeAllReviews() {
+            const btn = document.getElementById('finalize-all-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Finalizing…';
+            fetch('/api/pending-reviews/finalize-all', { method: 'POST' })
+                .then(r => r.json())
+                .then(data => {
+                    btn.disabled = false;
+                    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Finalize All`;
+                    if (data.ok) {
+                        fetchNotionReviews();
+                        alert(data.message);
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                }).catch(() => { btn.disabled = false; btn.innerHTML = 'Retry'; });
         }
 
         let cacheData = { pending: [], uploaded: [], finalized: [] };
+        let notionReviews = [];
+        let notionReviewsLoading = false;
 
         function fetchBatches() {
             fetch('/api/batches').then(res => res.json()).then(data => {

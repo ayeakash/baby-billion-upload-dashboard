@@ -24,7 +24,8 @@ from config import (
     PROP_FINAL_VIDEO_HINDI_LINK, PROP_FINAL_VIDEO_ENGLISH_LINK,
     PROP_FAILED_UPLOAD, PROP_REDO, PROP_REDO_REASON,
     PROP_HINDI_TITLE_ON_APP, PROP_ENGLISH_TITLE_ON_APP,
-    STATUS_READY, STATUS_UPLOADING, STATUS_FAILED_UPLOAD, UPLOAD_NO, UPLOAD_YES,
+    STATUS_READY, STATUS_UPLOADING, STATUS_FAILED_UPLOAD,
+    STATUS_PENDING_REVIEW, UPLOAD_NO, UPLOAD_YES,
 )
 
 log = logging.getLogger(__name__)
@@ -719,4 +720,154 @@ def clear_redo_in_notion(page_id: str, retries: int = 3) -> bool:
 
     log.error(f"[FAIL] Could not clear Notion re-do for {page_id} after {retries} attempts.")
     return False
+
+
+# ── Cross-computer workflow ───────────────────────────────────────────────────
+
+def mark_pending_review_in_notion(
+    page_id: str,
+    video_name: str | None = None,
+    lang_suffix: str | None = None,
+    retries: int = 3,
+) -> bool:
+    """
+    After uploading to admin: set Status = 'Uploaded - Pending Review'
+    and write the Hindi/English Title on App.
+
+    Does NOT check the Upload checkbox or set the Upload Date —
+    those are deferred until a reviewer calls finalize_in_notion().
+    """
+    _check_config()
+    url = f"{BASE}/pages/{page_id}"
+
+    props: dict = {
+        PROP_STATUS: {"select": {"name": STATUS_PENDING_REVIEW}},
+    }
+
+    # Write title field based on language
+    if video_name and lang_suffix:
+        if lang_suffix == "___ln_Hi":
+            props[PROP_HINDI_TITLE_ON_APP] = {
+                "rich_text": [{"text": {"content": video_name}}]
+            }
+        elif lang_suffix == "___ln_En":
+            props[PROP_ENGLISH_TITLE_ON_APP] = {
+                "rich_text": [{"text": {"content": video_name}}]
+            }
+
+    for attempt in range(1, retries + 1):
+        try:
+            resp = requests.patch(
+                url, headers=_headers(),
+                json={"properties": props}, timeout=30,
+            )
+            if resp.status_code == 200:
+                title_info = ""
+                if video_name and lang_suffix:
+                    field = "Hindi" if lang_suffix == "___ln_Hi" else "English"
+                    title_info = f", {field} Title='{video_name}'"
+                log.info(
+                    f"[OK] Notion pending review: {page_id} "
+                    f"(Status='{STATUS_PENDING_REVIEW}'{title_info})"
+                )
+                return True
+            else:
+                log.warning(
+                    f"Notion pending-review PATCH attempt {attempt}: "
+                    f"{resp.status_code} {resp.text[:200]}"
+                )
+        except Exception as e:
+            log.warning(f"Notion pending-review PATCH attempt {attempt} error: {e}")
+
+    log.error(f"[FAIL] Could not set pending review for {page_id} after {retries} attempts.")
+    return False
+
+
+def query_pending_review() -> list[dict]:
+    """
+    Returns pages where Status == 'Uploaded - Pending Review'.
+    Used by the reviewer's dashboard to see what needs finalization.
+    """
+    _check_config()
+
+    url     = f"{BASE}/databases/{NOTION_DATABASE_ID}/query"
+    results = []
+    cursor  = None
+
+    while True:
+        payload = {
+            "filter": {
+                "property": PROP_STATUS,
+                "select":   {"equals": STATUS_PENDING_REVIEW},
+            },
+            "page_size": 100,
+        }
+        if cursor:
+            payload["start_cursor"] = cursor
+
+        resp = requests.post(url, headers=_headers(), json=payload, timeout=30)
+        resp.raise_for_status()
+        data = resp.json()
+
+        for page in data.get("results", []):
+            props      = page["properties"]
+            page_id    = page["id"]
+            video_name = _prop_value(props, PROP_VIDEO_NAME).strip()
+            hindi_title  = _prop_value(props, PROP_HINDI_TITLE_ON_APP).strip()
+            english_title = _prop_value(props, PROP_ENGLISH_TITLE_ON_APP).strip()
+            age_group  = _prop_value(props, PROP_AGE_GROUP).strip()
+            category   = _prop_value(props, PROP_CATEGORY).strip()
+
+            results.append({
+                "page_id":       page_id,
+                "video_name":    video_name,
+                "hindi_title":   hindi_title,
+                "english_title": english_title,
+                "age_group":     age_group,
+                "category":      category,
+            })
+
+        if not data.get("has_more"):
+            break
+        cursor = data.get("next_cursor")
+
+    log.info(f"Pending review query: {len(results)} page(s) found.")
+    return results
+
+
+def finalize_in_notion(
+    page_id: str,
+    upload_date: str | None = None,
+    retries: int = 3,
+) -> bool:
+    """
+    Reviewer finalizes a page: set Upload = Yes, Upload Date = today.
+    Called after reviewing an 'Uploaded - Pending Review' page.
+    Does NOT change the Status field (it stays as-is or can be cleared).
+    """
+    _check_config()
+    if upload_date is None:
+        upload_date = date.today().isoformat()
+
+    url = f"{BASE}/pages/{page_id}"
+
+    for attempt in range(1, retries + 1):
+        for prop_type in ("select", "checkbox"):
+            patch = _build_upload_patch(upload_date, prop_type)
+            resp = requests.patch(url, headers=_headers(), json=patch, timeout=30)
+            if resp.status_code == 200:
+                log.info(f"[OK] Notion finalized: {page_id} (Upload=Yes, Date={upload_date})")
+                return True
+            elif resp.status_code == 400:
+                continue
+            else:
+                log.warning(
+                    f"Notion finalize PATCH attempt {attempt}: "
+                    f"{resp.status_code} {resp.text[:200]}"
+                )
+                break
+
+    log.error(f"[FAIL] Could not finalize Notion page {page_id} after {retries} attempts.")
+    return False
+
 

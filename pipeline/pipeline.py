@@ -386,7 +386,7 @@ def stage_upload(batch_names: list[str], headless: bool = False) -> dict[str, st
 #  STAGE 6 -- Track & Notion write-back
 # ════════════════════════════════════════════════════════════════════════════════
 
-def stage_track(batch_job_map: dict[str, str | None], all_videos: list[dict]):
+def stage_track(batch_job_map: dict[str, str | None], all_videos: list[dict], auto_finalize: bool = False):
     """
     For each successfully uploaded batch:
       - Update state.json for all videos in that batch
@@ -430,17 +430,26 @@ def stage_track(batch_job_map: dict[str, str | None], all_videos: list[dict]):
             rec = sm.get(state_key)
             real_page_id = rec.get("page_id", state_key) if rec else state_key
 
-            # Update Notion — only check Upload box if ALL variants for this page are done
+            # Update Notion
             log.info(f"    Notifying Notion for page {real_page_id} …")
             video_name = rec.get("video_name", "") if rec else ""
             lang_suffix = rec.get("lang_suffix", "") if rec else ""
-            all_done = _all_page_variants_uploaded(real_page_id)
-            success = nc.mark_uploaded_in_notion(
-                real_page_id, today,
-                video_name=video_name,
-                lang_suffix=lang_suffix,
-                check_upload=all_done,
-            )
+            if auto_finalize:
+                # Old single-machine mode: check Upload box directly
+                all_done = _all_page_variants_uploaded(real_page_id)
+                success = nc.mark_uploaded_in_notion(
+                    real_page_id, today,
+                    video_name=video_name,
+                    lang_suffix=lang_suffix,
+                    check_upload=all_done,
+                )
+            else:
+                # Cross-computer mode: set pending review (reviewer finalizes later)
+                success = nc.mark_pending_review_in_notion(
+                    real_page_id,
+                    video_name=video_name,
+                    lang_suffix=lang_suffix,
+                )
             if success:
                 notion_updated += 1
             else:
@@ -456,7 +465,7 @@ def stage_track(batch_job_map: dict[str, str | None], all_videos: list[dict]):
 #  MAIN
 # ════════════════════════════════════════════════════════════════════════════════
 
-def run_parallel_pipeline(all_videos: list[dict], headless: bool = False, skip_upload: bool = False):
+def run_parallel_pipeline(all_videos: list[dict], headless: bool = False, skip_upload: bool = False, auto_finalize: bool = False):
     """
     3-stage concurrent pipeline:
       [Download x3 threads] → compress_q → [Compress x1] → batch_q → [Batch/Zip/Upload x1]
@@ -607,15 +616,22 @@ def run_parallel_pipeline(all_videos: list[dict], headless: bool = False, skip_u
                     try:
                         video_name = verified_rec.get("video_name", "")
                         lang_suffix = verified_rec.get("lang_suffix", "")
-                        all_done = _all_page_variants_uploaded(real_page_id)
-                        success = nc.mark_uploaded_in_notion(
-                            real_page_id, today,
-                            video_name=video_name,
-                            lang_suffix=lang_suffix,
-                            check_upload=all_done,
-                        )
+                        if auto_finalize:
+                            all_done = _all_page_variants_uploaded(real_page_id)
+                            success = nc.mark_uploaded_in_notion(
+                                real_page_id, today,
+                                video_name=video_name,
+                                lang_suffix=lang_suffix,
+                                check_upload=all_done,
+                            )
+                        else:
+                            success = nc.mark_pending_review_in_notion(
+                                real_page_id,
+                                video_name=video_name,
+                                lang_suffix=lang_suffix,
+                            )
                         if not success:
-                            raise RuntimeError("mark_uploaded_in_notion returned False")
+                            raise RuntimeError("Notion writeback returned False")
                     except Exception as notion_err:
                         log.warning(
                             f"    [WARN] Notion update failed for {pid}: {notion_err} "
@@ -887,6 +903,7 @@ def main():
     parser.add_argument("--headless",      action="store_true", help="Run Chrome headless")
     parser.add_argument("--batch-only",    action="store_true", help="Only batch+zip+upload already-downloaded files")
     parser.add_argument("--status",        action="store_true", help="Print state summary and exit")
+    parser.add_argument("--auto-finalize", action="store_true", help="Auto-finalize in Notion (skip review step)")
     args = parser.parse_args()
 
     # ── Status mode ───────────────────────────────────────────────────────────
@@ -940,6 +957,7 @@ def main():
         all_videos,
         headless=args.headless,
         skip_upload=args.skip_upload,
+        auto_finalize=args.auto_finalize,
     )
 
     # ── Final summary ─────────────────────────────────────────────────────────

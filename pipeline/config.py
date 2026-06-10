@@ -41,9 +41,10 @@ PROP_HINDI_TITLE_ON_APP   = "Hindi Title on App"
 PROP_ENGLISH_TITLE_ON_APP = "English Title on App"
 
 # ── Status / upload values in Notion ──────────────────────────────────────────
-STATUS_READY         = "Ready to Upload"
-STATUS_UPLOADING     = "Uploading"          # claimed by a PC — other PCs skip it
-STATUS_FAILED_UPLOAD = "Failed to upload"
+STATUS_READY          = "Ready to Upload"
+STATUS_UPLOADING      = "Uploading"          # claimed by a PC — other PCs skip it
+STATUS_FAILED_UPLOAD  = "Failed to upload"
+STATUS_PENDING_REVIEW = "Uploaded - Pending Review"
 UPLOAD_NO      = "No"
 UPLOAD_YES     = "Yes"
 
