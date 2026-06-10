@@ -980,6 +980,10 @@
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
                 Pause
             </button>
+            <button class="btn btn-danger" onclick="killAllPython(this)" title="Kill all background Python processes" style="margin-left: 4px; padding: 6px 10px; font-size: 0.78rem; opacity: 0.8;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" x2="12" y1="2" y2="12"/></svg>
+                Kill All
+            </button>
         </div>
     </header>
 
@@ -1658,6 +1662,30 @@
                     appendTerminalText(d.error ? `[ERROR] ${d.error}\n` : `[SUCCESS] ${d.message}\n`);
                     fetchBatches();
                 }).catch(e => { appendTerminalText(`[ERROR] Request failed.\n`); fetchBatches(); });
+        }
+
+        function killAllPython(btn) {
+            if (!btn) return;
+            if (!btn.dataset.confirmKill) {
+                btn.dataset.confirmKill = 'true';
+                const orig = btn.innerHTML;
+                btn.innerHTML = '⚠️ Confirm Kill';
+                btn.style.opacity = '1';
+                setTimeout(() => { delete btn.dataset.confirmKill; btn.innerHTML = orig; btn.style.opacity = '0.8'; }, 3000);
+                return;
+            }
+            delete btn.dataset.confirmKill;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Killing...';
+            appendTerminalText('\n[SYSTEM] Killing all Python processes...\n');
+            fetch('/api/kill-all-python', {method:'POST'})
+                .then(r => r.json()).then(d => {
+                    appendTerminalText(d.error ? `[ERROR] ${d.error}\n` : `[SUCCESS] ${d.message}\n`);
+                    btn.disabled = false;
+                    btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" x2="12" y1="2" y2="12"/></svg> Kill All';
+                    btn.style.opacity = '0.8';
+                    fetchBatches();
+                }).catch(e => { appendTerminalText(`[ERROR] ${e}\n`); btn.disabled = false; });
         }
 
         function stopActiveOperation() {

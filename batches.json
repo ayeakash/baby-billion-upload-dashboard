@@ -9401,5 +9401,1002 @@
     "upload_job_id": null,
     "upload_date": "2026-04-29",
     "finalized_date": null
+  },
+  "Batch_561": {
+    "batch_name": "Batch_561",
+    "status": "pending_first_review",
+    "created_at": "2026-06-10T16:47:30.338376",
+    "videos": [
+      {
+        "page_id": "34863e60-e8f4-80b3-ab60-fef075c1834d",
+        "video_name": "Eating Healthy (balanced meals)___pg_34863e60e8f480b3ab60fef075c1834d",
+        "age_group": "6+",
+        "category": "Good habits",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Eating_Healthy_balanced_meals___pg_34863e60e8f480b3ab60fef075c1834d.mp4",
+        "drive_link": "https://drive.google.com/file/d/1bR8NygELmYkWChdRCfZZtt5xcsgk9Nyf/view?usp=drive_link",
+        "pipeline_status": "batched"
+      }
+    ],
+    "upload_job_id": null,
+    "upload_date": "2026-04-27",
+    "finalized_date": null
+  },
+  "Batch_562": {
+    "batch_name": "Batch_562",
+    "status": "pending_first_review",
+    "created_at": "2026-06-10T16:47:45.455535",
+    "videos": [
+      {
+        "page_id": "34863e60-e8f4-8055-b059-f99b310b05c7",
+        "video_name": "Bathing Daily___pg_34863e60e8f48055b059f99b310b05c7",
+        "age_group": "6+",
+        "category": "Good habits",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Bathing_Daily___pg_34863e60e8f48055b059f99b310b05c7.mp4",
+        "drive_link": "https://drive.google.com/file/d/12lqdQY2NqhmM7uvCiPYhgebgyMB_ZZ00/view?usp=drive_link",
+        "pipeline_status": "batched"
+      }
+    ],
+    "upload_job_id": null,
+    "upload_date": "2026-04-27",
+    "finalized_date": null
+  },
+  "Batch_563": {
+    "batch_name": "Batch_563",
+    "status": "pending_first_review",
+    "created_at": "2026-06-10T16:47:55.302982",
+    "videos": [
+      {
+        "page_id": "34863e60-e8f4-8090-a214-cb32ec4f41c7",
+        "video_name": "Wearing Clean Clothes___pg_34863e60e8f48090a214cb32ec4f41c7",
+        "age_group": "6+",
+        "category": "Good habits",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Wearing_Clean_Clothes___pg_34863e60e8f48090a214cb32ec4f41c7.mp4",
+        "drive_link": "https://drive.google.com/file/d/1Gr4kMFdTcmE_fwbHPTLz6ajMsYuOj8Dz/view?usp=drive_link",
+        "pipeline_status": "batched"
+      }
+    ],
+    "upload_job_id": null,
+    "upload_date": "2026-04-27",
+    "finalized_date": null
+  },
+  "Batch_564": {
+    "batch_name": "Batch_564",
+    "status": "pending_first_review",
+    "created_at": "2026-06-10T16:47:55.304004",
+    "videos": [
+      {
+        "page_id": "34863e60-e8f4-8069-8742-ffd4dabad407",
+        "video_name": "Daily Hygiene Routine___pg_34863e60e8f480698742ffd4dabad407",
+        "age_group": "6+",
+        "category": "Good habits",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Daily_Hygiene_Routine___pg_34863e60e8f480698742ffd4dabad407.mp4",
+        "drive_link": "https://drive.google.com/file/d/1D6uE7w2F8wKSPvTil5j9FHGrNAcHzkQ_/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-804f-b102-ed57fab00149",
+        "video_name": "Herbivores, Carnivores, Omnivores___pg_34863e60e8f4804fb102ed57fab00149",
+        "age_group": "6+",
+        "category": "Science",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Herbivores_Carnivores_Omnivores___pg_34863e60e8f4804fb102ed57fab00149.mp4",
+        "drive_link": "https://drive.google.com/file/d/1O0HoPfEJ3HRcaUi0kjXvtAhJzyO7o8RQ/view?usp=sharing",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-8065-88e4-e064340dbcc0",
+        "video_name": "Life Cycle of a Frog___pg_34863e60e8f4806588e4e064340dbcc0",
+        "age_group": "6+",
+        "category": "Science",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Life_Cycle_of_a_Frog___pg_34863e60e8f4806588e4e064340dbcc0.mp4",
+        "drive_link": "https://drive.google.com/file/d/1Kvu_9jIWxvVI3Fqcr7Yt5_wZ2VD98wUz/view?usp=sharing",
+        "pipeline_status": "batched"
+      }
+    ],
+    "upload_job_id": null,
+    "upload_date": "2026-04-27",
+    "finalized_date": null
+  },
+  "Batch_565": {
+    "batch_name": "Batch_565",
+    "status": "pending_first_review",
+    "created_at": "2026-06-10T16:48:00.201929",
+    "videos": [
+      {
+        "page_id": "34863e60-e8f4-8036-bbcc-c900cae8f54a",
+        "video_name": "Life Cycle of a Butterfly___pg_34863e60e8f48036bbccc900cae8f54a",
+        "age_group": "6+",
+        "category": "Science",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Life_Cycle_of_a_Butterfly___pg_34863e60e8f48036bbccc900cae8f54a.mp4",
+        "drive_link": "https://drive.google.com/file/d/1n5GWNonbqxXQLYaceT90i6OTesiBBc3l/view?usp=sharing",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-801d-8038-e334b3b44beb",
+        "video_name": "Life Cycle of a Plant___pg_34863e60e8f4801d8038e334b3b44beb",
+        "age_group": "6+",
+        "category": "Science",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Life_Cycle_of_a_Plant___pg_34863e60e8f4801d8038e334b3b44beb.mp4",
+        "drive_link": "https://drive.google.com/file/d/1okfyURyf0b_Kh4ihxBXS6E9SW7_u0xUm/view?usp=sharing",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-80c6-a46d-f305271ab71a",
+        "video_name": "Parts of a Flower___pg_34863e60e8f480c6a46df305271ab71a",
+        "age_group": "6+",
+        "category": "Science",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Parts_of_a_Flower___pg_34863e60e8f480c6a46df305271ab71a.mp4",
+        "drive_link": "https://drive.google.com/file/d/1uHzfGBr-FuQ4AYoSxFyi0KPXscQRSOVh/view?usp=sharing",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-8019-b289-ceb8f64079d8",
+        "video_name": "How Plants Make Food (Photosynthesis - basic)___pg_34863e60e8f48019b289ceb8f64079d8",
+        "age_group": "6+",
+        "category": "Science",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\How_Plants_Make_Food_Photosynthesis_-_basic___pg_34863e60e8f48019b289ceb8f64079d8.mp4",
+        "drive_link": "https://drive.google.com/file/d/17hz5uQp_QBLo_EhG2Hrfu4AzeHaw-U9F/view?usp=sharing",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-8058-9dc4-e60af2122dce",
+        "video_name": "Parts of a Plant (detailed)___pg_34863e60e8f480589dc4e60af2122dce",
+        "age_group": "6+",
+        "category": "Science",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Parts_of_a_Plant_detailed___pg_34863e60e8f480589dc4e60af2122dce.mp4",
+        "drive_link": "https://drive.google.com/file/d/1AhzUsKPO7PlP6MVCYweSxcNhU_aZ_vR2/view?usp=sharing",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-80b6-b728-d34a95e45b86",
+        "video_name": "Eagle___pg_34863e60e8f480b6b728d34a95e45b86",
+        "age_group": "under 3",
+        "category": "BIrds",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Eagle___pg_34863e60e8f480b6b728d34a95e45b86.mp4",
+        "drive_link": "https://drive.google.com/file/d/1-LcX3UIA-FjR0tLsLEZ6ZL-3VPrvYwFl/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-80b4-8cca-fee78c7973b5",
+        "video_name": "Indian Mountains (Himalayas, Western/Eastern Ghats)___pg_34863e60e8f480b48ccafee78c7973b5",
+        "age_group": "6+",
+        "category": "About India",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Indian_Mountains_Himalayas_WesternEastern_Ghats___pg_34863e60e8f480b48ccafee78c7973b5.mp4",
+        "drive_link": "https://drive.google.com/file/d/1DDlrs8Kyv4WkGGiMU8jUOYuIm2Fwi3Ug/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-805b-a0a8-ecdc0f422cfe",
+        "video_name": "National Flag of India___pg_34863e60e8f4805ba0a8ecdc0f422cfe",
+        "age_group": "6+",
+        "category": "About India",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\National_Flag_of_India___pg_34863e60e8f4805ba0a8ecdc0f422cfe.mp4",
+        "drive_link": "https://drive.google.com/file/d/1UDQ3g4go6hkDq5PkkKSdK5bjRRHZXe44/view?usp=drive_link",
+        "pipeline_status": "batched"
+      }
+    ],
+    "upload_job_id": null,
+    "upload_date": "2026-04-27",
+    "finalized_date": null
+  },
+  "Batch_566": {
+    "batch_name": "Batch_566",
+    "status": "pending_first_review",
+    "created_at": "2026-06-10T16:48:45.220166",
+    "videos": [
+      {
+        "page_id": "34863e60-e8f4-80a7-89f2-f5daf77cac70",
+        "video_name": "Capital of India (New Delhi)___pg_34863e60e8f480a789f2f5daf77cac70",
+        "age_group": "6+",
+        "category": "About India",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Capital_of_India_New_Delhi___pg_34863e60e8f480a789f2f5daf77cac70.mp4",
+        "drive_link": "https://drive.google.com/file/d/19g0nZZoFWKohYXOqYE_76LfY043-2AN8/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-8062-82b4-e4b2d2ba13e5",
+        "video_name": "Brushing Teeth___pg_34863e60e8f4806282b4e4b2d2ba13e5",
+        "age_group": "under 3",
+        "category": "Good habits",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Brushing_Teeth___pg_34863e60e8f4806282b4e4b2d2ba13e5.mp4",
+        "drive_link": "https://drive.google.com/file/d/1xwabzRBfuyyOuM_AR2kGYTNYSOi-tmbN/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-8077-90f9-cdcdbcc4b660",
+        "video_name": "Hi___pg_34863e60e8f4807790f9cdcdbcc4b660",
+        "age_group": "under 3",
+        "category": "Words",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Hi___pg_34863e60e8f4807790f9cdcdbcc4b660.mp4",
+        "drive_link": "https://drive.google.com/file/d/1VoA6XpFa1BejVpJ4yI9F-ZmZQ3x5hd4b/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-801a-af41-d593e77c3f80",
+        "video_name": "Water___pg_34863e60e8f4801aaf41d593e77c3f80",
+        "age_group": "under 3",
+        "category": "Words",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Water___pg_34863e60e8f4801aaf41d593e77c3f80.mp4",
+        "drive_link": "https://drive.google.com/file/d/17bczcicei2Xtq8RAazShgraikYpyrTNf/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-80a2-a46d-c65f0b7d1088",
+        "video_name": "Milk___pg_34863e60e8f480a2a46dc65f0b7d1088",
+        "age_group": "under 3",
+        "category": "Words",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Milk___pg_34863e60e8f480a2a46dc65f0b7d1088.mp4",
+        "drive_link": "https://drive.google.com/file/d/16SWWXVxx_zLGNQkMvc5OVvy5iU4gd2PP/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-80da-814e-f1740bcdae20",
+        "video_name": "Baby___pg_34863e60e8f480da814ef1740bcdae20",
+        "age_group": "under 3",
+        "category": "Words",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Baby___pg_34863e60e8f480da814ef1740bcdae20.mp4",
+        "drive_link": "https://drive.google.com/file/d/1I9zjGlLcaA1up8znFczfFGfdA9z9kJav/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-809e-ba9a-cda15016159c",
+        "video_name": "Papa___pg_34863e60e8f4809eba9acda15016159c",
+        "age_group": "under 3",
+        "category": "Words",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Papa___pg_34863e60e8f4809eba9acda15016159c.mp4",
+        "drive_link": "https://drive.google.com/file/d/1MshOAOh9rCwYMir-Sh3w2ZVhKbj1XHSI/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-802f-9399-e12b827caac0",
+        "video_name": "Mumma___pg_34863e60e8f4802f9399e12b827caac0",
+        "age_group": "under 3",
+        "category": "Words",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Mumma___pg_34863e60e8f4802f9399e12b827caac0.mp4",
+        "drive_link": "https://drive.google.com/file/d/1juiUCoJi-gEctNJrXUxhp4RBHeMjsFRZ/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-80a8-8f62-eecf0556a2c3",
+        "video_name": "Puzzle___pg_34863e60e8f480a88f62eecf0556a2c3",
+        "age_group": "under 3",
+        "category": "Toys",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Puzzle___pg_34863e60e8f480a88f62eecf0556a2c3.mp4",
+        "drive_link": "https://drive.google.com/drive/folders/1QZYzlSPqUTANdAUU5ONFzGqDwycVj4op?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-8080-b5b8-cf4d00c9f46b",
+        "video_name": "Rattle___pg_34863e60e8f48080b5b8cf4d00c9f46b",
+        "age_group": "under 3",
+        "category": "Toys",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Rattle___pg_34863e60e8f48080b5b8cf4d00c9f46b.mp4",
+        "drive_link": "https://drive.google.com/drive/folders/10nVcAvUacfO2pzpUT24-AJl7kTXy4tRD?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-8029-ba5b-d94e779aa246",
+        "video_name": "Train Toy___pg_34863e60e8f48029ba5bd94e779aa246",
+        "age_group": "under 3",
+        "category": "Toys",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Train_Toy___pg_34863e60e8f48029ba5bd94e779aa246.mp4",
+        "drive_link": "https://drive.google.com/drive/folders/1IhX0OUyhPVMAu0qTC55ULQ-iutqS39Il?usp=drive_link",
+        "pipeline_status": "batched"
+      }
+    ],
+    "upload_job_id": null,
+    "upload_date": "2026-04-27",
+    "finalized_date": null
+  },
+  "Batch_567": {
+    "batch_name": "Batch_567",
+    "status": "pending_first_review",
+    "created_at": "2026-06-10T16:49:04.886720",
+    "videos": [
+      {
+        "page_id": "34863e60-e8f4-80d1-8d44-eeffc8c00612",
+        "video_name": "Soft Toys___pg_34863e60e8f480d18d44eeffc8c00612",
+        "age_group": "under 3",
+        "category": "Toys",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Soft_Toys___pg_34863e60e8f480d18d44eeffc8c00612.mp4",
+        "drive_link": "https://drive.google.com/drive/folders/1nMeczFHkpIvGAnTzEl3hIgTqR6Qm5t5E?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-80b3-afa8-eb8a6db2cb03",
+        "video_name": "Car Toy___pg_34863e60e8f480b3afa8eb8a6db2cb03",
+        "age_group": "under 3",
+        "category": "Toys",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Car_Toy___pg_34863e60e8f480b3afa8eb8a6db2cb03.mp4",
+        "drive_link": "https://drive.google.com/drive/folders/1Q0-3fE3Vfd2F6KCiWlmcCAkHxnZFeiyj?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-80e5-b9ad-eaf0417144ba",
+        "video_name": "Doll___pg_34863e60e8f480e5b9adeaf0417144ba",
+        "age_group": "under 3",
+        "category": "Toys",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Doll___pg_34863e60e8f480e5b9adeaf0417144ba.mp4",
+        "drive_link": "https://drive.google.com/drive/folders/1-JB64_eTUxnVTWg0tDvhsrZvoioRJkR7?usp=drive_link",
+        "pipeline_status": "batched"
+      }
+    ],
+    "upload_job_id": null,
+    "upload_date": "2026-04-27",
+    "finalized_date": null
+  },
+  "Batch_568": {
+    "batch_name": "Batch_568",
+    "status": "pending_first_review",
+    "created_at": "2026-06-10T16:49:04.887273",
+    "videos": [
+      {
+        "page_id": "34863e60-e8f4-806f-8e08-ecadb6d39e89",
+        "video_name": "Blocks___pg_34863e60e8f4806f8e08ecadb6d39e89",
+        "age_group": "under 3",
+        "category": "Toys",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Blocks___pg_34863e60e8f4806f8e08ecadb6d39e89.mp4",
+        "drive_link": "https://drive.google.com/drive/folders/12dAaDhfU3swEonByaeBoBeuMosvOuFxb?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-80da-ad92-fc7ccc60b7d4",
+        "video_name": "Ball___pg_34863e60e8f480daad92fc7ccc60b7d4",
+        "age_group": "under 3",
+        "category": "Toys",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Ball___pg_34863e60e8f480daad92fc7ccc60b7d4.mp4",
+        "drive_link": "https://drive.google.com/drive/folders/1r4qG-zVtH18eQfuU4aB-39zTu5wkAjAh?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-8092-9353-dc28bb655619",
+        "video_name": "Months of the Year___pg_34863e60e8f480929353dc28bb655619",
+        "age_group": "6+",
+        "category": "Time",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Months_of_the_Year___pg_34863e60e8f480929353dc28bb655619.mp4",
+        "drive_link": "https://drive.google.com/file/d/1t8IxEkFXAvPkcIQ_v4yE2RBaU4-x0ad1/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-80ea-b5b6-ea0812d6a446",
+        "video_name": "Days of the Week___pg_34863e60e8f480eab5b6ea0812d6a446",
+        "age_group": "6+",
+        "category": "Time",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Days_of_the_Week___pg_34863e60e8f480eab5b6ea0812d6a446.mp4",
+        "drive_link": "https://drive.google.com/file/d/1O1BEDAuEWPYYAt5T1ZJ3LXrk71ayRm35/view?usp=drive_link",
+        "pipeline_status": "batched"
+      }
+    ],
+    "upload_job_id": null,
+    "upload_date": "2026-04-27",
+    "finalized_date": null
+  },
+  "Batch_569": {
+    "batch_name": "Batch_569",
+    "status": "pending_first_review",
+    "created_at": "2026-06-10T16:49:15.237559",
+    "videos": [
+      {
+        "page_id": "34863e60-e8f4-80f6-99ab-c3281aed8890",
+        "video_name": "Grass___pg_34863e60e8f480f699abc3281aed8890",
+        "age_group": "under 3",
+        "category": "Nature",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Grass___pg_34863e60e8f480f699abc3281aed8890.mp4",
+        "drive_link": "https://drive.google.com/drive/u/3/folders/1C6j9i4L975oVeWi2oorC6TYUCGhhQQhR",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-8049-8a6c-c6f4147f404c",
+        "video_name": "Moon___pg_34863e60e8f480498a6cc6f4147f404c",
+        "age_group": "under 3",
+        "category": "Nature",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Moon___pg_34863e60e8f480498a6cc6f4147f404c.mp4",
+        "drive_link": "https://drive.google.com/drive/u/3/folders/17Uc9gjih1_PiQA-CHPoBEUBkwpb3Hknq",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-8074-ad7b-df15b9b00f67",
+        "video_name": "Accha___pg_34863e60e8f48074ad7bdf15b9b00f67",
+        "age_group": "under 3",
+        "category": "Hindi Basics",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Accha___pg_34863e60e8f48074ad7bdf15b9b00f67.mp4",
+        "drive_link": "https://drive.google.com/file/d/1VRYZCUV40_NW0ig76onI67oCGvPe8YOJ/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-809c-8f7a-cdacbf4ba2a0",
+        "video_name": "Aao___pg_34863e60e8f4809c8f7acdacbf4ba2a0",
+        "age_group": "under 3",
+        "category": "Hindi Basics",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Aao___pg_34863e60e8f4809c8f7acdacbf4ba2a0.mp4",
+        "drive_link": "https://drive.google.com/file/d/19_KYWJzKdOBbscQfdXmuW-IrvLC2VO3M/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-8002-8d9b-d7cd434ad78d",
+        "video_name": "Khana___pg_34863e60e8f480028d9bd7cd434ad78d",
+        "age_group": "under 3",
+        "category": "Hindi Basics",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Khana___pg_34863e60e8f480028d9bd7cd434ad78d.mp4",
+        "drive_link": "https://drive.google.com/file/d/1mUDFTRrV-37vBqmCYpT96Yi6JBQImzHo/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-80ea-842e-c521448c480e",
+        "video_name": "Maa___pg_34863e60e8f480ea842ec521448c480e",
+        "age_group": "under 3",
+        "category": "Hindi Basics",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Maa___pg_34863e60e8f480ea842ec521448c480e.mp4",
+        "drive_link": "https://drive.google.com/file/d/1puYUQ142ztgajg1HX1IaOwROB4S3e7Q0/view?usp=drive_link",
+        "pipeline_status": "batched"
+      }
+    ],
+    "upload_job_id": null,
+    "upload_date": "2026-04-27",
+    "finalized_date": null
+  },
+  "Batch_570": {
+    "batch_name": "Batch_570",
+    "status": "pending_first_review",
+    "created_at": "2026-06-10T16:49:34.888052",
+    "videos": [
+      {
+        "page_id": "34863e60-e8f4-8085-976c-deb304281ee5",
+        "video_name": "Flowers___pg_34863e60e8f48085976cdeb304281ee5",
+        "age_group": "under 3",
+        "category": "Nature",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Flowers___pg_34863e60e8f48085976cdeb304281ee5.mp4",
+        "drive_link": "https://drive.google.com/drive/u/3/folders/13zuoGtGIBDp83pOmsX46SREIM5dIYGtP",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-8019-b4ff-f111ff54aa5d",
+        "video_name": "Tailor___pg_34863e60e8f48019b4fff111ff54aa5d",
+        "age_group": "3-6",
+        "category": "Community Helpers",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Tailor___pg_34863e60e8f48019b4fff111ff54aa5d.mp4",
+        "drive_link": "https://drive.google.com/file/d/1NzdkFsw0JlXUvTz5nkgAtTo4bBW6Z9Hc/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-8060-ad50-de86d884a040",
+        "video_name": "Chef/Cook___pg_34863e60e8f48060ad50de86d884a040",
+        "age_group": "3-6",
+        "category": "Community Helpers",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\ChefCook___pg_34863e60e8f48060ad50de86d884a040.mp4",
+        "drive_link": "https://drive.google.com/file/d/1PXKBE125CmDIA_-9N9Wd0Xrwg0V3uqFM/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-8066-8527-ed61ac5226ee",
+        "video_name": "Driver___pg_34863e60e8f480668527ed61ac5226ee",
+        "age_group": "3-6",
+        "category": "Community Helpers",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Driver___pg_34863e60e8f480668527ed61ac5226ee.mp4",
+        "drive_link": "https://drive.google.com/file/d/1JkCF4HhxKobD_xr5hyepiRVmZwsnX15a/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-80df-b7aa-c3eb0f86a7f3",
+        "video_name": "Farmer___pg_34863e60e8f480dfb7aac3eb0f86a7f3",
+        "age_group": "3-6",
+        "category": "Community Helpers",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Farmer___pg_34863e60e8f480dfb7aac3eb0f86a7f3.mp4",
+        "drive_link": "https://drive.google.com/file/d/18FxyXLAjWSnQByWiPKoO8f82HRnRu5c0/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-808f-8f42-f5bbac1697df",
+        "video_name": "Postman___pg_34863e60e8f4808f8f42f5bbac1697df",
+        "age_group": "3-6",
+        "category": "Community Helpers",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Postman___pg_34863e60e8f4808f8f42f5bbac1697df.mp4",
+        "drive_link": "https://drive.google.com/file/d/1Jc-i3U7cBK6lfD1sQ79Zfh2B6Wbv82Tj/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-80a2-b2ec-cef62424c608",
+        "video_name": "Teacher___pg_34863e60e8f480a2b2eccef62424c608",
+        "age_group": "3-6",
+        "category": "Community Helpers",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Teacher___pg_34863e60e8f480a2b2eccef62424c608.mp4",
+        "drive_link": "https://drive.google.com/file/d/105KsFO0pXF3idbs6NnCQTboj7qDzd8_D/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-8085-90d9-fc65b955d954",
+        "video_name": "Nurse___pg_34863e60e8f4808590d9fc65b955d954",
+        "age_group": "3-6",
+        "category": "Community Helpers",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Nurse___pg_34863e60e8f4808590d9fc65b955d954.mp4",
+        "drive_link": "https://drive.google.com/file/d/1SaWU6o1B7dBc74aKU1IOTSubBvivXvYW/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-80df-adc9-cf86335e7c70",
+        "video_name": "Doctor___pg_34863e60e8f480dfadc9cf86335e7c70",
+        "age_group": "3-6",
+        "category": "Community Helpers",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Doctor___pg_34863e60e8f480dfadc9cf86335e7c70.mp4",
+        "drive_link": "https://drive.google.com/file/d/1KGNei5cQuF-yPu8zDL3Jf_7grUjrebZF/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-8040-8b07-c860cf0ae3e7",
+        "video_name": "Baby___pg_34863e60e8f480408b07c860cf0ae3e7",
+        "age_group": "under 3",
+        "category": "My Family",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Baby___pg_34863e60e8f480408b07c860cf0ae3e7.mp4",
+        "drive_link": "https://drive.google.com/drive/folders/1byaPqIB1mKhsYi2ia-8QaSORO4SQhHe6",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-80e9-b729-ca17f02168c6",
+        "video_name": "Cousin___pg_34863e60e8f480e9b729ca17f02168c6",
+        "age_group": "under 3",
+        "category": "My Family",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Cousin___pg_34863e60e8f480e9b729ca17f02168c6.mp4",
+        "drive_link": "https://drive.google.com/drive/folders/1QbSVYD0PnAN2yIo5stnIlO-ksywJ58Vt",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-8083-b149-f93f83fc8baf",
+        "video_name": "Uncle (Chacha/Mama)___pg_34863e60e8f48083b149f93f83fc8baf",
+        "age_group": "under 3",
+        "category": "My Family",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Uncle_ChachaMama___pg_34863e60e8f48083b149f93f83fc8baf.mp4",
+        "drive_link": "https://drive.google.com/drive/folders/10Ms05AgUoIx80nHS7tNRaR55cnHASHNR",
+        "pipeline_status": "batched"
+      }
+    ],
+    "upload_job_id": null,
+    "upload_date": "2026-04-27",
+    "finalized_date": null
+  },
+  "Batch_571": {
+    "batch_name": "Batch_571",
+    "status": "pending_first_review",
+    "created_at": "2026-06-10T16:49:47.527387",
+    "videos": [
+      {
+        "page_id": "34863e60-e8f4-8066-a83d-ed938d56536e",
+        "video_name": "Sister (Didi)___pg_34863e60e8f48066a83ded938d56536e",
+        "age_group": "under 3",
+        "category": "My Family",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Sister_Didi___pg_34863e60e8f48066a83ded938d56536e.mp4",
+        "drive_link": "https://drive.google.com/drive/folders/1vX639q50jcIHqbp0qJ-Uum1ZFeNoPK5N",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-80a8-8570-df40668ae092",
+        "video_name": "Greeting Elders___pg_34863e60e8f480a88570df40668ae092",
+        "age_group": "3-6",
+        "category": "Good habits",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Greeting_Elders___pg_34863e60e8f480a88570df40668ae092.mp4",
+        "drive_link": "https://drive.google.com/file/d/1icqaaIO_USoim1nLkDhPiV3jHLOf5QEc/view?usp=sharing",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-802a-bb24-f63a89949a5b",
+        "video_name": "Diamond___pg_34863e60e8f4802abb24f63a89949a5b",
+        "age_group": "3-6",
+        "category": "shapes",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Diamond___pg_34863e60e8f4802abb24f63a89949a5b.mp4",
+        "drive_link": "https://drive.google.com/drive/folders/16A3c494BP9tHZSkztOdO8auxWWUfStAT?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-8089-901c-d6a7fdcc60ce",
+        "video_name": "Ovel___pg_34863e60e8f48089901cd6a7fdcc60ce",
+        "age_group": "3-6",
+        "category": "shapes",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Ovel___pg_34863e60e8f48089901cd6a7fdcc60ce.mp4",
+        "drive_link": "https://drive.google.com/drive/folders/1tk-D1aPDZM6bx16lb0TLPXnypRxHmVWQ?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-8003-852c-f46a1ef46863",
+        "video_name": "Heart___pg_34863e60e8f48003852cf46a1ef46863",
+        "age_group": "3-6",
+        "category": "shapes",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Heart___pg_34863e60e8f48003852cf46a1ef46863.mp4",
+        "drive_link": "https://drive.google.com/drive/folders/1FzVddudvqjXRDm0aFVWY2Iy82LWb-lcf?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34863e60-e8f4-80c8-a432-dbe0cc9601ca",
+        "video_name": "Triangle___pg_34863e60e8f480c8a432dbe0cc9601ca",
+        "age_group": "3-6",
+        "category": "shapes",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Triangle___pg_34863e60e8f480c8a432dbe0cc9601ca.mp4",
+        "drive_link": "https://drive.google.com/drive/folders/1QVfTZg5TKNPMJFOKqHUdQIUOtgnoiCyU?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34663e60-e8f4-80fa-8356-cac83591edc9",
+        "video_name": "Digraphs (ch, sh, th, wh, ph)___pg_34663e60e8f480fa8356cac83591edc9",
+        "age_group": "6+",
+        "category": "Phonics",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Digraphs_ch_sh_th_wh_ph___pg_34663e60e8f480fa8356cac83591edc9.mp4",
+        "drive_link": "https://drive.google.com/file/d/15c1alcI2Jw29iAhB49S92hBjy3uMJPhW/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34663e60-e8f4-8012-a2a6-c1024b0521df",
+        "video_name": "Consonant Blends (sk, sl, sm, sn, sp, st, sw)___pg_34663e60e8f48012a2a6c1024b0521df",
+        "age_group": "6+",
+        "category": "Phonics",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Consonant_Blends_sk_sl_sm_sn_sp_st_sw___pg_34663e60e8f48012a2a6c1024b0521df.mp4",
+        "drive_link": "https://drive.google.com/file/d/1155hm3puna-TbVualin0p9mofSdJy0fB/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34663e60-e8f4-80aa-85cd-e3e3a2d771a8",
+        "video_name": "Review of Letter Sounds A-Z___pg_34663e60e8f480aa85cde3e3a2d771a8",
+        "age_group": "6+",
+        "category": "Phonics",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Review_of_Letter_Sounds_A-Z___pg_34663e60e8f480aa85cde3e3a2d771a8.mp4",
+        "drive_link": "https://drive.google.com/file/d/1z6al4HHbe1i6yTkxAzpUZ91hkJk36zPL/view?usp=drive_link",
+        "pipeline_status": "batched"
+      }
+    ],
+    "upload_job_id": null,
+    "upload_date": "2026-04-27",
+    "finalized_date": null
+  },
+  "Batch_572": {
+    "batch_name": "Batch_572",
+    "status": "pending_first_review",
+    "created_at": "2026-06-10T16:50:09.953983",
+    "videos": [
+      {
+        "page_id": "34663e60-e8f4-807a-aebf-e96c76ffbea9",
+        "video_name": "Giving Directions___pg_34663e60e8f4807aaebfe96c76ffbea9",
+        "age_group": "6+",
+        "category": "English speaking",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Giving_Directions___pg_34663e60e8f4807aaebfe96c76ffbea9.mp4",
+        "drive_link": "https://drive.google.com/file/d/1vUJBEYtK-obNifavc5sqmr3-9GioI03h/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34663e60-e8f4-80c3-9d22-f2260231ce15",
+        "video_name": "Asking Questions (What, Where, When, Who, Why, How)___pg_34663e60e8f480c39d22f2260231ce15",
+        "age_group": "6+",
+        "category": "English speaking",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Asking_Questions_What_Where_When_Who_Why_How___pg_34663e60e8f480c39d22f2260231ce15.mp4",
+        "drive_link": "https://drive.google.com/file/d/1ohjLp0RE6rz1MRnRwrIUitf58eFT3IwI/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34663e60-e8f4-8097-8907-edaf3c6fa3fd",
+        "video_name": "Bicycle___pg_34663e60e8f480978907edaf3c6fa3fd",
+        "age_group": "3-6",
+        "category": "Vehicles",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Bicycle___pg_34663e60e8f480978907edaf3c6fa3fd.mp4",
+        "drive_link": "https://drive.google.com/file/d/1zmSN92thAPJVS9-6aLzM81oT2KeiSM_B/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34663e60-e8f4-8041-b2b2-d00a7d544792",
+        "video_name": "Bike/Motorcycle___pg_34663e60e8f48041b2b2d00a7d544792",
+        "age_group": "3-6",
+        "category": "Vehicles",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\BikeMotorcycle___pg_34663e60e8f48041b2b2d00a7d544792.mp4",
+        "drive_link": "https://drive.google.com/file/d/1cyeBeUQugF3MmHzvx0L025UBSxW6AfW0/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34663e60-e8f4-8073-a95d-ced81f6c21ae",
+        "video_name": "Truck___pg_34663e60e8f48073a95dced81f6c21ae",
+        "age_group": "3-6",
+        "category": "Vehicles",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Truck___pg_34663e60e8f48073a95dced81f6c21ae.mp4",
+        "drive_link": "https://drive.google.com/file/d/1S8_WB8dwtD-G3kwxm2NSrOij0Wj8bfNg/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34663e60-e8f4-80f5-9a9d-db3279a6c567",
+        "video_name": "I am [name]___pg_34663e60e8f480f59a9ddb3279a6c567",
+        "age_group": "3-6",
+        "category": "Simple  sentences",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\I_am_name___pg_34663e60e8f480f59a9ddb3279a6c567.mp4",
+        "drive_link": "https://drive.google.com/drive/folders/1xyD8DnFAI_h-rdEYD6jZDbAPcfozxZ4K?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34663e60-e8f4-8036-ac83-f24aa74d8234",
+        "video_name": "And___pg_34663e60e8f48036ac83f24aa74d8234",
+        "age_group": "3-6",
+        "category": "Sight  words",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\And___pg_34663e60e8f48036ac83f24aa74d8234.mp4",
+        "drive_link": "https://drive.google.com/file/d/1EviBEKLpf8CmLIvrYljklgvqwt4igk-w/view?usp=sharing",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34663e60-e8f4-803f-9b97-e0306c47091f",
+        "video_name": "Auto Rickshaw___pg_34663e60e8f4803f9b97e0306c47091f",
+        "age_group": "under 3",
+        "category": "Vehicles",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Auto_Rickshaw___pg_34663e60e8f4803f9b97e0306c47091f.mp4",
+        "drive_link": "https://drive.google.com/drive/folders/13Poiwwijg_tNE4lPuzCDgJqQLQzTaPRU",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34663e60-e8f4-80d1-9ee3-c8cf18d5c8c9",
+        "video_name": "Cycle___pg_34663e60e8f480d19ee3c8cf18d5c8c9",
+        "age_group": "under 3",
+        "category": "Vehicles",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Cycle___pg_34663e60e8f480d19ee3c8cf18d5c8c9.mp4",
+        "drive_link": "https://drive.google.com/drive/folders/1W2rcVvbRy0v0HqqMuKuy9ybj0lBmbFKp",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34663e60-e8f4-80b8-aa9f-cd449ecfc34b",
+        "video_name": "Bike___pg_34663e60e8f480b8aa9fcd449ecfc34b",
+        "age_group": "under 3",
+        "category": "Vehicles",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Bike___pg_34663e60e8f480b8aa9fcd449ecfc34b.mp4",
+        "drive_link": "https://drive.google.com/drive/folders/1RkWrnTpaxm7R6NjHqjUquqVCgmtw4gv0",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34663e60-e8f4-80c4-b636-e73959bdaafb",
+        "video_name": "Train___pg_34663e60e8f480c4b636e73959bdaafb",
+        "age_group": "under 3",
+        "category": "Vehicles",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Train___pg_34663e60e8f480c4b636e73959bdaafb.mp4",
+        "drive_link": "https://drive.google.com/drive/folders/10dFGZuObUQMq7eIxxoDdC8vxGISZhFQV",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34663e60-e8f4-808d-b017-f4d12ab73808",
+        "video_name": "Truck___pg_34663e60e8f4808db017f4d12ab73808",
+        "age_group": "under 3",
+        "category": "Vehicles",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Truck___pg_34663e60e8f4808db017f4d12ab73808.mp4",
+        "drive_link": "https://drive.google.com/drive/folders/1uTJrsnQn5yGyIWk8ZBJq5_0jdHkRFg66",
+        "pipeline_status": "batched"
+      }
+    ],
+    "upload_job_id": null,
+    "upload_date": "2026-04-27",
+    "finalized_date": null
+  },
+  "Batch_573": {
+    "batch_name": "Batch_573",
+    "status": "pending_first_review",
+    "created_at": "2026-06-10T16:50:30.201758",
+    "videos": [
+      {
+        "page_id": "34663e60-e8f4-8098-ba1a-e7a341569184",
+        "video_name": "Bus___pg_34663e60e8f48098ba1ae7a341569184",
+        "age_group": "under 3",
+        "category": "Vehicles",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Bus___pg_34663e60e8f48098ba1ae7a341569184.mp4",
+        "drive_link": "https://drive.google.com/drive/folders/1fX3u8xmhHlmn-OH_v0RxrPxAHTrarMlD",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34663e60-e8f4-8069-b37a-fed919773478",
+        "video_name": "Yes/No Answers___pg_34663e60e8f48069b37afed919773478",
+        "age_group": "3-6",
+        "category": "English speaking",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\YesNo_Answers___pg_34663e60e8f48069b37afed919773478.mp4",
+        "drive_link": "https://drive.google.com/file/d/1KNxlQ-aMTbj7OdPfDvpjiPLN9X1yK6CY/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34663e60-e8f4-80fa-af2c-c4aa9735e22e",
+        "video_name": "Saying Sorry___pg_34663e60e8f480faaf2cc4aa9735e22e",
+        "age_group": "3-6",
+        "category": "English speaking",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Saying_Sorry___pg_34663e60e8f480faaf2cc4aa9735e22e.mp4",
+        "drive_link": "https://drive.google.com/file/d/1G7q0lIsGyh7ofevNPcczTkI4iiQZx5OJ/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34a63e60-e8f4-8060-8699-cbff07d26896",
+        "video_name": "Sad___pg_34a63e60e8f480608699cbff07d26896",
+        "age_group": "under 3",
+        "category": "Emotions",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Sad___pg_34a63e60e8f480608699cbff07d26896.mp4",
+        "drive_link": "https://drive.google.com/file/d/1m3JeSEx3hwGea6bAJrW9RtZQE3GrKNie/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34a63e60-e8f4-8006-b231-e91c98fd1866",
+        "video_name": "001_colors_grey___pg_34a63e60e8f48006b231e91c98fd1866",
+        "age_group": "3-6",
+        "category": "Colors",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\001_colors_grey___pg_34a63e60e8f48006b231e91c98fd1866.mp4",
+        "drive_link": "https://drive.google.com/drive/folders/1o3-9AkfG_PfOeGjjyJm3nsyf6RWrHYzK",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34a63e60-e8f4-808f-858f-db5c5fd576ac",
+        "video_name": "005_abc_letter_o_orange_owl___pg_34a63e60e8f4808f858fdb5c5fd576ac",
+        "age_group": "3-6",
+        "category": "ABC",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\005_abc_letter_o_orange_owl___pg_34a63e60e8f4808f858fdb5c5fd576ac.mp4",
+        "drive_link": "https://drive.google.com/drive/folders/1vr6_oBi7lFJS4yClutTVY539KjDyttd6",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34a63e60-e8f4-8002-b04b-c4865de94135",
+        "video_name": "002_abc_letter_l_lion_leaf___pg_34a63e60e8f48002b04bc4865de94135",
+        "age_group": "3-6",
+        "category": "ABC",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\002_abc_letter_l_lion_leaf___pg_34a63e60e8f48002b04bc4865de94135.mp4",
+        "drive_link": "https://drive.google.com/drive/folders/1vRH5pQaZmC5aK5g3epvCZA6Uc6pk5bMv",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34a63e60-e8f4-80ad-8d52-e21da9386283",
+        "video_name": "001_abc_letter_k_kite_key___pg_34a63e60e8f480ad8d52e21da9386283",
+        "age_group": "3-6",
+        "category": "ABC",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\001_abc_letter_k_kite_key___pg_34a63e60e8f480ad8d52e21da9386283.mp4",
+        "drive_link": "https://drive.google.com/drive/folders/1rdyMOszwsSJ9IbemV0vKkNoNgTqfz07U",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34a63e60-e8f4-80ce-aad4-d77632a068a3",
+        "video_name": "010_sight_words_go___pg_34a63e60e8f480ceaad4d77632a068a3",
+        "age_group": "3-6",
+        "category": "Sight  words",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\010_sight_words_go___pg_34a63e60e8f480ceaad4d77632a068a3.mp4",
+        "drive_link": "https://drive.google.com/file/d/1B0X16N_-dn9gJxQ_b4pGhT-5iH7lGT5X/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34a63e60-e8f4-8026-a760-c41da0dbecc1",
+        "video_name": "009_sight_words_up___pg_34a63e60e8f48026a760c41da0dbecc1",
+        "age_group": "3-6",
+        "category": "Sight  words",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\009_sight_words_up___pg_34a63e60e8f48026a760c41da0dbecc1.mp4",
+        "drive_link": "https://drive.google.com/file/d/16Dq7AaGASW859pmk8y-3CdmU1q1um1b4/view?usp=drive_link",
+        "pipeline_status": "batched"
+      }
+    ],
+    "upload_job_id": null,
+    "upload_date": "2026-04-27",
+    "finalized_date": null
+  },
+  "Batch_574": {
+    "batch_name": "Batch_574",
+    "status": "pending_first_review",
+    "created_at": "2026-06-10T16:50:39.941517",
+    "videos": [
+      {
+        "page_id": "34a63e60-e8f4-80a8-b6c6-ce8f817a768c",
+        "video_name": "007_sight_words_on___pg_34a63e60e8f480a8b6c6ce8f817a768c",
+        "age_group": "3-6",
+        "category": "Sight  words",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\007_sight_words_on___pg_34a63e60e8f480a8b6c6ce8f817a768c.mp4",
+        "drive_link": "https://drive.google.com/file/d/1FckbMQO6BryoV3TJe-X1YdbMVbl6TM4n/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34a63e60-e8f4-8024-bd68-e59383cc4c5f",
+        "video_name": "006_sight_words_be___pg_34a63e60e8f48024bd68e59383cc4c5f",
+        "age_group": "3-6",
+        "category": "Sight  words",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\006_sight_words_be___pg_34a63e60e8f48024bd68e59383cc4c5f.mp4",
+        "drive_link": "https://drive.google.com/file/d/1L8FT7ObFDg-KbQf0-1yxcohvv8a7tEQB/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34a63e60-e8f4-80d5-88f6-e490cd2cef9d",
+        "video_name": "005_sight_words_my___pg_34a63e60e8f480d588f6e490cd2cef9d",
+        "age_group": "3-6",
+        "category": "Sight  words",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\005_sight_words_my___pg_34a63e60e8f480d588f6e490cd2cef9d.mp4",
+        "drive_link": "https://drive.google.com/file/d/1T23Dvemq7pRAY-5HCz4Fj1bVuoWOAt4S/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34a63e60-e8f4-80d3-a872-fa68acc2c173",
+        "video_name": "004_sight_words_me___pg_34a63e60e8f480d3a872fa68acc2c173",
+        "age_group": "3-6",
+        "category": "Sight  words",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\004_sight_words_me___pg_34a63e60e8f480d3a872fa68acc2c173.mp4",
+        "drive_link": "https://drive.google.com/file/d/1GzNQHWp_03vBFfJjWBFRPc2eq0E4ZZH6/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34a63e60-e8f4-802d-90d7-da354bf6883c",
+        "video_name": "003_good_habits_washing_face_in_the_morning___pg_34a63e60e8f4802d90d7da354bf6883c",
+        "age_group": "3-6",
+        "category": "Good habits",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\003_good_habits_washing_face_in_the_morning___pg_34a63e60e8f4802d90d7da354bf6883c.mp4",
+        "drive_link": "https://drive.google.com/drive/u/3/folders/1sFZlIaRLwv993SNlZcw_iDBn9TuBa50n",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34a63e60-e8f4-80a4-aa77-f89298e557c2",
+        "video_name": "009_vehicles_crane___pg_34a63e60e8f480a4aa77f89298e557c2",
+        "age_group": "3-6",
+        "category": "Vehicles",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\009_vehicles_crane___pg_34a63e60e8f480a4aa77f89298e557c2.mp4",
+        "drive_link": "https://drive.google.com/file/d/1kzPJSfMwhddG0fG6JbwMTTuZIGNaLKeP/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34a63e60-e8f4-80a9-adfd-d944fc7c8718",
+        "video_name": "008_vehicles_bulldozer_jcb___pg_34a63e60e8f480a9adfdd944fc7c8718",
+        "age_group": "3-6",
+        "category": "Vehicles",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\008_vehicles_bulldozer_jcb___pg_34a63e60e8f480a9adfdd944fc7c8718.mp4",
+        "drive_link": "https://drive.google.com/file/d/1gsyglpsih0OV3uMAi368kU-NKYSmdvjl/view?usp=drive_link",
+        "pipeline_status": "batched"
+      }
+    ],
+    "upload_job_id": null,
+    "upload_date": "2026-04-27",
+    "finalized_date": null
+  },
+  "Batch_575": {
+    "batch_name": "Batch_575",
+    "status": "pending_first_review",
+    "created_at": "2026-06-10T16:51:05.011477",
+    "videos": [
+      {
+        "page_id": "34a63e60-e8f4-80e7-b9e4-f08d9f99e830",
+        "video_name": "006_vehicles_police_car___pg_34a63e60e8f480e7b9e4f08d9f99e830",
+        "age_group": "3-6",
+        "category": "Vehicles",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\006_vehicles_police_car___pg_34a63e60e8f480e7b9e4f08d9f99e830.mp4",
+        "drive_link": "https://drive.google.com/file/d/1WOZiEeVLdUgUe_eAwrZDtgMJG_igdiXq/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34a63e60-e8f4-80c9-8851-f5139e3cb6ac",
+        "video_name": "005_vehicles_fire_truck___pg_34a63e60e8f480c98851f5139e3cb6ac",
+        "age_group": "3-6",
+        "category": "Vehicles",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\005_vehicles_fire_truck___pg_34a63e60e8f480c98851f5139e3cb6ac.mp4",
+        "drive_link": "https://drive.google.com/file/d/1LiJoNtM7EIWp0Jf81hzeTlPZ2QOwOjM4/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34a63e60-e8f4-80f3-bbac-f1bed075bb8d",
+        "video_name": "003_vehicles_helicopter___pg_34a63e60e8f480f3bbacf1bed075bb8d",
+        "age_group": "3-6",
+        "category": "Vehicles",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\003_vehicles_helicopter___pg_34a63e60e8f480f3bbacf1bed075bb8d.mp4",
+        "drive_link": "https://drive.google.com/file/d/1NwJfwY4e6xwp5087FLCpYx874Wh8axtu/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34a63e60-e8f4-8078-8984-c837d37e9139",
+        "video_name": "002_vehicles_airplane___pg_34a63e60e8f480788984c837d37e9139",
+        "age_group": "3-6",
+        "category": "Vehicles",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\002_vehicles_airplane___pg_34a63e60e8f480788984c837d37e9139.mp4",
+        "drive_link": "https://drive.google.com/file/d/1VfglmKuTO34vtRk35eZClWYcNtXM2oSW/view?usp=drive_link",
+        "pipeline_status": "batched"
+      }
+    ],
+    "upload_job_id": null,
+    "upload_date": "2026-04-27",
+    "finalized_date": null
+  },
+  "Batch_576": {
+    "batch_name": "Batch_576",
+    "status": "pending_first_review",
+    "created_at": "2026-06-10T16:51:15.234597",
+    "videos": [
+      {
+        "page_id": "34a63e60-e8f4-809a-ab11-eb65f4edd754",
+        "video_name": "001_vehicles_ship___pg_34a63e60e8f4809aab11eb65f4edd754",
+        "age_group": "3-6",
+        "category": "Vehicles",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\001_vehicles_ship___pg_34a63e60e8f4809aab11eb65f4edd754.mp4",
+        "drive_link": "https://drive.google.com/file/d/1BD72sUP6XzKr62PkyMBgcYpW6j8FgSG_/view?usp=drive_link",
+        "pipeline_status": "batched"
+      }
+    ],
+    "upload_job_id": null,
+    "upload_date": "2026-04-27",
+    "finalized_date": null
   }
 }

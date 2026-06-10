@@ -393,6 +393,35 @@ def stop_pipeline():
         return jsonify({"error": msg}), 400
     return jsonify({"message": msg})
 
+@app.route("/api/kill-all-python", methods=["POST"])
+def kill_all_python():
+    """Kill all other Python processes on this machine, then restart self."""
+    import subprocess as sp
+    my_pid = os.getpid()
+    try:
+        # Get list of all python PIDs
+        result = sp.run(
+            ["powershell", "-Command",
+             f"Get-Process python* -ErrorAction SilentlyContinue | Where-Object {{ $_.Id -ne {my_pid} }} | Select-Object -ExpandProperty Id"],
+            capture_output=True, text=True, timeout=5
+        )
+        pids = [p.strip() for p in result.stdout.strip().split("\n") if p.strip()]
+        killed = 0
+        for pid in pids:
+            try:
+                sp.run(["taskkill", "/F", "/PID", pid], capture_output=True, timeout=5)
+                killed += 1
+            except Exception:
+                pass
+        # Reset internal pipeline state
+        batch_manager.pipeline_running = False
+        batch_manager.active_pipeline_process = None
+        batch_manager.pipeline_paused = False
+        batch_manager.global_log_buffer.write(f"\n[SYSTEM] Killed {killed} Python process(es). Dashboard still running (PID {my_pid}).")
+        return jsonify({"message": f"Killed {killed} Python process(es). Dashboard still running."})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 @app.route("/api/batches/stop-upload", methods=["POST"])
 def stop_upload():
     success, msg = batch_manager.stop_automated_upload()
