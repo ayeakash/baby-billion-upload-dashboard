@@ -379,49 +379,42 @@ def delete_batch(batch_name):
 
 @app.route("/api/batches/delete-all", methods=["POST"])
 def delete_all_batches():
-    """Delete ALL batches (pending, uploaded, finalized) at once."""
+    """Delete ALL batches (pending, uploaded, finalized) at once.
+    Also clears ALL batch references from state.json to prevent resurrection."""
     import shutil
     import state_manager as sm
 
-    batches = batch_manager.load_batches()
-    batch_names = list(batches.keys())
-    if not batch_names:
-        return jsonify({"message": "No batches to delete."})
+    # 1. Clear ALL batch references from state.json (not just current batches)
+    try:
+        state = sm.get_all()
+        cleared = 0
+        for page_id, rec in state.items():
+            if isinstance(rec, dict) and rec.get("batch"):
+                sm.upsert(page_id, pipeline_status="pending", batch="", local_file="")
+                cleared += 1
+        log.info(f"Cleared batch references from {cleared} state.json records")
+    except Exception as e:
+        log.error(f"Error clearing state.json batch refs: {e}")
 
-    deleted = 0
-    errors = []
-    for name in batch_names:
-        batch_dir = os.path.join(uploader.BATCHES_DIR, name)
-        csv_path = os.path.join(uploader.BATCHES_DIR, f"{name}.csv")
-        zip_path = os.path.join(uploader.BATCHES_DIR, f"{name}.zip")
-
-        # Reset video states
-        try:
-            state = sm.get_all()
-            for page_id, rec in state.items():
-                if isinstance(rec, dict) and rec.get("batch") == name:
-                    sm.upsert(page_id, pipeline_status="pending", batch="", local_file="")
-        except Exception as e:
-            errors.append(f"{name} state: {e}")
-
-        # Delete files
-        for path in [batch_dir, csv_path, zip_path]:
+    # 2. Delete all batch files from disk
+    deleted_files = 0
+    if os.path.isdir(uploader.BATCHES_DIR):
+        for entry in os.listdir(uploader.BATCHES_DIR):
+            full = os.path.join(uploader.BATCHES_DIR, entry)
             try:
-                if os.path.isdir(path):
-                    shutil.rmtree(path)
-                elif os.path.isfile(path):
-                    os.remove(path)
+                if os.path.isdir(full) and entry.startswith("Batch_"):
+                    shutil.rmtree(full)
+                    deleted_files += 1
+                elif os.path.isfile(full) and entry.startswith("Batch_"):
+                    os.remove(full)
+                    deleted_files += 1
             except Exception as e:
-                errors.append(f"{name}: {e}")
+                log.warning(f"Could not delete {entry}: {e}")
 
-        deleted += 1
-
-    # Clear batches.json
+    # 3. Clear batches.json completely
     batch_manager.save_batches({})
 
-    msg = f"Deleted {deleted} batch(es)."
-    if errors:
-        msg += f" Warnings: {'; '.join(errors[:5])}"
+    msg = f"Deleted all batches. Cleared {cleared} state refs, removed {deleted_files} files."
     log.info(msg)
     return jsonify({"message": msg})
 

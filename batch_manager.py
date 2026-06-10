@@ -135,18 +135,22 @@ def scan_and_register_batches():
     changed = False
     for batch_name, v_list in grouped.items():
         if batch_name not in batches:
+            # Only register if the batch folder or files actually exist on disk
+            batch_dir = os.path.join(uploader.BATCHES_DIR, batch_name)
+            csv_file = os.path.join(uploader.BATCHES_DIR, f"{batch_name}.csv")
+            if not os.path.isdir(batch_dir) and not os.path.isfile(csv_file):
+                # Ghost batch — files were deleted. Skip registration.
+                continue
+
             # Check if all videos are uploaded in state.json
             all_uploaded = all(v.get("pipeline_status") == "uploaded" for v in v_list)
             
             # Determine initial status
-            # If the files exist in the batches folder, it's pending review.
-            batch_dir = os.path.join(uploader.BATCHES_DIR, batch_name)
             if all_uploaded:
                 status = "finalized"
             elif os.path.isdir(batch_dir):
                 status = "pending_first_review"
             else:
-                # If files are gone and not all uploaded, it could be legacy/unknown
                 status = "pending_first_review"
             
             # Extract metadata
