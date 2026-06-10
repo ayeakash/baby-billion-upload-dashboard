@@ -377,6 +377,54 @@ def delete_batch(batch_name):
     log.info(f"Batch {batch_name} fully deleted")
     return jsonify({"message": f"Batch '{batch_name}' deleted. Videos reset to 'pending' for re-download."})
 
+@app.route("/api/batches/delete-all", methods=["POST"])
+def delete_all_batches():
+    """Delete ALL batches (pending, uploaded, finalized) at once."""
+    import shutil
+    import state_manager as sm
+
+    batches = batch_manager.load_batches()
+    batch_names = list(batches.keys())
+    if not batch_names:
+        return jsonify({"message": "No batches to delete."})
+
+    deleted = 0
+    errors = []
+    for name in batch_names:
+        batch_dir = os.path.join(uploader.BATCHES_DIR, name)
+        csv_path = os.path.join(uploader.BATCHES_DIR, f"{name}.csv")
+        zip_path = os.path.join(uploader.BATCHES_DIR, f"{name}.zip")
+
+        # Reset video states
+        try:
+            state = sm.get_all()
+            for page_id, rec in state.items():
+                if isinstance(rec, dict) and rec.get("batch") == name:
+                    sm.upsert(page_id, pipeline_status="pending", batch="", local_file="")
+        except Exception as e:
+            errors.append(f"{name} state: {e}")
+
+        # Delete files
+        for path in [batch_dir, csv_path, zip_path]:
+            try:
+                if os.path.isdir(path):
+                    shutil.rmtree(path)
+                elif os.path.isfile(path):
+                    os.remove(path)
+            except Exception as e:
+                errors.append(f"{name}: {e}")
+
+        deleted += 1
+
+    # Clear batches.json
+    batch_manager.save_batches({})
+
+    msg = f"Deleted {deleted} batch(es)."
+    if errors:
+        msg += f" Warnings: {'; '.join(errors[:5])}"
+    log.info(msg)
+    return jsonify({"message": msg})
+
 @app.route("/api/batches/run-pipeline", methods=["POST"])
 def run_pipeline():
     data = request.json or {}

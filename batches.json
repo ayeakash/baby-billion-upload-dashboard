@@ -10398,5 +10398,107 @@
     "upload_job_id": null,
     "upload_date": "2026-04-27",
     "finalized_date": null
+  },
+  "Batch_577": {
+    "batch_name": "Batch_577",
+    "status": "pending_first_review",
+    "created_at": "2026-06-10T16:51:24.987257",
+    "videos": [
+      {
+        "page_id": "34a63e60-e8f4-8079-a40d-e87750013378",
+        "video_name": "005_simple_sentences_i_like_chocolates___pg_34a63e60e8f48079a40de87750013378",
+        "age_group": "3-6",
+        "category": "Simple  sentences",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\005_simple_sentences_i_like_chocolates___pg_34a63e60e8f48079a40de87750013378.mp4",
+        "drive_link": "https://drive.google.com/file/d/1msrVkhrUjKZm754GFRwQFJpFNq6Rd45B/view?usp=drive_link",
+        "pipeline_status": "batched"
+      }
+    ],
+    "upload_job_id": null,
+    "upload_date": "2026-04-27",
+    "finalized_date": null
+  },
+  "Batch_578": {
+    "batch_name": "Batch_578",
+    "status": "pending_first_review",
+    "created_at": "2026-06-10T16:51:30.192035",
+    "videos": [
+      {
+        "page_id": "34a63e60-e8f4-8025-b343-e1d5b53c11dc",
+        "video_name": "003_simple_sentences_i_like_apples___pg_34a63e60e8f48025b343e1d5b53c11dc",
+        "age_group": "3-6",
+        "category": "Simple  sentences",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\003_simple_sentences_i_like_apples___pg_34a63e60e8f48025b343e1d5b53c11dc.mp4",
+        "drive_link": "https://drive.google.com/file/d/10V8SS7BPRH6qYg5yGjOmPLRVOAnvaLQb/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34963e60-e8f4-801c-8a0f-f50353bdd54d",
+        "video_name": "005_english_speaking_see_you_tomorrow___pg_34963e60e8f4801c8a0ff50353bdd54d",
+        "age_group": "3-6",
+        "category": "English speaking",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\005_english_speaking_see_you_tomorrow___pg_34963e60e8f4801c8a0ff50353bdd54d.mp4",
+        "drive_link": "https://drive.google.com/file/d/1xwDz3tQQO62tLXah-kEhQOUrPlpwx5Pp/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34963e60-e8f4-8036-a622-d22a8b66c508",
+        "video_name": "004_english_speaking_nice_to_meet_you___pg_34963e60e8f48036a622d22a8b66c508",
+        "age_group": "3-6",
+        "category": "English speaking",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\004_english_speaking_nice_to_meet_you___pg_34963e60e8f48036a622d22a8b66c508.mp4",
+        "drive_link": "https://drive.google.com/file/d/1FGl7bx20PZKZaOwrnwqPduqFA3pnh6rH/view?usp=drive_link",
+        "pipeline_status": "batched"
+      }
+    ],
+    "upload_job_id": null,
+    "upload_date": "2026-04-27",
+    "finalized_date": null
+  },
+  "Batch_579": {
+    "batch_name": "Batch_579",
+    "status": "pending_first_review",
+    "created_at": "2026-06-10T16:51:47.527982",
+    "videos": [
+      {
+        "page_id": "34a63e60-e8f4-802d-a389-e517fee41e58",
+        "video_name": "002_simple_sentences_i_like_bananas___pg_34a63e60e8f4802da389e517fee41e58",
+        "age_group": "3-6",
+        "category": "Simple  sentences",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\002_simple_sentences_i_like_bananas___pg_34a63e60e8f4802da389e517fee41e58.mp4",
+        "drive_link": "https://drive.google.com/file/d/1r0-O0XEq_68rEgtP_Aj8uMe2ZIjXFWOk/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34963e60-e8f4-8045-8cba-d6ca39a5264c",
+        "video_name": "003_english_speaking_good_night___pg_34963e60e8f480458cbad6ca39a5264c",
+        "age_group": "3-6",
+        "category": "English speaking",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\003_english_speaking_good_night___pg_34963e60e8f480458cbad6ca39a5264c.mp4",
+        "drive_link": "https://drive.google.com/file/d/1mqmbkap0TKGDnB8pKtlESuERUbTZcICW/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34963e60-e8f4-8095-8b81-ce43954a2910",
+        "video_name": "002_english_speaking_good_evening___pg_34963e60e8f480958b81ce43954a2910",
+        "age_group": "3-6",
+        "category": "English speaking",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\002_english_speaking_good_evening___pg_34963e60e8f480958b81ce43954a2910.mp4",
+        "drive_link": "https://drive.google.com/file/d/1sEoWNEDDXjrbFIckmtlo22059Fr86_ui/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "34963e60-e8f4-80d5-afcb-cce35c453cd6",
+        "video_name": "001_english_speaking_good_afternoon___pg_34963e60e8f480d5afcbcce35c453cd6",
+        "age_group": "3-6",
+        "category": "English speaking",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\001_english_speaking_good_afternoon___pg_34963e60e8f480d5afcbcce35c453cd6.mp4",
+        "drive_link": "https://drive.google.com/file/d/1YDM_AnwWSytWKkk1zpFbK_LBPLooTMyr/view?usp=drive_link",
+        "pipeline_status": "batched"
+      }
+    ],
+    "upload_job_id": null,
+    "upload_date": "2026-04-27",
+    "finalized_date": null
   }
 }
