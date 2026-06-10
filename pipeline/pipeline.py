@@ -924,18 +924,36 @@ def main():
     # ── Stage 1: Fetch from Notion ────────────────────────────────────────────
     if args.batch_only:
         state_all  = sm.get_all()
-        all_videos = [
-            {
-                "page_id":    pid,
-                "video_name": rec.get("video_name", ""),
-                "age_group":  rec.get("age_group", ""),
-                "category":   rec.get("category", ""),
-                "drive_link": rec.get("drive_link", ""),
-                "local_file": rec.get("local_file", ""),
-            }
-            for pid, rec in state_all.items()
-            if rec.get("pipeline_status") == "downloaded"
-        ]
+        all_videos = []
+        for pid, rec in state_all.items():
+            if rec.get("pipeline_status") != "downloaded":
+                continue
+            vname      = rec.get("video_name", "")
+            page_id    = rec.get("page_id", pid)
+            lang_suffix = rec.get("lang_suffix", "")
+
+            # Re-tag video name if not already tagged
+            if vname and "___pg_" not in vname:
+                short_pid = page_id.replace("-", "")
+                if lang_suffix:
+                    tagged = f"{vname}___pg_{short_pid}{lang_suffix}"
+                else:
+                    # Old single-link entries: no language suffix
+                    tagged = f"{vname}___pg_{short_pid}"
+                log.info(f"  [RETAG] {vname} → {tagged}")
+                vname = tagged
+                # Update state.json so future runs use the tagged name
+                sm.upsert(pid, video_name=vname, lang_suffix=lang_suffix)
+
+            all_videos.append({
+                "page_id":     page_id,
+                "video_name":  vname,
+                "age_group":   rec.get("age_group", ""),
+                "category":    rec.get("category", ""),
+                "drive_link":  rec.get("drive_link", ""),
+                "local_file":  rec.get("local_file", ""),
+                "lang_suffix": lang_suffix,
+            })
         log.info(f"Batch-only mode: {len(all_videos)} downloaded videos found.")
         # Sanity check even in batch-only mode (safety net)
         all_videos, batch_failed = sanity_checker.run(all_videos, mark_notion=True)
