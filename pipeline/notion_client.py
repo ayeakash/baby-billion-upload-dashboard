@@ -252,7 +252,8 @@ def query_ready_to_upload() -> list[dict]:
                 link_variants.append((english_link, "___ln_En"))
 
             for drive_link, lang_suffix in link_variants:
-                tagged_name = f"{video_name}{lang_suffix}"
+                short_pid = page_id.replace("-", "")
+                tagged_name = f"{video_name}___pg_{short_pid}{lang_suffix}"
                 log.info(
                     f"  [OK] QUEUE [{tagged_name}] | "
                     f"Status='{status_val}' | Upload='{upload_val}' | "
@@ -347,7 +348,8 @@ def query_failed_to_upload() -> list[dict]:
                 link_variants.append((english_link, "___ln_En"))
 
             for drive_link, lang_suffix in link_variants:
-                tagged_name = f"{video_name}{lang_suffix}"
+                short_pid = page_id.replace("-", "")
+                tagged_name = f"{video_name}___pg_{short_pid}{lang_suffix}"
                 results.append({
                     "page_id":    page_id,
                     "video_name": tagged_name,
