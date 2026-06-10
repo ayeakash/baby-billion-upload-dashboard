@@ -1,8 +1,42 @@
+# ── Python ────────────────────────────────────────────────
 __pycache__/
 *.pyc
 *.pyo
 *.egg-info/
 dist/
 build/
+.venv/
+venv/
+
+# ── Credentials (NEVER commit) ────────────────────────────
 .env
+credentials.py
+pipeline/credentials.py
+
+# ── Runtime data ──────────────────────────────────────────
+state.json
+state.json.bak_*
+notion_unsynced.json
+batches.json
+
+# ── Downloads & batches (large media files) ───────────────
+downloads/
+batches/
+
+# ── Logs ──────────────────────────────────────────────────
+logs/
 *.log
+
+# ── Debug artifacts ───────────────────────────────────────
+debug_shots/
+
+# ── IDE ───────────────────────────────────────────────────
+.vscode/
+.idea/
+
+# ── OS ────────────────────────────────────────────────────
+Thumbs.db
+.DS_Store
+
+# ── Pipeline scratch scripts ─────────────────────────────
+pipeline/_*.py

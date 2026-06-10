@@ -5,20 +5,20 @@ title BabyBillion Pipeline Dashboard
 :: ── Ensure working directory is this script's folder ─────────
 cd /d "%~dp0"
 
-:: ── Activate venv from notion_pipeline (run setup.bat first if this fails) ──
-set "PIPELINE_DIR=%~dp0..\YouTube Downloads\notion_pipeline"
+:: ── Activate venv (run setup.bat in pipeline/ first if this fails) ──
+set "PIPELINE_DIR=%~dp0pipeline"
 
-if not exist "%PIPELINE_DIR%\.venv\Scripts\activate.bat" (
+if not exist "%~dp0.venv\Scripts\activate.bat" (
     echo.
     echo  [ERROR] Virtual environment not found at:
-    echo         %PIPELINE_DIR%\.venv
+    echo         %~dp0.venv
     echo.
-    echo  Run setup.bat in notion_pipeline first!
+    echo  Run setup.bat in pipeline\ first!
     echo.
     pause
     exit /b 1
 )
-call "%PIPELINE_DIR%\.venv\Scripts\activate.bat"
+call "%~dp0.venv\Scripts\activate.bat"
 
 :: ── Check credentials ─────────────────────────────────────────
 if not exist "%PIPELINE_DIR%\credentials.py" (
@@ -26,7 +26,7 @@ if not exist "%PIPELINE_DIR%\credentials.py" (
     echo  [ERROR] credentials.py not found in:
     echo         %PIPELINE_DIR%
     echo.
-    echo  Run setup.bat in notion_pipeline first!
+    echo  Run setup.bat in pipeline\ first!
     echo.
     pause
     exit /b 1

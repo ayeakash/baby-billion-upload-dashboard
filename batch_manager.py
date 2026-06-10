@@ -13,8 +13,8 @@ import subprocess
 from datetime import datetime, date
 import collections
 
-# ── Add notion_pipeline to sys.path so we can import shared modules ──────────
-_PIPELINE_DIR = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "YouTube Downloads", "notion_pipeline"))
+# ── Add local pipeline/ to sys.path so we can import shared modules ──────────
+_PIPELINE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "pipeline")
 if _PIPELINE_DIR not in sys.path:
     sys.path.insert(0, _PIPELINE_DIR)
 
