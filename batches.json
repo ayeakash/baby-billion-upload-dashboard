@@ -8583,25 +8583,6 @@
     "upload_date": null,
     "finalized_date": null
   },
-  "Batch_526": {
-    "batch_name": "Batch_526",
-    "status": "pending_first_review",
-    "created_at": "2026-05-22T14:45:56.043739",
-    "videos": [
-      {
-        "page_id": "36563e60-e8f4-809a-9d79-eab476af4404",
-        "video_name": "Comp_3-6_CVC Words_1",
-        "age_group": "3-6",
-        "category": "CVC Words",
-        "local_file": "D:\\BabyBillion\\YouTube Downloads\\notion_pipeline\\downloads\\Comp_3-6_CVC_Words_1.mp4",
-        "drive_link": "https://drive.google.com/file/d/12ECvjZZQJRt0pU7_S8AaAqh1PF_6obSc/view?usp=sharing",
-        "pipeline_status": "batched"
-      }
-    ],
-    "upload_job_id": null,
-    "upload_date": null,
-    "finalized_date": null
-  },
   "Batch_528": {
     "batch_name": "Batch_528",
     "status": "pending_first_review",
@@ -8659,43 +8640,6 @@
     "upload_date": null,
     "finalized_date": null
   },
-  "Batch_530": {
-    "batch_name": "Batch_530",
-    "status": "pending_first_review",
-    "created_at": "2026-05-22T14:47:55.925928",
-    "videos": [
-      {
-        "page_id": "36463e60-e8f4-809b-ad2d-f74dde7d9b3f",
-        "video_name": "COMP_3-6_1-10_1",
-        "age_group": "3-6",
-        "category": "Counting",
-        "local_file": "D:\\BabyBillion\\YouTube Downloads\\notion_pipeline\\downloads\\COMP_3-6_1-10_1.mp4",
-        "drive_link": "https://drive.google.com/file/d/1z6zpuSzfpnYUu0dWMTOrG5XewkAiHJkb/view?usp=sharing",
-        "pipeline_status": "batched"
-      },
-      {
-        "page_id": "36263e60-e8f4-806d-ad5b-ea99fb4bd9a7",
-        "video_name": "064_sight_words_big and little",
-        "age_group": "3-6",
-        "category": "Sight words",
-        "local_file": "D:\\BabyBillion\\YouTube Downloads\\notion_pipeline\\downloads\\064_sight_words_big_and_little.mp4",
-        "drive_link": "https://drive.google.com/file/d/1x87qOcC8p1fIU5Mcosd-n61GWAyBtRfO/view?usp=drive_link",
-        "pipeline_status": "batched"
-      },
-      {
-        "page_id": "36263e60-e8f4-80f7-8f5f-e201af2f1a85",
-        "video_name": "062_sight_words_new and old",
-        "age_group": "3-6",
-        "category": "Sight words",
-        "local_file": "D:\\BabyBillion\\YouTube Downloads\\notion_pipeline\\downloads\\062_sight_words_new_and_old.mp4",
-        "drive_link": "https://drive.google.com/file/d/1cpDys9zTn-1p0xUBIxRLpejLx22WofDO/view?usp=drive_link",
-        "pipeline_status": "batched"
-      }
-    ],
-    "upload_job_id": null,
-    "upload_date": null,
-    "finalized_date": null
-  },
   "Batch_531": {
     "batch_name": "Batch_531",
     "status": "finalized",
@@ -8737,7 +8681,7 @@
         "category": "Sight words",
         "local_file": "D:\\BabyBillion\\YouTube Downloads\\notion_pipeline\\downloads\\061_sight_words_good.mp4",
         "drive_link": "https://drive.google.com/file/d/1Mkrwn9umL3Rm7D6UJv848V9hKy-OF__r/view?usp=drive_link",
-        "pipeline_status": "uploaded_pending_final_review"
+        "pipeline_status": "batched"
       },
       {
         "page_id": "36263e60-e8f4-8049-b012-d98f5a9fa1e1",
@@ -8746,7 +8690,7 @@
         "category": "Emotions",
         "local_file": "D:\\BabyBillion\\YouTube Downloads\\notion_pipeline\\downloads\\Using_Kind_Words_When_Upset.mp4",
         "drive_link": "https://drive.google.com/file/d/1_az8f8Tb2TqmKHhHCKch0-mu6CJq6QkJ/view?usp=drive_link",
-        "pipeline_status": "uploaded_pending_final_review"
+        "pipeline_status": "batched"
       },
       {
         "page_id": "36263e60-e8f4-80f3-9fa7-cc6c5acda6f8",
@@ -8755,7 +8699,7 @@
         "category": "Emotions",
         "local_file": "D:\\BabyBillion\\YouTube Downloads\\notion_pipeline\\downloads\\Talking_About_My_Feelings.mp4",
         "drive_link": "https://drive.google.com/file/d/13nWtKMH88O4msGpdFI4kT9sBg2_wBW4O/view?usp=drive_linkhttps://drive.google.com/file/d/13nWtKMH88O4msGpdFI4kT9sBg2_wBW4O/view?usp=drive_link",
-        "pipeline_status": "uploaded_pending_final_review"
+        "pipeline_status": "batched"
       },
       {
         "page_id": "36263e60-e8f4-8018-a9cc-db5b402adb44",
@@ -8764,8 +8708,7 @@
         "category": "Emotions",
         "local_file": "D:\\BabyBillion\\YouTube Downloads\\notion_pipeline\\downloads\\Feeling_Grateful.mp4",
         "drive_link": "https://drive.google.com/file/d/1rUMMAtJxWz-TJoPs9rtrRteMD7PI9mec/view?usp=drive_link",
-        "pipeline_status": "bad",
-        "redo_reason": "Unclear message, incomplete sentences"
+        "pipeline_status": "batched"
       },
       {
         "page_id": "36263e60-e8f4-803e-a83a-c1d9ac11acf4",
@@ -8774,8 +8717,7 @@
         "category": "Patterns",
         "local_file": "D:\\BabyBillion\\YouTube Downloads\\notion_pipeline\\downloads\\108_3-6_Size_Patterns_Full_length.mp4",
         "drive_link": "https://drive.google.com/file/d/1Pzyg7uNA6cMsF1CJBAyQwZFOOSHNPbXR/view?usp=drive_link",
-        "pipeline_status": "bad",
-        "redo_reason": "Initial patterns are not clear. Need to properly communicate what we're calling tall. Currently the kid is standing on a short building when he says tall"
+        "pipeline_status": "batched"
       },
       {
         "page_id": "36263e60-e8f4-80d6-b817-ff40a19a72d3",
@@ -8784,7 +8726,7 @@
         "category": "Patterns",
         "local_file": "D:\\BabyBillion\\YouTube Downloads\\notion_pipeline\\downloads\\107_3-6_Color_Patterns_RedBlue.mp4",
         "drive_link": "https://drive.google.com/file/d/1al9u5OdszY8P8CbVsdFgzF--57p7hV-8/view?usp=drive_link",
-        "pipeline_status": "uploaded_pending_final_review"
+        "pipeline_status": "batched"
       }
     ],
     "upload_job_id": "9f0adabb-9e99-426b-94e1-ab0dd5c43cde",

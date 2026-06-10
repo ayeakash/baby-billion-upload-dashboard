@@ -351,15 +351,24 @@ def delete_batch(batch_name):
     except Exception as e:
         errors.append(f"batches.json: {e}")
 
-    # Delete files
+    # Delete files (retry up to 3 times — subprocess may still hold handles briefly)
+    import time
     for path, label in [(batch_dir, "folder"), (csv_path, "CSV"), (zip_path, "ZIP")]:
-        try:
-            if os.path.isdir(path):
-                shutil.rmtree(path)
-            elif os.path.isfile(path):
-                os.remove(path)
-        except Exception as e:
-            errors.append(f"{label}: {e}")
+        for attempt in range(3):
+            try:
+                if os.path.isdir(path):
+                    shutil.rmtree(path)
+                elif os.path.isfile(path):
+                    os.remove(path)
+                break  # success
+            except PermissionError:
+                if attempt < 2:
+                    time.sleep(1)  # wait for subprocess to release handles
+                else:
+                    errors.append(f"{label}: file locked — try again in a few seconds")
+            except Exception as e:
+                errors.append(f"{label}: {e}")
+                break
 
     if errors:
         log.warning(f"Batch {batch_name} deleted with errors: {errors}")
