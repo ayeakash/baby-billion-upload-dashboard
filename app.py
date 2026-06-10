@@ -260,14 +260,37 @@ def regenerate_csv(batch_name):
     if not os.path.isdir(batch_dir):
         return jsonify({"error": f"Batch folder '{batch_name}' not found"}), 404
 
-    # Get video metadata from state.json for age_group and category
+    # Primary source: batches.json (always has age_group and category)
+    batches = batch_manager.load_batches()
+    batch_record = batches.get(batch_name, {})
+    batch_videos = batch_record.get("videos", [])
+    
+    # Build lookup by video_name stem from batches.json
+    # Index by both original name and sanitized name (spaces→underscores, commas removed)
+    import re as _re
+    def _norm(n):
+        """Normalize name for matching: spaces→_, remove commas, collapse underscores."""
+        n = n.replace(" ", "_").replace(",", "")
+        n = _re.sub(r"_+", "_", n)
+        return n.strip("_")
+    
+    video_meta_by_name = {}
+    for bv in batch_videos:
+        vname = bv.get("video_name", "")
+        if vname:
+            video_meta_by_name[vname] = bv
+            video_meta_by_name[_norm(vname)] = bv
+    
+    # Fallback source: state.json
     import state_manager as sm
     state = sm.get_all()
-    videos_in_batch = {
-        v.get("video_name", os.path.splitext(os.path.basename(v.get("local_file", "")))[0]): v
-        for v in state.values()
-        if isinstance(v, dict) and v.get("batch") == batch_name
-    }
+    state_by_name = {}
+    for pid, rec in state.items():
+        if isinstance(rec, dict):
+            vname = rec.get("video_name", "")
+            if vname:
+                state_by_name[vname] = rec
+                state_by_name[_norm(vname)] = rec
 
     # List mp4 files in the batch folder
     mp4_files = [f for f in os.listdir(batch_dir) if f.endswith(".mp4")]
@@ -277,10 +300,14 @@ def regenerate_csv(batch_name):
     csv_rows = []
     for mp4 in mp4_files:
         stem = os.path.splitext(mp4)[0]
-        # Find matching state record
-        rec = videos_in_batch.get(stem, {})
+        
+        # Try batches.json first, then state.json (using both original and normalized keys)
+        rec = video_meta_by_name.get(stem) or video_meta_by_name.get(_norm(stem)) or state_by_name.get(stem) or state_by_name.get(_norm(stem)) or {}
         age = rec.get("age_group", "")
         notion_cat = rec.get("category", "")
+        
+        if not age or not notion_cat:
+            log.warning(f"  [REGEN] No metadata for {stem} — age={repr(age)}, cat={repr(notion_cat)}")
 
         # Resolve category mapping
         if "," in notion_cat:

@@ -63,5 +63,52 @@
     "upload_job_id": null,
     "upload_date": null,
     "finalized_date": null
+  },
+  "Batch_584": {
+    "batch_name": "Batch_584",
+    "status": "pending_first_review",
+    "created_at": "2026-06-10T17:49:46.428303",
+    "videos": [
+      {
+        "page_id": "36f63e60-e8f4-80fd-a0f5-fba429fadf76",
+        "video_name": "Long_6_My Body_05___pg_36f63e60e8f480fda0f5fba429fadf76___ln_Hi",
+        "age_group": "6+",
+        "category": "My Body",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Long_6_My_Body_05___pg_36f63e60e8f480fda0f5fba429fadf76___ln_Hi.mp4",
+        "drive_link": "https://drive.google.com/file/d/1GgjYAUESN38moGDhZW4EdiOoXM9ZisAX/view?usp=drive_link",
+        "pipeline_status": "batched"
+      },
+      {
+        "page_id": "36f63e60-e8f4-80fd-a0f5-fba429fadf76",
+        "video_name": "Long_6_My Body_05___pg_36f63e60e8f480fda0f5fba429fadf76___ln_En",
+        "age_group": "6+",
+        "category": "My Body",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Long_6_My_Body_05___pg_36f63e60e8f480fda0f5fba429fadf76___ln_En.mp4",
+        "drive_link": "https://drive.google.com/file/d/147HxsfQyeSIDnbwo5Y-ti4tMtGyxNyNt/view?usp=drive_link",
+        "pipeline_status": "batched"
+      }
+    ],
+    "upload_job_id": null,
+    "upload_date": null,
+    "finalized_date": null
+  },
+  "Batch_585": {
+    "batch_name": "Batch_585",
+    "status": "pending_first_review",
+    "created_at": "2026-06-10T17:50:46.884247",
+    "videos": [
+      {
+        "page_id": "36f63e60-e8f4-8086-a41d-c051171cc7a6",
+        "video_name": "Long_6_My Body_03___pg_36f63e60e8f48086a41dc051171cc7a6___ln_Hi",
+        "age_group": "6+",
+        "category": "My Body",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Long_6_My_Body_03___pg_36f63e60e8f48086a41dc051171cc7a6___ln_Hi.mp4",
+        "drive_link": "https://drive.google.com/file/d/1yjeW_vVutySLO7uInZkFO_bV2NgkpN9u/view?usp=drive_link",
+        "pipeline_status": "batched"
+      }
+    ],
+    "upload_job_id": null,
+    "upload_date": null,
+    "finalized_date": null
   }
 }

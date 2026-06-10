@@ -41,13 +41,18 @@ def _sanitize_video_name(stem: str) -> str:
     """
     Ensure the video_name written to the admin CSV is clean:
       - Collapse consecutive underscores / spaces into one underscore
+      - BUT preserve ___pg_ and ___ln_ tag separators (triple underscores)
       - Strip leading/trailing underscores or spaces
       - Remove characters the admin site might reject
     The stem is already sanitized by downloader.sanitize_filename, but this
     acts as a second pass in case the file was placed manually.
     """
-    name = re.sub(r"[^\w\-]", "_", stem)   # replace anything non-word with _
-    name = re.sub(r"_+", "_", name)          # collapse consecutive _
+    # Protect ___pg_ and ___ln_ markers from being collapsed
+    name = stem.replace("___pg_", "\x00PG\x00").replace("___ln_", "\x00LN\x00")
+    name = re.sub(r"[^\w\-\x00]", "_", name)   # replace anything non-word with _
+    name = re.sub(r"_+", "_", name)              # collapse consecutive _
+    # Restore the protected markers
+    name = name.replace("\x00PG\x00", "___pg_").replace("\x00LN\x00", "___ln_")
     name = name.strip("_").strip()
     return name or "untitled"
 
