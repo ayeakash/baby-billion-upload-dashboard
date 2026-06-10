@@ -5,20 +5,16 @@ title BabyBillion Pipeline Dashboard
 :: ── Ensure working directory is this script's folder ─────────
 cd /d "%~dp0"
 
-:: ── Activate venv (run setup.bat in pipeline/ first if this fails) ──
+:: ── Pipeline directory ─────────────────────────────────────────
 set "PIPELINE_DIR=%~dp0pipeline"
 
-if not exist "%~dp0.venv\Scripts\activate.bat" (
-    echo.
-    echo  [ERROR] Virtual environment not found at:
-    echo         %~dp0.venv
-    echo.
-    echo  Run setup.bat in pipeline\ first!
-    echo.
-    pause
-    exit /b 1
+:: ── Try venv first, fall back to global Python ──────────────
+if exist "%~dp0.venv\Scripts\activate.bat" (
+    call "%~dp0.venv\Scripts\activate.bat"
+    echo  [OK] Using virtual environment
+) else (
+    echo  [INFO] No .venv found, using system Python
 )
-call "%~dp0.venv\Scripts\activate.bat"
 
 :: ── Check credentials ─────────────────────────────────────────
 if not exist "%PIPELINE_DIR%\credentials.py" (
@@ -26,7 +22,7 @@ if not exist "%PIPELINE_DIR%\credentials.py" (
     echo  [ERROR] credentials.py not found in:
     echo         %PIPELINE_DIR%
     echo.
-    echo  Run setup.bat in pipeline\ first!
+    echo  Create credentials.py with your Notion token!
     echo.
     pause
     exit /b 1
@@ -36,8 +32,8 @@ if not exist "%PIPELINE_DIR%\credentials.py" (
 python -c "import flask" 2>nul
 if errorlevel 1 (
     echo.
-    echo  [ERROR] Flask is not installed in the virtual environment.
-    echo  Run:  pip install flask
+    echo  [ERROR] Flask is not installed.
+    echo  Run:  pip install flask requests selenium
     echo.
     pause
     exit /b 1
@@ -53,7 +49,6 @@ echo  Press Ctrl+C in this window to stop the server.
 echo.
 
 :: ── Launch browser AFTER a short delay so Flask can start ────
-:: Uses a background ping-based wait, then opens the URL
 start /b cmd /c "ping -n 3 127.0.0.1 >nul 2>&1 & start http://127.0.0.1:5000"
 
 :: ── Run the Flask app from this directory ────────────────────
