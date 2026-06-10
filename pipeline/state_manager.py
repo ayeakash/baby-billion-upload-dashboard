@@ -30,13 +30,23 @@ def _load() -> dict:
 
 def _save(state: dict):
     """Write state. Protected by _lock (caller must hold it or call via upsert)."""
+    import time
     if os.path.dirname(STATE_FILE):
         os.makedirs(os.path.dirname(STATE_FILE), exist_ok=True)
     tmp_file = STATE_FILE + ".tmp"
     try:
         with open(tmp_file, "w", encoding="utf-8") as f:
             json.dump(state, f, indent=2, ensure_ascii=False)
-        os.replace(tmp_file, STATE_FILE)
+        # Retry os.replace — on Windows another process may hold a read handle
+        for attempt in range(5):
+            try:
+                os.replace(tmp_file, STATE_FILE)
+                return
+            except PermissionError:
+                if attempt < 4:
+                    time.sleep(0.2)
+                else:
+                    raise
     except Exception as e:
         if os.path.isfile(tmp_file):
             try:
