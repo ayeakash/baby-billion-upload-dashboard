@@ -70,13 +70,17 @@ def get(page_id: str) -> dict | None:
     return _load().get(_key(page_id))
 
 
-def upsert(page_id: str, **fields):
-    """Create or update a video's state record (thread-safe)."""
+def upsert(state_key: str, **fields):
+    """Create or update a video's state record (thread-safe).
+    
+    state_key: The unique key for this record (may include lang suffix).
+    fields:    Arbitrary fields to store, including 'page_id' for the real Notion page ID.
+    """
     with _lock:
         state = _load_unlocked()
-        key = _key(page_id)
+        key = _key(state_key)
         if key not in state:
-            state[key] = {"page_id": page_id, "updated_at": datetime.now().isoformat()}
+            state[key] = {"page_id": state_key, "updated_at": datetime.now().isoformat()}
         state[key].update(fields)
         state[key]["updated_at"] = datetime.now().isoformat()
         _save(state)
