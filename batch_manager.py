@@ -379,7 +379,11 @@ def finalize_batch(batch_name: str) -> tuple[bool, str]:
         video_name = v["video_name"]
         
         global_log_buffer.write(f"[NOTION] Updating: {video_name}...")
-        notion_success = notion_client.mark_uploaded_in_notion(page_id, upload_date)
+        notion_success = notion_client.mark_uploaded_in_notion(
+            page_id, upload_date,
+            video_name=video_name,
+            lang_suffix=v.get("lang_suffix", ""),
+        )
         
         if notion_success:
             state_manager.mark_uploaded(page_id, job_id, upload_date)

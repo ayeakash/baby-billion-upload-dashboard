@@ -23,6 +23,7 @@ from config import (
     PROP_STATUS, PROP_UPLOAD, PROP_UPLOAD_DATE,
     PROP_FINAL_VIDEO_HINDI_LINK, PROP_FINAL_VIDEO_ENGLISH_LINK,
     PROP_FAILED_UPLOAD, PROP_REDO, PROP_REDO_REASON,
+    PROP_HINDI_TITLE_ON_APP, PROP_ENGLISH_TITLE_ON_APP,
     STATUS_READY, STATUS_UPLOADING, STATUS_FAILED_UPLOAD, UPLOAD_NO, UPLOAD_YES,
 )
 
@@ -390,9 +391,17 @@ def _build_upload_patch(upload_date_str: str, upload_prop_type: str = "auto") ->
     return {"properties": props}
 
 
-def mark_uploaded_in_notion(page_id: str, upload_date: str | None = None, retries: int = 3) -> bool:
+def mark_uploaded_in_notion(
+    page_id: str,
+    upload_date: str | None = None,
+    video_name: str | None = None,
+    lang_suffix: str | None = None,
+    retries: int = 3,
+) -> bool:
     """
     Update Notion page: set Upload = Yes, Upload Date = today.
+    If video_name and lang_suffix are provided, also writes the final title
+    to "Hindi Title on App" or "English Title on App".
     Returns True on success.
     """
     _check_config()
@@ -405,9 +414,25 @@ def mark_uploaded_in_notion(page_id: str, upload_date: str | None = None, retrie
         # Try as select first
         for prop_type in ("select", "checkbox"):
             patch = _build_upload_patch(upload_date, prop_type)
+
+            # Add title-on-app field based on language
+            if video_name and lang_suffix:
+                if lang_suffix == "___ln_Hi":
+                    patch["properties"][PROP_HINDI_TITLE_ON_APP] = {
+                        "rich_text": [{"text": {"content": video_name}}]
+                    }
+                elif lang_suffix == "___ln_En":
+                    patch["properties"][PROP_ENGLISH_TITLE_ON_APP] = {
+                        "rich_text": [{"text": {"content": video_name}}]
+                    }
+
             resp  = requests.patch(url, headers=_headers(), json=patch, timeout=30)
             if resp.status_code == 200:
-                log.info(f"[OK] Notion updated: {page_id} (Upload=Yes, Date={upload_date})")
+                title_info = ""
+                if video_name and lang_suffix:
+                    field = "Hindi" if lang_suffix == "___ln_Hi" else "English"
+                    title_info = f", {field} Title='{video_name}'"
+                log.info(f"[OK] Notion updated: {page_id} (Upload=Yes, Date={upload_date}{title_info})")
                 return True
             elif resp.status_code == 400:
                 # Probably wrong property type -- try the other

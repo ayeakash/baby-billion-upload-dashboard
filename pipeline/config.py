@@ -37,6 +37,8 @@ PROP_FINAL_VIDEO_ENGLISH_LINK = "Final Video English Link"
 PROP_FAILED_UPLOAD   = "Failed to Upload"
 PROP_REDO            = "Re-do"
 PROP_REDO_REASON     = "reason for re-do"
+PROP_HINDI_TITLE_ON_APP   = "Hindi Title on App"
+PROP_ENGLISH_TITLE_ON_APP = "English Title on App"
 
 # ── Status / upload values in Notion ──────────────────────────────────────────
 STATUS_READY         = "Ready to Upload"

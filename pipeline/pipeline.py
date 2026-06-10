@@ -415,7 +415,13 @@ def stage_track(batch_job_map: dict[str, str | None], all_videos: list[dict]):
 
             # Update Notion
             log.info(f"    Notifying Notion for page {real_page_id} …")
-            success = nc.mark_uploaded_in_notion(real_page_id, today)
+            video_name = rec.get("video_name", "") if rec else ""
+            lang_suffix = rec.get("lang_suffix", "") if rec else ""
+            success = nc.mark_uploaded_in_notion(
+                real_page_id, today,
+                video_name=video_name,
+                lang_suffix=lang_suffix,
+            )
             if success:
                 notion_updated += 1
             else:
@@ -580,7 +586,13 @@ def run_parallel_pipeline(all_videos: list[dict], headless: bool = False, skip_u
                     # Use real page_id (not composite key) for Notion API
                     real_page_id = verified_rec.get("page_id", state_key)
                     try:
-                        success = nc.mark_uploaded_in_notion(real_page_id, today)
+                        video_name = verified_rec.get("video_name", "")
+                        lang_suffix = verified_rec.get("lang_suffix", "")
+                        success = nc.mark_uploaded_in_notion(
+                            real_page_id, today,
+                            video_name=video_name,
+                            lang_suffix=lang_suffix,
+                        )
                         if not success:
                             raise RuntimeError("mark_uploaded_in_notion returned False")
                     except Exception as notion_err:
