@@ -199,19 +199,30 @@ def run(videos: list[dict]) -> list[str]:
 
     log.info(f"Batching {len(to_batch)} videos …")
 
-    # ── Greedy bin-packing ────────────────────────────────────────────────────
+    # ── Group by page_id so language variants stay together ────────────────
+    #    Hindi + English of the same Notion page MUST be in the same batch.
+    page_groups: dict[str, list[dict]] = {}
+    for v in to_batch:
+        pid = v["page_id"]
+        page_groups.setdefault(pid, []).append(v)
+
+    # Sort groups by first video name for deterministic ordering
+    sorted_groups = sorted(page_groups.values(), key=lambda g: g[0]["video_name"])
+
+    # ── Greedy bin-packing (page groups are atomic) ───────────────────────
     batches: list[list[dict]] = []
     current_batch: list[dict] = []
     current_size = 0
 
-    for v in sorted(to_batch, key=lambda x: x["video_name"]):
-        fsize = os.path.getsize(v["local_file"])
-        if current_batch and (current_size + fsize) > MAX_BATCH_BYTES:
+    for group in sorted_groups:
+        group_size = sum(os.path.getsize(v["local_file"]) for v in group)
+        # If adding this page group would exceed the limit, flush current batch
+        if current_batch and (current_size + group_size) > MAX_BATCH_BYTES:
             batches.append(current_batch)
             current_batch = []
             current_size  = 0
-        current_batch.append(v)
-        current_size += fsize
+        current_batch.extend(group)
+        current_size += group_size
 
     if current_batch:
         batches.append(current_batch)

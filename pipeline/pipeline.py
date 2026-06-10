@@ -710,6 +710,13 @@ def run_parallel_pipeline(all_videos: list[dict], headless: bool = False, skip_u
             for t in post_upload_threads:
                 t.join()
 
+        # Track which page_ids have pending siblings (so we don't split them)
+        # Build a lookup: page_id -> expected variant count from all_videos
+        page_variant_count: dict[str, int] = {}
+        for v in all_videos:
+            pid = v["page_id"]
+            page_variant_count[pid] = page_variant_count.get(pid, 0) + 1
+
         # Main consume loop
         while True:
             item = batch_q.get()
@@ -721,11 +728,26 @@ def run_parallel_pipeline(all_videos: list[dict], headless: bool = False, skip_u
             lf   = v.get("local_file", "")
             size = os.path.getsize(lf) if lf and os.path.isfile(lf) else 0
 
-            # Flush when adding this video would exceed the batch limit
+            # Check if flushing now would split a page's language variants
+            def _has_incomplete_page_group() -> bool:
+                """True if any page_id in pending still has a sibling not yet arrived."""
+                pending_pids: dict[str, int] = {}
+                for pv in pending:
+                    pid = pv["page_id"]
+                    pending_pids[pid] = pending_pids.get(pid, 0) + 1
+                for pid, count in pending_pids.items():
+                    if count < page_variant_count.get(pid, 1):
+                        return True
+                return False
+
+            # Flush when adding this video would exceed the batch limit,
+            # BUT only if all page groups in pending are complete
             if pending and (pending_size + size) > MAX_BATCH_BYTES:
-                flush(pending)
-                pending      = []
-                pending_size = 0
+                if not _has_incomplete_page_group():
+                    flush(pending)
+                    pending      = []
+                    pending_size = 0
+                # else: keep accumulating — a sibling is still coming
 
             pending.append(v)
             pending_size += size
