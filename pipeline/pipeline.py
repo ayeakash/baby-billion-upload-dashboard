@@ -35,6 +35,12 @@ log_path = os.path.join(
     os.path.dirname(__file__), "logs",
     f"pipeline_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
 )
+# Force UTF-8 on stdout so Hindi/Devanagari characters don't crash on Windows cp1252
+if sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
+    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+if sys.stderr.encoding and sys.stderr.encoding.lower() != 'utf-8':
+    sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s  %(levelname)-8s  %(message)s",

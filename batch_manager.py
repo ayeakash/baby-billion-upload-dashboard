@@ -463,6 +463,7 @@ def run_pipeline_thread(batch_only: bool = False):
         # Force unbuffered output so logs appear in real-time
         env = os.environ.copy()
         env["PYTHONUNBUFFERED"] = "1"
+        env["PYTHONIOENCODING"] = "utf-8"
             
         proc = subprocess.Popen(
             cmd,
