@@ -1527,25 +1527,28 @@
                         </div>
                     </div>
                     <div class="batch-details"><div class="batch-details-inner">
-                        <div style="display:grid;grid-template-columns:2fr 2fr 2fr 1fr 1fr 0.8fr;padding:0.25rem 0.5rem;color:var(--md-sys-color-outline);font-size:0.58rem;font-weight:500;letter-spacing:0.04em;border-bottom:1px solid var(--md-sys-color-outline-variant)">
-                            <span>VIDEO NAME</span><span>HINDI TITLE</span><span>ENGLISH TITLE</span><span>AGE GROUP</span><span>CATEGORY</span><span></span>
+                        <div style="display:grid;grid-template-columns:2.5fr 0.6fr 2.5fr 1fr 1fr 0.8fr;padding:0.25rem 0.5rem;color:var(--md-sys-color-outline);font-size:0.58rem;font-weight:500;letter-spacing:0.04em;border-bottom:1px solid var(--md-sys-color-outline-variant)">
+                            <span>VIDEO NAME</span><span>LANG</span><span>TITLE ON APP</span><span>AGE GROUP</span><span>CATEGORY</span><span></span>
                         </div>`;
 
                 reviews.forEach(r => {
-                    html += `<div class="video-item" style="grid-template-columns:2fr 2fr 2fr 1fr 1fr 0.8fr">
-                        <div class="video-name-cell" title="${r.page_id}">
-                            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.video_name || '—'}</span>
-                        </div>
-                        <div class="video-meta-cell" style="color:${r.hindi_title ? 'var(--md-custom-color-success)' : 'var(--md-sys-color-outline)'}">${r.hindi_title || '—'}</div>
-                        <div class="video-meta-cell" style="color:${r.english_title ? 'var(--md-custom-color-success)' : 'var(--md-sys-color-outline)'}">${r.english_title || '—'}</div>
-                        <div class="video-meta-cell">${r.age_group || '—'}</div>
-                        <div class="video-meta-cell">${r.category || '—'}</div>
-                        <div>
-                            <button class="btn btn-primary" style="font-size:0.65rem;padding:0.3rem 0.6rem" onclick="finalizeOneReview('${r.page_id}', this)">
-                                Finalize
-                            </button>
-                        </div>
-                    </div>`;
+                    const variants = [];
+                    if (r.hindi_title) variants.push({ lang: 'Hi', title: r.hindi_title, color: '#F59E0B' });
+                    if (r.english_title) variants.push({ lang: 'En', title: r.english_title, color: '#60A5FA' });
+                    if (variants.length === 0) variants.push({ lang: '—', title: '—', color: 'var(--md-sys-color-outline)' });
+
+                    variants.forEach((v, vi) => {
+                        html += `<div class="video-item" style="grid-template-columns:2.5fr 0.6fr 2.5fr 1fr 1fr 0.8fr${vi > 0 ? ';border-top:1px dashed var(--md-sys-color-outline-variant)' : ''}">
+                            <div class="video-name-cell" title="${r.page_id}">
+                                ${vi === 0 ? `<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.video_name || '—'}</span>` : `<span style="opacity:0.3;font-size:0.6rem">↳ same page</span>`}
+                            </div>
+                            <div class="video-meta-cell"><span style="font-size:0.6rem;font-weight:600;padding:1px 6px;border-radius:4px;background:${v.color}22;color:${v.color};letter-spacing:0.02em">${v.lang}</span></div>
+                            <div class="video-meta-cell" style="color:var(--md-custom-color-success)">${v.title}</div>
+                            <div class="video-meta-cell">${vi === 0 ? (r.age_group || '—') : ''}</div>
+                            <div class="video-meta-cell">${vi === 0 ? (r.category || '—') : ''}</div>
+                            <div>${vi === 0 ? `<button class="btn btn-primary" style="font-size:0.65rem;padding:0.3rem 0.6rem" onclick="finalizeOneReview('${r.page_id}', this)">Finalize</button>` : ''}</div>
+                        </div>`;
+                    });
                 });
 
                 html += `</div></div></div>`;
