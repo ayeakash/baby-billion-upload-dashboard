@@ -24,6 +24,7 @@ from config import (
     PROP_FINAL_VIDEO_HINDI_LINK, PROP_FINAL_VIDEO_ENGLISH_LINK,
     PROP_FAILED_UPLOAD, PROP_REDO, PROP_REDO_REASON,
     PROP_HINDI_TITLE_ON_APP, PROP_ENGLISH_TITLE_ON_APP,
+    PROP_BATCH_ID,
     STATUS_READY, STATUS_UPLOADING, STATUS_FAILED_UPLOAD, STATUS_UPLOADED,
     UPLOAD_NO, UPLOAD_YES,
     UPLOAD_PROGRESS_DRAFT, UPLOAD_PROGRESS_REVIEWED,
@@ -750,11 +751,12 @@ def mark_pending_review_in_notion(
     page_id: str,
     video_name: str | None = None,
     lang_suffix: str | None = None,
+    batch_name: str | None = None,
     retries: int = 3,
 ) -> bool:
     """
-    After uploading to admin: set Upload Progress = 'draft upload'
-    and write the Hindi/English Title on App.
+    After uploading to admin: set Upload Progress = 'draft upload',
+    write the Hindi/English Title on App, and store the Batch ID.
 
     Does NOT check the Upload checkbox or set the Upload Date —
     those are deferred until a reviewer calls finalize_in_notion().
@@ -765,6 +767,12 @@ def mark_pending_review_in_notion(
     props: dict = {
         PROP_UPLOAD_PROGRESS: {"select": {"name": UPLOAD_PROGRESS_DRAFT}},
     }
+
+    # Write batch name so other PCs can see which batch this belongs to
+    if batch_name:
+        props[PROP_BATCH_ID] = {
+            "rich_text": [{"text": {"content": batch_name}}]
+        }
 
     # Write title field based on language
     if video_name and lang_suffix:
@@ -788,9 +796,10 @@ def mark_pending_review_in_notion(
                 if video_name and lang_suffix:
                     field = "Hindi" if lang_suffix == "___ln_Hi" else "English"
                     title_info = f", {field} Title='{video_name}'"
+                batch_info = f", Batch='{batch_name}'" if batch_name else ""
                 log.info(
                     f"[OK] Notion pending review: {page_id} "
-                    f"(Upload Progress='{UPLOAD_PROGRESS_DRAFT}'{title_info})"
+                    f"(Upload Progress='{UPLOAD_PROGRESS_DRAFT}'{title_info}{batch_info})"
                 )
                 return True
             else:
@@ -849,6 +858,7 @@ def query_pending_review() -> list[dict]:
             english_title = _prop_value(props, PROP_ENGLISH_TITLE_ON_APP).strip()
             age_group  = _prop_value(props, PROP_AGE_GROUP).strip()
             category   = _prop_value(props, PROP_CATEGORY).strip()
+            batch_id   = _prop_value(props, PROP_BATCH_ID).strip()
 
             results.append({
                 "page_id":       page_id,
@@ -857,6 +867,7 @@ def query_pending_review() -> list[dict]:
                 "english_title": english_title,
                 "age_group":     age_group,
                 "category":      category,
+                "batch_id":      batch_id,
             })
 
         if not data.get("has_more"):

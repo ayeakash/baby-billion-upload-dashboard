@@ -688,10 +688,30 @@ def play_video(batch_name, filename):
 
 @app.route("/api/pending-reviews")
 def get_pending_reviews():
-    """Return pages awaiting reviewer finalization (Status = 'Uploaded - Pending Review')."""
+    """Return pages awaiting reviewer finalization, grouped by batch name from Notion."""
     try:
         reviews = batch_manager.get_pending_reviews()
-        return jsonify({"ok": True, "reviews": reviews})
+
+        # Group reviews by batch_id stored in Notion (works across PCs)
+        grouped = {}
+        for r in reviews:
+            bname = r.get("batch_id") or "Ungrouped"
+            grouped.setdefault(bname, []).append(r)
+
+        # Sort batches: Batch_NN naturally, Ungrouped last
+        def batch_sort_key(name):
+            if name == "Ungrouped":
+                return (1, "")
+            return (0, name)
+
+        grouped_list = []
+        for bname in sorted(grouped.keys(), key=batch_sort_key):
+            grouped_list.append({
+                "batch_name": bname,
+                "reviews": grouped[bname],
+            })
+
+        return jsonify({"ok": True, "grouped": grouped_list, "total": len(reviews)})
     except Exception as e:
         return jsonify({"ok": False, "error": str(e)}), 500
 
@@ -706,6 +726,31 @@ def finalize_all_reviews():
     """Finalize all pending review pages at once."""
     success, failed, msg = batch_manager.finalize_all_reviews()
     return jsonify({"ok": True, "success": success, "failed": failed, "message": msg})
+
+@app.route("/api/pending-reviews/finalize-batch", methods=["POST"])
+def finalize_batch_reviews():
+    """Finalize all pending review pages for a specific batch."""
+    data = request.json or {}
+    page_ids = data.get("page_ids", [])
+    if not page_ids:
+        return jsonify({"ok": False, "message": "No page_ids provided."}), 400
+
+    success = 0
+    failed = 0
+    for pid in page_ids:
+        ok, msg = batch_manager.finalize_review(pid)
+        if ok:
+            success += 1
+        else:
+            failed += 1
+            log.warning(f"Finalize failed for {pid}: {msg}")
+
+    return jsonify({
+        "ok": True,
+        "success": success,
+        "failed": failed,
+        "message": f"Finalized {success}/{success + failed} pages."
+    })
 
 if __name__ == "__main__":
     # Kill any zombie servers still on port 5000 from previous runs
