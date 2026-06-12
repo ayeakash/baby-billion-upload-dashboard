@@ -430,6 +430,18 @@ def query_failed_to_upload() -> list[dict]:
 
 # ── Update ─────────────────────────────────────────────────────────────────────
 
+def _clean_title(video_name: str) -> str:
+    """Strip internal pipeline tags (___pg_XXXX, ___ln_XX) from a video name
+    so only the clean title is written to Notion's Title on App fields."""
+    name = video_name
+    # Remove ___pg_<hex> suffix
+    if "___pg_" in name:
+        name = name.split("___pg_")[0]
+    # Remove ___ln_Hi / ___ln_En suffix (if ___pg_ wasn't present)
+    if "___ln_" in name:
+        name = name.split("___ln_")[0]
+    return name.strip()
+
 def _build_upload_patch(upload_date_str: str, upload_prop_type: str = "checkbox") -> dict:
     """
     Build the PATCH body to finalize a page.
@@ -463,13 +475,14 @@ def mark_uploaded_in_notion(
     # Title properties
     title_props: dict = {}
     if video_name and lang_suffix:
+        clean = _clean_title(video_name)
         if lang_suffix == "___ln_Hi":
             title_props[PROP_HINDI_TITLE_ON_APP] = {
-                "rich_text": [{"text": {"content": video_name}}]
+                "rich_text": [{"text": {"content": clean}}]
             }
         elif lang_suffix == "___ln_En":
             title_props[PROP_ENGLISH_TITLE_ON_APP] = {
-                "rich_text": [{"text": {"content": video_name}}]
+                "rich_text": [{"text": {"content": clean}}]
             }
 
     for attempt in range(1, retries + 1):
@@ -776,13 +789,14 @@ def mark_pending_review_in_notion(
 
     # Write title field based on language
     if video_name and lang_suffix:
+        clean = _clean_title(video_name)
         if lang_suffix == "___ln_Hi":
             props[PROP_HINDI_TITLE_ON_APP] = {
-                "rich_text": [{"text": {"content": video_name}}]
+                "rich_text": [{"text": {"content": clean}}]
             }
         elif lang_suffix == "___ln_En":
             props[PROP_ENGLISH_TITLE_ON_APP] = {
-                "rich_text": [{"text": {"content": video_name}}]
+                "rich_text": [{"text": {"content": clean}}]
             }
 
     for attempt in range(1, retries + 1):
