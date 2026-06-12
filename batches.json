@@ -94,7 +94,7 @@
   },
   "Batch_610": {
     "batch_name": "Batch_610",
-    "status": "pending_second_review",
+    "status": "finalized",
     "created_at": "2026-06-11T19:43:56.545978",
     "videos": [
       {
@@ -104,7 +104,7 @@
         "category": "Science",
         "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Long_3-6_Science_02___pg_36c63e60e8f480818087e74fd1e29ad0___ln_Hi.mp4",
         "drive_link": "https://drive.google.com/file/d/1DZfYMAlj_3Hqjwuxr3GWvTj7ztwqJMoI/view?usp=drive_link",
-        "pipeline_status": "uploaded_pending_final_review"
+        "pipeline_status": "uploaded"
       },
       {
         "page_id": "36c63e60-e8f4-8081-8087-e74fd1e29ad0",
@@ -113,12 +113,12 @@
         "category": "Science",
         "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Long_3-6_Science_02___pg_36c63e60e8f480818087e74fd1e29ad0___ln_En.mp4",
         "drive_link": "https://drive.google.com/file/d/1cdm2gHXrgMbLp6o4JdhhKYPvcaEr7HHP/view?usp=drive_link",
-        "pipeline_status": "uploaded_pending_final_review"
+        "pipeline_status": "uploaded"
       }
     ],
     "upload_job_id": "9edeeae4-8362-475c-bb28-583690cf6f34",
     "upload_date": "2026-06-11",
-    "finalized_date": null,
+    "finalized_date": "2026-06-12T12:56:06.695458",
     "upload_completed": true
   },
   "Batch_611": {
