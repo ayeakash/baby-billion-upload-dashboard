@@ -121,14 +121,22 @@ def _capture_job_id(driver) -> str | None:
     """
     Poll indefinitely (every 3s) until:
       - A UUID job ID is found  -> return it
+      - "Processed Results" / "Submit Batch for Approval" detected -> return UUID
       - An explicit upload error is detected -> return None immediately
 
     This is a React SPA so body.text only shows nav text.
     We use JS execute_script to read the actual rendered DOM.
 
-    Known DOM structure:
+    Known DOM structure (old):
       <p id="upload-error">...</p>  -- error text (empty = no error yet)
       After success a UUID appears in input values or span text.
+
+    Known DOM structure (new CMS):
+      After upload processing completes:
+      - Banner: "Upload is paused. Batch <UUID> is completed and waiting for approval"
+      - "Processed Results" heading
+      - "Submit Batch for Approval" button
+      - Table of video IDs
     """
     uuid_pat = re.compile(
         r"([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})",
@@ -142,9 +150,9 @@ document.querySelectorAll('input, textarea').forEach(function(el) {
     var v = el.value || '';
     if (v) parts.push('INPUT:' + v);
 });
-document.querySelectorAll('p, span, div, h1, h2, h3, h4, li').forEach(function(el) {
+document.querySelectorAll('p, span, div, h1, h2, h3, h4, li, td, th, button').forEach(function(el) {
     var t = (el.innerText || el.textContent || '').trim();
-    if (t && t.length < 200) parts.push('TEXT:' + t);
+    if (t && t.length < 300) parts.push('TEXT:' + t);
 });
 return parts.join('\\n');
 """
@@ -153,14 +161,31 @@ return parts.join('\\n');
 var el = document.getElementById('upload-error');
 return el ? (el.innerText || el.textContent || '').trim() : '';
 """
+    # Detect the new CMS "Processed Results" completion screen
+    JS_COMPLETION = """
+var body = document.body ? (document.body.innerText || document.body.textContent || '') : '';
+var indicators = {
+    hasProcessedResults: body.indexOf('Processed Results') !== -1,
+    hasSubmitForApproval: body.indexOf('Submit Batch for Approval') !== -1,
+    hasCompletedWaiting: body.indexOf('completed and waiting') !== -1,
+    hasRejectUpload: body.indexOf('Reject Upload') !== -1,
+    hasVideoId: body.indexOf('VIDEO ID') !== -1 || body.indexOf('Video ID') !== -1 || body.indexOf('video_id') !== -1,
+};
+indicators.isComplete = indicators.hasProcessedResults || indicators.hasSubmitForApproval || indicators.hasCompletedWaiting;
+return JSON.stringify(indicators);
+"""
 
-    MAX_POLLS = 200   # 200 × 3s = 10 min hard cap
+    MAX_POLLS = 100   # 100 × 3s = 5 min hard cap
     poll_num = 0
     consecutive_driver_errors = 0
     while poll_num < MAX_POLLS:
+        # Check abort before waiting
+        if abort_event.is_set():
+            log.info("  [ABORT] Upload aborted by user.")
+            return None
+
         upload_resume_event.wait()
 
-        # Check if abort was requested (user clicked Stop Upload)
         if abort_event.is_set():
             log.info("  [ABORT] Upload aborted by user.")
             return None
@@ -185,6 +210,52 @@ return el ? (el.innerText || el.textContent || '').trim() : '';
                 log.error(f"  [ERROR] Browser appears to have crashed ({consecutive_driver_errors} consecutive driver errors). Aborting.")
                 return None
 
+        # ── Check for rejection / validation error messages in page body ─────
+        try:
+            body_text = driver.execute_script(
+                "return document.body ? (document.body.innerText || '') : ''"
+            ) or ""
+            body_lower = body_text.lower()
+            # Common rejection / error patterns
+            for pattern in (
+                "invalid csv", "invalid file", "file not accepted",
+                "upload failed", "error occurred", "something went wrong",
+                "not accepted", "rejected", "validation error",
+                "please try again", "unsupported format",
+            ):
+                if pattern in body_lower:
+                    log.warning(f"  [REJECTED] Dashboard rejected upload (poll #{poll_num}): found '{pattern}' in page")
+                    log.warning(f"  Page text snippet: {body_text[:300]}")
+                    return None
+        except Exception:
+            pass
+
+        # ── Check for the new CMS "Processed Results" completion screen ──────
+        try:
+            import json as _json
+            completion_raw = driver.execute_script(JS_COMPLETION) or "{}"
+            completion = _json.loads(completion_raw)
+            if completion.get("isComplete"):
+                log.info(f"  [COMPLETE] CMS shows upload completion screen (poll #{poll_num})")
+                log.info(f"    Indicators: {completion}")
+                # Now find the UUID on this page
+                collected = driver.execute_script(JS_COLLECT) or ""
+                m = uuid_pat.search(collected)
+                if m:
+                    log.info(f"  [JOB ID] Found on completion screen: {m.group(1)}")
+                    return m.group(1)
+                # Fallback: page source
+                m = uuid_pat.search(driver.page_source or "")
+                if m:
+                    log.info(f"  [JOB ID] Found in page source on completion: {m.group(1)}")
+                    return m.group(1)
+                # Completion detected but no UUID? Return a placeholder
+                log.warning("  [COMPLETE] Completion screen found but no UUID — returning placeholder")
+                return "completed-no-uuid"
+            consecutive_driver_errors = 0
+        except Exception as comp_err:
+            log.debug(f"  Completion check error: {comp_err}")
+
         # ── Scan all inputs + text elements via JS ───────────────────────────
         try:
             collected = driver.execute_script(JS_COLLECT) or ""
@@ -206,7 +277,7 @@ return el ? (el.innerText || el.textContent || '').trim() : '';
         except Exception:
             pass
 
-        log.info(f"  [POLL {poll_num}] t={poll_num * 3}s | waiting for job ID or error ...")
+        log.info(f"  [POLL {poll_num}] t={poll_num * 3}s | waiting for job ID or completion screen ...")
 
     log.error(f"  [TIMEOUT] No job ID after {MAX_POLLS * 3}s ({MAX_POLLS} polls) -- giving up.")
     return None
@@ -231,6 +302,30 @@ def upload_batch(driver, batch_name: str) -> str | None:
 
     for attempt in range(1, UPLOAD_RETRY_MAX + 1):
         log.info(f"  Upload attempt {attempt}/{UPLOAD_RETRY_MAX} for {batch_name} …")
+
+        # Before retrying, check if the page already shows "Processed Results"
+        # (meaning a previous attempt actually succeeded)
+        if attempt > 1:
+            try:
+                import json as _json
+                body = driver.execute_script(
+                    "return document.body ? document.body.innerText : ''"
+                ) or ""
+                if "Processed Results" in body or "Submit Batch for Approval" in body:
+                    log.info(f"  [ALREADY DONE] Page shows Processed Results — first attempt succeeded!")
+                    uuid_pat = re.compile(
+                        r"([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})",
+                        re.IGNORECASE
+                    )
+                    m = uuid_pat.search(body)
+                    if m:
+                        batch_uuid = m.group(1)
+                        log.info(f"  [BATCH ID] {batch_uuid}")
+                        return batch_uuid
+                    return "completed-no-uuid"
+            except Exception:
+                pass
+
         try:
             job_id = _do_upload(driver, By, WebDriverWait, EC,
                                 NoSuchElementException, csv_path, zip_path, batch_name)
@@ -247,6 +342,7 @@ def upload_batch(driver, batch_name: str) -> str | None:
         time.sleep(5)
 
     return None
+
 
 
 def _do_upload(driver, By, WebDriverWait, EC, NoSuchElementException,
@@ -336,15 +432,24 @@ def _do_upload(driver, By, WebDriverWait, EC, NoSuchElementException,
 active_driver = None
 
 def abort():
+    """Immediately stop any running upload. Kill Chrome processes aggressively."""
     global active_driver
+    import subprocess as sp
     abort_event.set()  # Signal the polling loop to stop immediately
-    if active_driver:
-        log.info("Aborting active Selenium upload session...")
+    log.info("Aborting active Selenium upload session...")
+
+    # Force-kill ALL Chrome and chromedriver processes
+    for proc_name in ("chromedriver", "chrome"):
         try:
-            active_driver.quit()
+            sp.run(
+                ["taskkill", "/F", "/IM", f"{proc_name}.exe", "/T"],
+                capture_output=True, timeout=5,
+            )
         except Exception:
             pass
-        active_driver = None
+
+    active_driver = None
+    log.info("Selenium abort complete — Chrome processes killed.")
 
 def run_all(batch_names: list[str], headless: bool = False) -> dict[str, str | None]:
     """
@@ -386,10 +491,38 @@ def run_all(batch_names: list[str], headless: bool = False) -> dict[str, str | N
     except KeyboardInterrupt:
         log.info("Interrupted by user.")
     finally:
-        try:
-            driver.quit()
-        except Exception:
-            pass
+        _safe_quit_driver(driver)
         active_driver = None
 
     return job_ids
+
+
+def _safe_quit_driver(driver, timeout=5):
+    """Quit the Selenium driver with a timeout. If quit() hangs, force-kill the Chrome process."""
+    if driver is None:
+        return
+
+    # Try graceful quit in a thread with timeout
+    quit_thread = threading.Thread(target=lambda: _try_quit(driver), daemon=True)
+    quit_thread.start()
+    quit_thread.join(timeout=timeout)
+
+    if quit_thread.is_alive():
+        log.warning(f"  driver.quit() hung for {timeout}s — force-killing Chrome process")
+        try:
+            # Get the Chrome PID and kill it
+            import subprocess as sp
+            if hasattr(driver, 'service') and hasattr(driver.service, 'process') and driver.service.process:
+                pid = driver.service.process.pid
+                sp.run(["taskkill", "/F", "/T", "/PID", str(pid)], capture_output=True, timeout=5)
+        except Exception as e:
+            log.debug(f"  Force-kill fallback error: {e}")
+    log.info("  Selenium driver closed.")
+
+
+def _try_quit(driver):
+    """Attempt driver.quit() — used in a thread so we can timeout."""
+    try:
+        driver.quit()
+    except Exception:
+        pass

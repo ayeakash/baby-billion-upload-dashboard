@@ -32,6 +32,7 @@ PROP_CATEGORY        = "Category"
 PROP_STATUS          = "Status"
 PROP_UPLOAD          = "Upload"
 PROP_UPLOAD_DATE     = "Upload Date"
+PROP_UPLOAD_PROGRESS = "Upload Progress"
 PROP_FINAL_VIDEO_HINDI_LINK   = "Final Video Hindi Link"
 PROP_FINAL_VIDEO_ENGLISH_LINK = "Final Video English Link"
 PROP_FAILED_UPLOAD   = "Failed to Upload"
@@ -44,9 +45,13 @@ PROP_ENGLISH_TITLE_ON_APP = "English Title on App"
 STATUS_READY          = "Ready to Upload"
 STATUS_UPLOADING      = "Uploading"          # claimed by a PC — other PCs skip it
 STATUS_FAILED_UPLOAD  = "Failed to upload"
-STATUS_PENDING_REVIEW = "Uploaded - Pending Review"
+STATUS_UPLOADED       = "Uploaded"
 UPLOAD_NO      = "No"
 UPLOAD_YES     = "Yes"
+
+# Upload Progress status values (Notion property type: 'status', not 'select')
+UPLOAD_PROGRESS_DRAFT    = "Draft Upload"    # set after Selenium upload completes
+UPLOAD_PROGRESS_REVIEWED = "Uploaded"      # set by Finalize & Sync / Notion Reviews
 
 # ── Paths ──────────────────────────────────────────────────────────────────────
 BASE_DIR      = os.path.dirname(os.path.abspath(__file__))           # pipeline/

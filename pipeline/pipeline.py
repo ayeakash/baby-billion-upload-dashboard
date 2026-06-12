@@ -18,6 +18,7 @@ Options:
     --skip-upload     Stop after zipping (don't upload)
     --headless        Run Chrome headless
     --batch-only      Only batch + zip what's already in downloads/
+    --max-batches N   Limit to N batches (excess videos stay pending)
     --status          Print pipeline state summary and exit
 """
 from __future__ import annotations
@@ -914,6 +915,7 @@ def main():
     parser.add_argument("--batch-only",    action="store_true", help="Only batch+zip+upload already-downloaded files")
     parser.add_argument("--status",        action="store_true", help="Print state summary and exit")
     parser.add_argument("--auto-finalize", action="store_true", help="Auto-finalize in Notion (skip review step)")
+    parser.add_argument("--max-batches",   type=int, default=0, help="Max number of batches to create (0=unlimited)")
     args = parser.parse_args()
 
     # ── Status mode ───────────────────────────────────────────────────────────
@@ -979,6 +981,27 @@ def main():
     if not all_videos:
         log.info("Nothing to do. Exiting.")
         return
+
+    # ── Limit videos to produce at most --max-batches batches ────────────────
+    if args.max_batches and args.max_batches > 0:
+        from config import MAX_BATCH_BYTES
+        # Estimate average video size from the list
+        sizes = []
+        for v in all_videos:
+            lf = v.get("local_file", "")
+            if lf and os.path.isfile(lf):
+                sizes.append(os.path.getsize(lf))
+        if sizes:
+            avg_size = sum(sizes) / len(sizes)
+        else:
+            avg_size = 15 * 1024 * 1024  # assume ~15MB per video
+        videos_per_batch = max(1, int(MAX_BATCH_BYTES / avg_size))
+        max_videos = args.max_batches * videos_per_batch
+        if len(all_videos) > max_videos:
+            log.info(f"\n  --max-batches={args.max_batches}: limiting to ~{max_videos} videos ")
+            log.info(f"    (avg {avg_size/1024/1024:.1f}MB/video, ~{videos_per_batch}/batch)")
+            log.info(f"    {len(all_videos) - max_videos} video(s) will remain pending for next run.")
+            all_videos = all_videos[:max_videos]
 
     # ── Stages 2-6: Parallel download → compress → batch/zip/upload ──────────
     batch_job_map = run_parallel_pipeline(

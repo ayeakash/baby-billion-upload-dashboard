@@ -22,11 +22,12 @@ if _PIPELINE_DIR not in sys.path:
 import state_manager
 import notion_client
 import uploader
+import zipper
 
 log = logging.getLogger(__name__)
 
 BATCHES_JSON = os.path.join(os.path.dirname(__file__), "batches.json")
-_batches_lock = threading.Lock()
+_batches_lock = threading.RLock()  # RLock allows same thread to re-acquire (reentrant)
 
 class LogBuffer:
     def __init__(self, maxlen=2000):
@@ -219,6 +220,7 @@ def scan_and_register_batches():
 
 def mark_batch_uploaded(batch_name: str, job_id: str | None = None) -> tuple[bool, str]:
     """Confirm a batch as uploaded, moving it to second review.
+    Also updates Notion Upload Progress = 'Draft Upload' for each video.
     Second reviews do NOT block other uploads — multiple can exist simultaneously."""
     batches = load_batches()
     if batch_name not in batches:
@@ -240,8 +242,32 @@ def mark_batch_uploaded(batch_name: str, job_id: str | None = None) -> tuple[boo
             v["pipeline_status"] = "uploaded_pending_final_review"
 
     save_batches(batches)
-    log.info(f"[OK] Batch '{batch_name}' marked as Uploaded (Pending Second Review) with Job ID: {b['upload_job_id']}")
-    return True, f"Batch '{batch_name}' marked as uploaded successfully."
+
+    # Update Notion: set Upload Progress = 'Draft Upload' for each good video
+    good_videos = [v for v in b["videos"] if v.get("pipeline_status") != "bad"]
+    notion_ok = 0
+    for v in good_videos:
+        page_id = v["page_id"]
+        video_name = v["video_name"]
+        lang_suffix = ""
+        if "___ln_Hi" in video_name:
+            lang_suffix = "___ln_Hi"
+        elif "___ln_En" in video_name:
+            lang_suffix = "___ln_En"
+        try:
+            success = notion_client.mark_pending_review_in_notion(
+                page_id, video_name=video_name, lang_suffix=lang_suffix
+            )
+            if success:
+                notion_ok += 1
+                global_log_buffer.write(f"[NOTION] Draft Upload set for: {video_name}")
+            else:
+                global_log_buffer.write(f"[ERROR] Failed to set Draft Upload for: {video_name}")
+        except Exception as e:
+            global_log_buffer.write(f"[ERROR] Notion error for {video_name}: {e}")
+
+    log.info(f"[OK] Batch '{batch_name}' marked as Uploaded ({notion_ok}/{len(good_videos)} synced to Notion)")
+    return True, f"Batch '{batch_name}' marked as uploaded. {notion_ok}/{len(good_videos)} synced to Notion."
 
 def mark_video_bad(batch_name: str, page_id: str, bad: bool = True, reason: str = "") -> tuple[bool, str]:
     """Toggle a single video's status to 'bad' (or back to 'batched').
@@ -285,9 +311,7 @@ def mark_video_bad(batch_name: str, page_id: str, bad: bool = True, reason: str 
     return False, f"Video with page_id '{page_id}' not found in batch '{batch_name}'."
 
 def run_automated_upload_thread(batch_name: str):
-    """Target function for Selenium upload in a background thread.
-    After upload succeeds, sets upload_completed=True but does NOT move
-    the batch to second review — the user must click 'Mark Uploaded' to confirm."""
+    """Upload → mark uploaded → sync Notion, all in one go."""
     global upload_running, upload_batch_name
     upload_running = True
     upload_batch_name = batch_name
@@ -300,17 +324,51 @@ def run_automated_upload_thread(batch_name: str):
         results = uploader.run_all([batch_name], headless=False)
         job_id = results.get(batch_name)
         if job_id:
-            global_log_buffer.write(f"[SUCCESS] Selenium upload complete for {batch_name}. Job ID: {job_id}")
-            global_log_buffer.write(f"[INFO] Click 'Mark Uploaded' to confirm and unblock uploads.")
-            # Store job_id and flag as uploaded, but keep in first review for user confirmation
-            with _batches_lock:
-                batches = load_batches()
-                if batch_name in batches:
-                    batches[batch_name]["upload_completed"] = True
-                    batches[batch_name]["upload_job_id"] = job_id
-                    save_batches(batches)
+            global_log_buffer.write(f"[SUCCESS] Upload complete for {batch_name}. Batch ID: {job_id}")
         else:
-            global_log_buffer.write(f"[ERROR] Selenium upload failed to return a Job ID for {batch_name}.")
+            global_log_buffer.write(f"[WARNING] Upload did not return a Batch ID — syncing to Notion anyway.")
+            job_id = "MANUAL"
+
+        # Auto-mark as uploaded (no confirmation needed)
+        global_log_buffer.write(f"[AUTO] Marking batch as uploaded...")
+        upload_date = date.today().isoformat()
+        with _batches_lock:
+            batches = load_batches()
+            if batch_name in batches:
+                b = batches[batch_name]
+                b["status"] = "pending_second_review"
+                b["upload_completed"] = True
+                b["upload_job_id"] = job_id
+                b["upload_date"] = upload_date
+                for v in b["videos"]:
+                    if v["pipeline_status"] != "bad":
+                        v["pipeline_status"] = "uploaded_pending_final_review"
+                save_batches(batches)
+
+        # Sync Notion: set Upload Progress = "Draft Upload" for each video
+        b_data = load_batches().get(batch_name, {})
+        videos = [v for v in b_data.get("videos", []) if v.get("pipeline_status") != "bad"]
+        global_log_buffer.write(f"[NOTION] Setting Upload Progress='Draft Upload' for {len(videos)} videos...")
+        notion_ok = 0
+        for v in videos:
+            page_id = v.get("page_id")
+            vname = v.get("video_name", "")
+            if page_id:
+                lang = "___ln_Hi" if "___ln_Hi" in vname else \
+                       "___ln_En" if "___ln_En" in vname else None
+                try:
+                    ok = notion_client.mark_pending_review_in_notion(
+                        page_id, video_name=vname, lang_suffix=lang,
+                    )
+                    if ok:
+                        notion_ok += 1
+                        global_log_buffer.write(f"[NOTION] Draft Upload set: {vname}")
+                    else:
+                        global_log_buffer.write(f"[ERROR] Notion failed for: {vname}")
+                except Exception as ne:
+                    global_log_buffer.write(f"[ERROR] Notion exception for {vname}: {ne}")
+        global_log_buffer.write(f"[NOTION] Done — {notion_ok}/{len(videos)} synced.")
+        global_log_buffer.write(f"[DONE] Batch '{batch_name}' uploaded and synced to Notion.")
     except Exception as e:
         log.error(f"Error in automated upload background thread: {e}")
         global_log_buffer.write(f"[EXCEPTION] Automated upload error: {e}")
@@ -336,8 +394,15 @@ def start_automated_upload(batch_name: str) -> tuple[bool, str]:
     # Validate that files exist
     csv_file = os.path.join(uploader.BATCHES_DIR, f"{batch_name}.csv")
     zip_file = os.path.join(uploader.BATCHES_DIR, f"{batch_name}.zip")
-    if not os.path.isfile(csv_file) or not os.path.isfile(zip_file):
-        return False, f"Missing ZIP or CSV file for {batch_name} in batches folder."
+    if not os.path.isfile(csv_file):
+        return False, f"Missing CSV file for {batch_name} in batches folder."
+
+    # Auto-create ZIP if missing (batch folder with MP4s exists but wasn't zipped)
+    if not os.path.isfile(zip_file):
+        global_log_buffer.write(f"[ZIP] ZIP missing for {batch_name} — creating automatically...")
+        zip_result = zipper.zip_batch(batch_name)
+        if not zip_result:
+            return False, f"Failed to create ZIP for {batch_name}. Check that the batch folder contains MP4 files."
 
     # Run in thread
     t = threading.Thread(target=run_automated_upload_thread, args=(batch_name,))
@@ -377,30 +442,31 @@ def finalize_batch(batch_name: str) -> tuple[bool, str]:
         global_log_buffer.write(f"[SKIP] Bad video '{video_name}' — reset to pending for redo.")
         bad_count += 1
 
-    # 1. Update state.json first, then Notion (so sibling check sees current upload)
+    # 1. Update state.json first, then set Status='Uploaded' + title in Notion
+    #    (Upload checkbox is NOT checked here — that's done from the Reviews tab)
     for v in good_videos:
         page_id = v["page_id"]
         video_name = v["video_name"]
-        lang_suffix = v.get("lang_suffix", "")
+        
+        # Extract lang_suffix from the video_name (e.g., ___ln_Hi or ___ln_En)
+        lang_suffix = ""
+        if "___ln_Hi" in video_name:
+            lang_suffix = "___ln_Hi"
+        elif "___ln_En" in video_name:
+            lang_suffix = "___ln_En"
 
-        # Mark state as uploaded first (so sibling check sees it)
-        state_manager.mark_uploaded(page_id, job_id, upload_date)
+        # Build the correct state key (matches how batcher.py stored it)
+        state_key = page_id + lang_suffix if lang_suffix else page_id
+
+        # Mark state as uploaded
+        state_manager.mark_uploaded(state_key, job_id, upload_date)
         v["pipeline_status"] = "uploaded"
 
-        # Check if ALL language variants for this page are now uploaded
-        state_all = state_manager.get_all()
-        siblings = [
-            rec for rec in state_all.values()
-            if isinstance(rec, dict) and rec.get("page_id") == page_id
-        ]
-        all_done = all(rec.get("pipeline_status") == "uploaded" for rec in siblings) if siblings else True
-
-        global_log_buffer.write(f"[NOTION] Updating: {video_name} (check_upload={all_done})...")
+        global_log_buffer.write(f"[NOTION] Setting Status='Uploaded' + title: {video_name}...")
         notion_success = notion_client.mark_uploaded_in_notion(
             page_id, upload_date,
             video_name=video_name,
             lang_suffix=lang_suffix,
-            check_upload=all_done,
         )
         
         if notion_success:
@@ -450,11 +516,12 @@ def finalize_batch(batch_name: str) -> tuple[bool, str]:
     return True, f"Batch '{batch_name}' finalized: {success_count} uploaded, {fail_count} failed{bad_msg}."
 
 # Pipeline background execution
-def run_pipeline_thread(batch_only: bool = False):
+def run_pipeline_thread(batch_only: bool = False, max_batches: int = None):
     global pipeline_running, active_pipeline_process
     log_mode = "BATCH-ONLY MODE (processing existing downloads)" if batch_only else "NORMAL MODE (fetching new from Notion)"
+    batch_limit_msg = f", max {max_batches} batches" if max_batches else ""
     global_log_buffer.write(f"\n============================================================")
-    global_log_buffer.write(f"STARTING PIPELINE RUN: {log_mode}")
+    global_log_buffer.write(f"STARTING PIPELINE RUN: {log_mode}{batch_limit_msg}")
     global_log_buffer.write(f"============================================================\n")
 
     try:
@@ -463,6 +530,8 @@ def run_pipeline_thread(batch_only: bool = False):
         cmd = [sys.executable, "-u", "pipeline.py", "--skip-upload"]
         if batch_only:
             cmd.append("--batch-only")
+        if max_batches and max_batches > 0:
+            cmd.extend(["--max-batches", str(max_batches)])
 
         # Force unbuffered output so logs appear in real-time
         env = os.environ.copy()
@@ -500,7 +569,7 @@ def run_pipeline_thread(batch_only: bool = False):
         active_pipeline_process = None
         pipeline_paused = False
 
-def start_pipeline_batching(batch_only: bool = False) -> tuple[bool, str]:
+def start_pipeline_batching(batch_only: bool = False, max_batches: int = None) -> tuple[bool, str]:
     global pipeline_running
     global pipeline_run_thread
     
@@ -508,7 +577,7 @@ def start_pipeline_batching(batch_only: bool = False) -> tuple[bool, str]:
         return False, "Pipeline is already running in the background."
 
     pipeline_running = True
-    pipeline_run_thread = threading.Thread(target=run_pipeline_thread, args=(batch_only,))
+    pipeline_run_thread = threading.Thread(target=run_pipeline_thread, args=(batch_only, max_batches))
     pipeline_run_thread.daemon = True
     pipeline_run_thread.start()
     return True, "Pipeline started in the background. Monitor logs below."
@@ -655,7 +724,7 @@ def resume_automated_upload() -> tuple[bool, str]:
 # ── Cross-computer review workflow ────────────────────────────────────────────
 
 def get_pending_reviews() -> list[dict]:
-    """Query Notion for pages awaiting reviewer finalization."""
+    """Query Notion for pages with Status='Uploaded' and Upload unchecked."""
     try:
         return notion_client.query_pending_review()
     except Exception as e:
@@ -664,7 +733,7 @@ def get_pending_reviews() -> list[dict]:
 
 
 def finalize_review(page_id: str) -> tuple[bool, str]:
-    """Reviewer finalizes a page: check Upload box + set Upload Date."""
+    """Finalize a single Notion page: check Upload box + set Upload Date."""
     try:
         success = notion_client.finalize_in_notion(page_id)
         if success:
@@ -677,7 +746,7 @@ def finalize_review(page_id: str) -> tuple[bool, str]:
 
 
 def finalize_all_reviews() -> tuple[int, int, str]:
-    """Finalize ALL pending review pages at once. Returns (success_count, fail_count, message)."""
+    """Finalize ALL pending review pages at once."""
     pages = get_pending_reviews()
     if not pages:
         return 0, 0, "No pending reviews found."

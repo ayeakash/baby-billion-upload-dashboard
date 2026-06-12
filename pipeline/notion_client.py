@@ -20,12 +20,13 @@ from datetime import date
 from config import (
     NOTION_TOKEN, NOTION_DATABASE_ID,
     PROP_VIDEO_NAME, PROP_AGE_GROUP, PROP_CATEGORY,
-    PROP_STATUS, PROP_UPLOAD, PROP_UPLOAD_DATE,
+    PROP_STATUS, PROP_UPLOAD, PROP_UPLOAD_DATE, PROP_UPLOAD_PROGRESS,
     PROP_FINAL_VIDEO_HINDI_LINK, PROP_FINAL_VIDEO_ENGLISH_LINK,
     PROP_FAILED_UPLOAD, PROP_REDO, PROP_REDO_REASON,
     PROP_HINDI_TITLE_ON_APP, PROP_ENGLISH_TITLE_ON_APP,
-    STATUS_READY, STATUS_UPLOADING, STATUS_FAILED_UPLOAD,
-    STATUS_PENDING_REVIEW, UPLOAD_NO, UPLOAD_YES,
+    STATUS_READY, STATUS_UPLOADING, STATUS_FAILED_UPLOAD, STATUS_UPLOADED,
+    UPLOAD_NO, UPLOAD_YES,
+    UPLOAD_PROGRESS_DRAFT, UPLOAD_PROGRESS_REVIEWED,
 )
 
 log = logging.getLogger(__name__)
@@ -353,8 +354,12 @@ def query_failed_to_upload() -> list[dict]:
     while True:
         payload = {
             "filter": {
-                "property": PROP_STATUS,
-                "select":   {"equals": STATUS_FAILED_UPLOAD},
+                "and": [
+                    {
+                        "property": PROP_STATUS,
+                        "select":   {"equals": STATUS_FAILED_UPLOAD},
+                    },
+                ]
             },
             "page_size": 100,
         }
@@ -362,7 +367,9 @@ def query_failed_to_upload() -> list[dict]:
             payload["start_cursor"] = cursor
 
         resp = requests.post(url, headers=_headers(), json=payload, timeout=30)
-        resp.raise_for_status()
+        if resp.status_code != 200:
+            log.error(f"Failed upload query failed: {resp.status_code} {resp.text[:500]}")
+            break
         data = resp.json()
 
         for page in data.get("results", []):
@@ -422,26 +429,16 @@ def query_failed_to_upload() -> list[dict]:
 
 # ── Update ─────────────────────────────────────────────────────────────────────
 
-def _build_upload_patch(upload_date_str: str, upload_prop_type: str = "auto") -> dict:
+def _build_upload_patch(upload_date_str: str, upload_prop_type: str = "checkbox") -> dict:
     """
-    Build the PATCH body to mark a page as uploaded.
-    Handles both select ("Yes") and checkbox (true) for the Upload field.
-    upload_date_str: ISO date string e.g. "2026-04-20"
-    upload_prop_type: "select" | "checkbox" | "auto" (auto-detects on first call)
+    Build the PATCH body to finalize a page.
+    Sets Upload = True (checkbox), Upload Date, Upload Progress = 'First Review'.
     """
-    props = {
-        PROP_UPLOAD_DATE: {
-            "date": {"start": upload_date_str}
-        }
-    }
-
-    if upload_prop_type == "checkbox":
-        props[PROP_UPLOAD] = {"checkbox": True}
-    else:
-        # Default: treat as select with "Yes" option
-        props[PROP_UPLOAD] = {"select": {"name": UPLOAD_YES}}
-
-    return {"properties": props}
+    return {"properties": {
+        PROP_UPLOAD_DATE: {"date": {"start": upload_date_str}},
+        PROP_UPLOAD_PROGRESS: {"select": {"name": UPLOAD_PROGRESS_REVIEWED}},
+        PROP_UPLOAD: {"checkbox": True},
+    }}
 
 
 def mark_uploaded_in_notion(
@@ -449,18 +446,12 @@ def mark_uploaded_in_notion(
     upload_date: str | None = None,
     video_name: str | None = None,
     lang_suffix: str | None = None,
-    check_upload: bool = True,
+    check_upload: bool = True,        # kept for backward-compat, always True now
     retries: int = 3,
 ) -> bool:
     """
-    Update Notion page after a successful upload.
-
-    If check_upload is True:  set Upload = Yes, Upload Date = today + title.
-    If check_upload is False: only write the title field (Upload stays unchecked).
-
-    Use check_upload=False when a page has multiple language variants and
-    not all of them have been uploaded yet.
-    Returns True on success.
+    Finalize & Sync: set Upload Progress = 'first review',
+    Upload = Yes, Upload Date = today, and write Hindi/English Title.
     """
     _check_config()
     if upload_date is None:
@@ -468,58 +459,39 @@ def mark_uploaded_in_notion(
 
     url = f"{BASE}/pages/{page_id}"
 
-    # Build title-only properties
-    def _title_props() -> dict:
-        props = {}
-        if video_name and lang_suffix:
-            if lang_suffix == "___ln_Hi":
-                props[PROP_HINDI_TITLE_ON_APP] = {
-                    "rich_text": [{"text": {"content": video_name}}]
-                }
-            elif lang_suffix == "___ln_En":
-                props[PROP_ENGLISH_TITLE_ON_APP] = {
-                    "rich_text": [{"text": {"content": video_name}}]
-                }
-        return props
+    # Title properties
+    title_props: dict = {}
+    if video_name and lang_suffix:
+        if lang_suffix == "___ln_Hi":
+            title_props[PROP_HINDI_TITLE_ON_APP] = {
+                "rich_text": [{"text": {"content": video_name}}]
+            }
+        elif lang_suffix == "___ln_En":
+            title_props[PROP_ENGLISH_TITLE_ON_APP] = {
+                "rich_text": [{"text": {"content": video_name}}]
+            }
 
     for attempt in range(1, retries + 1):
-        if check_upload:
-            # Full update: Upload checkbox + date + title
-            for prop_type in ("select", "checkbox"):
-                patch = _build_upload_patch(upload_date, prop_type)
-                patch["properties"].update(_title_props())
+        patch = _build_upload_patch(upload_date)
+        patch["properties"].update(title_props)
 
-                resp = requests.patch(url, headers=_headers(), json=patch, timeout=30)
-                if resp.status_code == 200:
-                    title_info = ""
-                    if video_name and lang_suffix:
-                        field = "Hindi" if lang_suffix == "___ln_Hi" else "English"
-                        title_info = f", {field} Title='{video_name}'"
-                    log.info(f"[OK] Notion updated: {page_id} (Upload=Yes, Date={upload_date}{title_info})")
-                    return True
-                elif resp.status_code == 400:
-                    log.debug(f"PATCH attempt with {prop_type} failed (400), trying next type …")
-                    continue
-                else:
-                    log.warning(f"Notion PATCH attempt {attempt} failed: {resp.status_code} {resp.text[:200]}")
-                    break
-        else:
-            # Title-only update (Upload stays unchecked — waiting for other variant)
-            t_props = _title_props()
-            if not t_props:
-                log.info(f"[OK] Notion: no title to write for {page_id} (check_upload=False, no lang)")
-                return True
-
-            resp = requests.patch(url, headers=_headers(), json={"properties": t_props}, timeout=30)
-            if resp.status_code == 200:
+        resp = requests.patch(url, headers=_headers(), json=patch, timeout=30)
+        if resp.status_code == 200:
+            title_info = ""
+            if video_name and lang_suffix:
                 field = "Hindi" if lang_suffix == "___ln_Hi" else "English"
-                log.info(
-                    f"[OK] Notion title written: {page_id} ({field} Title='{video_name}') "
-                    f"— Upload checkbox deferred (waiting for other variant)"
-                )
-                return True
-            else:
-                log.warning(f"Notion title-only PATCH attempt {attempt} failed: {resp.status_code} {resp.text[:200]}")
+                title_info = f", {field} Title='{video_name}'"
+            log.info(
+                f"[OK] Notion finalized: {page_id} "
+                f"(Upload=Yes, Date={upload_date}, "
+                f"Progress='{UPLOAD_PROGRESS_REVIEWED}'{title_info})"
+            )
+            return True
+        else:
+            log.warning(
+                f"Notion PATCH attempt {attempt} failed: "
+                f"{resp.status_code} {resp.text[:200]}"
+            )
 
     log.error(f"[FAIL] Failed to update Notion page {page_id} after {retries} attempts.")
     return False
@@ -781,7 +753,7 @@ def mark_pending_review_in_notion(
     retries: int = 3,
 ) -> bool:
     """
-    After uploading to admin: set Status = 'Uploaded - Pending Review'
+    After uploading to admin: set Upload Progress = 'draft upload'
     and write the Hindi/English Title on App.
 
     Does NOT check the Upload checkbox or set the Upload Date —
@@ -791,7 +763,7 @@ def mark_pending_review_in_notion(
     url = f"{BASE}/pages/{page_id}"
 
     props: dict = {
-        PROP_STATUS: {"select": {"name": STATUS_PENDING_REVIEW}},
+        PROP_UPLOAD_PROGRESS: {"select": {"name": UPLOAD_PROGRESS_DRAFT}},
     }
 
     # Write title field based on language
@@ -818,7 +790,7 @@ def mark_pending_review_in_notion(
                     title_info = f", {field} Title='{video_name}'"
                 log.info(
                     f"[OK] Notion pending review: {page_id} "
-                    f"(Status='{STATUS_PENDING_REVIEW}'{title_info})"
+                    f"(Upload Progress='{UPLOAD_PROGRESS_DRAFT}'{title_info})"
                 )
                 return True
             else:
@@ -835,8 +807,8 @@ def mark_pending_review_in_notion(
 
 def query_pending_review() -> list[dict]:
     """
-    Returns pages where Status == 'Uploaded - Pending Review'.
-    Used by the reviewer's dashboard to see what needs finalization.
+    Returns pages where Upload Progress == 'draft upload'.
+    These are pages uploaded to the CMS but not yet reviewed.
     """
     _check_config()
 
@@ -847,8 +819,16 @@ def query_pending_review() -> list[dict]:
     while True:
         payload = {
             "filter": {
-                "property": PROP_STATUS,
-                "select":   {"equals": STATUS_PENDING_REVIEW},
+                "and": [
+                    {
+                        "property": PROP_UPLOAD_PROGRESS,
+                        "select":   {"equals": UPLOAD_PROGRESS_DRAFT},
+                    },
+                    {
+                        "property": PROP_UPLOAD,
+                        "checkbox": {"equals": False},
+                    },
+                ]
             },
             "page_size": 100,
         }
@@ -856,7 +836,9 @@ def query_pending_review() -> list[dict]:
             payload["start_cursor"] = cursor
 
         resp = requests.post(url, headers=_headers(), json=payload, timeout=30)
-        resp.raise_for_status()
+        if resp.status_code != 200:
+            log.error(f"Pending review query failed: {resp.status_code} {resp.text[:500]}")
+            return results
         data = resp.json()
 
         for page in data.get("results", []):
@@ -891,9 +873,9 @@ def finalize_in_notion(
     retries: int = 3,
 ) -> bool:
     """
-    Reviewer finalizes a page: set Upload = Yes, Upload Date = today.
-    Called after reviewing an 'Uploaded - Pending Review' page.
-    Does NOT change the Status field (it stays as-is or can be cleared).
+    Reviewer finalizes a page:
+      - Set Upload Progress = 'first review'
+      - Set Upload = Yes + Upload Date = today
     """
     _check_config()
     if upload_date is None:
@@ -902,20 +884,19 @@ def finalize_in_notion(
     url = f"{BASE}/pages/{page_id}"
 
     for attempt in range(1, retries + 1):
-        for prop_type in ("select", "checkbox"):
-            patch = _build_upload_patch(upload_date, prop_type)
-            resp = requests.patch(url, headers=_headers(), json=patch, timeout=30)
-            if resp.status_code == 200:
-                log.info(f"[OK] Notion finalized: {page_id} (Upload=Yes, Date={upload_date})")
-                return True
-            elif resp.status_code == 400:
-                continue
-            else:
-                log.warning(
-                    f"Notion finalize PATCH attempt {attempt}: "
-                    f"{resp.status_code} {resp.text[:200]}"
-                )
-                break
+        patch = _build_upload_patch(upload_date)
+        resp = requests.patch(url, headers=_headers(), json=patch, timeout=30)
+        if resp.status_code == 200:
+            log.info(
+                f"[OK] Notion finalized: {page_id} "
+                f"(Upload=Yes, Date={upload_date}, Progress='{UPLOAD_PROGRESS_REVIEWED}')"
+            )
+            return True
+        else:
+            log.warning(
+                f"Notion finalize PATCH attempt {attempt}: "
+                f"{resp.status_code} {resp.text[:200]}"
+            )
 
     log.error(f"[FAIL] Could not finalize Notion page {page_id} after {retries} attempts.")
     return False

@@ -263,9 +263,15 @@ def run(videos: list[dict]) -> list[str]:
                     par, cat = get_category_fields(age, p)
                     if par and par not in parents:
                         parents.append(par)
-                    cats.append(cat)
+                    cats.append((par, cat))
+                # Filter out parent-only entries (where cat == parent, e.g., "Animals" -> ("Animals","Animals"))
+                # These are just the parent category repeated — the real playlist is the child
+                child_cats = [cat for par, cat in cats if cat != par]
+                if not child_cats:
+                    # All entries are parents — keep them all
+                    child_cats = [cat for par, cat in cats]
                 parent_cat = ", ".join(parents)
-                exact_cat  = ", ".join(cats)
+                exact_cat  = ", ".join(child_cats)
             else:
                 parent_cat, exact_cat = get_category_fields(age, notion_cat)
 

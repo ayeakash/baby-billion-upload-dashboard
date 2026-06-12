@@ -15,26 +15,27 @@
            Material You Dark Theme — Tonal Palette
            ═══════════════════════════════════════════════════════════════ */
         :root {
-            /* M3 Dark Scheme */
-            --md-sys-color-background: #131316;
-            --md-sys-color-on-background: #E4E1E6;
-            --md-sys-color-surface: #131316;
-            --md-sys-color-surface-dim: #131316;
-            --md-sys-color-surface-container-lowest: #0E0E11;
-            --md-sys-color-surface-container-low: #1B1B1F;
-            --md-sys-color-surface-container: #201F23;
-            --md-sys-color-surface-container-high: #2A292D;
-            --md-sys-color-surface-container-highest: #353438;
-            --md-sys-color-on-surface: #E4E1E6;
-            --md-sys-color-on-surface-variant: #C7C5CA;
-            --md-sys-color-outline: #918F94;
-            --md-sys-color-outline-variant: #46464A;
+            /* M3 Dark Scheme — Refined Palette */
+            --md-sys-color-background: #0D0D11;
+            --md-sys-color-on-background: #E6E3E8;
+            --md-sys-color-surface: #0D0D11;
+            --md-sys-color-surface-dim: #0D0D11;
+            --md-sys-color-surface-container-lowest: #08080B;
+            --md-sys-color-surface-container-low: #161619;
+            --md-sys-color-surface-container: #1C1B20;
+            --md-sys-color-surface-container-high: #262529;
+            --md-sys-color-surface-container-highest: #313035;
+            --md-sys-color-on-surface: #E6E3E8;
+            --md-sys-color-on-surface-variant: #CAC8CE;
+            --md-sys-color-outline: #918F96;
+            --md-sys-color-outline-variant: #3E3E43;
 
-            /* Primary */
-            --md-sys-color-primary: #B4C5FF;
-            --md-sys-color-on-primary: #1B3060;
-            --md-sys-color-primary-container: #334778;
-            --md-sys-color-on-primary-container: #DBE1FF;
+            /* Primary — Vibrant Indigo */
+            --md-sys-color-primary: #A8B8FF;
+            --md-sys-color-on-primary: #162454;
+            --md-sys-color-primary-container: #2D3F6E;
+            --md-sys-color-on-primary-container: #D6DEFF;
+            --md-sys-color-primary-glow: rgba(168, 184, 255, 0.15);
 
             /* Secondary */
             --md-sys-color-secondary: #BFC6DC;
@@ -42,8 +43,8 @@
             --md-sys-color-secondary-container: #3F4759;
             --md-sys-color-on-secondary-container: #DBE1F9;
 
-            /* Tertiary */
-            --md-sys-color-tertiary: #DEBCE0;
+            /* Tertiary — Orchid accent */
+            --md-sys-color-tertiary: #E0B8E5;
             --md-sys-color-on-tertiary: #3F2844;
             --md-sys-color-tertiary-container: #573E5C;
 
@@ -53,15 +54,15 @@
             --md-sys-color-error-container: #93000A;
 
             /* Custom semantic */
-            --md-custom-color-success: #A8DAB5;
-            --md-custom-color-success-container: #1B3A26;
+            --md-custom-color-success: #7EDBA5;
+            --md-custom-color-success-container: #122E1E;
             --md-custom-color-warning: #F0C878;
             --md-custom-color-warning-container: #3D3018;
 
-            /* Elevation (M3 uses surface tint) */
-            --md-sys-elevation-1: 0 1px 3px 1px rgba(0,0,0,0.15), 0 1px 2px 0 rgba(0,0,0,0.3);
-            --md-sys-elevation-2: 0 2px 6px 2px rgba(0,0,0,0.15), 0 1px 2px 0 rgba(0,0,0,0.3);
-            --md-sys-elevation-3: 0 4px 8px 3px rgba(0,0,0,0.15), 0 1px 3px 0 rgba(0,0,0,0.3);
+            /* Elevation */
+            --md-sys-elevation-1: 0 1px 3px 1px rgba(0,0,0,0.2), 0 1px 2px 0 rgba(0,0,0,0.35);
+            --md-sys-elevation-2: 0 2px 6px 2px rgba(0,0,0,0.2), 0 1px 2px 0 rgba(0,0,0,0.35);
+            --md-sys-elevation-3: 0 6px 16px 4px rgba(0,0,0,0.25), 0 2px 4px 0 rgba(0,0,0,0.4);
 
             /* Shape */
             --md-sys-shape-xs: 4px;
@@ -92,8 +93,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: var(--md-sys-color-surface-container-low);
-            border-bottom: 1px solid var(--md-sys-color-outline-variant);
+            background: linear-gradient(135deg, rgba(22,21,27,0.92), rgba(16,15,20,0.96));
+            backdrop-filter: blur(20px) saturate(1.5);
+            -webkit-backdrop-filter: blur(20px) saturate(1.5);
+            border-bottom: 1px solid rgba(168,184,255,0.08);
             z-index: 10;
             position: sticky;
             top: 0;
@@ -108,13 +111,14 @@
         }
 
         .logo-icon {
-            width: 32px; height: 32px;
-            border-radius: var(--md-sys-shape-sm);
-            background: var(--md-sys-color-primary-container);
+            width: 34px; height: 34px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--md-sys-color-primary-container), var(--md-sys-color-tertiary-container));
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            box-shadow: 0 2px 12px rgba(168,184,255,0.15);
         }
         .logo-icon svg { width: 18px; height: 18px; stroke: var(--md-sys-color-on-primary-container); }
 
@@ -161,11 +165,12 @@
 
         /* Filled */
         .btn-primary {
-            background: var(--md-sys-color-primary);
+            background: linear-gradient(135deg, var(--md-sys-color-primary), #8BA0ED);
             color: var(--md-sys-color-on-primary);
         }
         .btn-primary:hover:not(:disabled) {
-            box-shadow: var(--md-sys-elevation-1);
+            box-shadow: 0 2px 12px var(--md-sys-color-primary-glow);
+            filter: brightness(1.08);
         }
 
         /* Tonal */
@@ -179,20 +184,22 @@
 
         /* Filled - Success */
         .btn-success {
-            background: var(--md-custom-color-success);
+            background: linear-gradient(135deg, var(--md-custom-color-success), #5DC08A);
             color: #0F1F15;
         }
         .btn-success:hover:not(:disabled) {
-            box-shadow: var(--md-sys-elevation-1);
+            box-shadow: 0 2px 12px rgba(126,219,165,0.2);
+            filter: brightness(1.08);
         }
 
         /* Filled - Danger */
         .btn-danger {
-            background: var(--md-sys-color-error);
+            background: linear-gradient(135deg, var(--md-sys-color-error), #E8887E);
             color: var(--md-sys-color-on-error);
         }
         .btn-danger:hover:not(:disabled) {
-            box-shadow: var(--md-sys-elevation-1);
+            box-shadow: 0 2px 12px rgba(255,180,171,0.2);
+            filter: brightness(1.08);
         }
 
         /* Filled - Amber/Warning */
@@ -231,33 +238,42 @@
         .status-pill.idle {
             background: var(--md-custom-color-success-container);
             color: var(--md-custom-color-success);
+            box-shadow: 0 0 12px rgba(126,219,165,0.1);
         }
         .status-pill.batching {
-            background: rgba(181, 197, 255, 0.12);
+            background: rgba(168, 184, 255, 0.1);
             color: var(--md-sys-color-primary);
+            box-shadow: 0 0 12px var(--md-sys-color-primary-glow);
         }
         .status-pill.uploading {
-            background: rgba(181, 197, 255, 0.12);
+            background: rgba(168, 184, 255, 0.1);
             color: var(--md-sys-color-primary);
+            box-shadow: 0 0 16px var(--md-sys-color-primary-glow);
+            animation: uploadGlow 2s ease-in-out infinite;
         }
         .status-pill.paused {
             background: var(--md-custom-color-warning-container);
             color: var(--md-custom-color-warning);
         }
 
+        @keyframes uploadGlow {
+            0%, 100% { box-shadow: 0 0 12px var(--md-sys-color-primary-glow); }
+            50% { box-shadow: 0 0 22px var(--md-sys-color-primary-glow); }
+        }
+
         .status-dot {
-            width: 6px; height: 6px;
+            width: 7px; height: 7px;
             border-radius: 50%;
             flex-shrink: 0;
         }
-        .status-pill.idle .status-dot { background: var(--md-custom-color-success); animation: dotPulse 2.5s ease-in-out infinite; }
-        .status-pill.batching .status-dot { background: var(--md-sys-color-primary); animation: dotPulse 1.5s ease-in-out infinite; }
-        .status-pill.uploading .status-dot { background: var(--md-sys-color-primary); animation: dotPulse 1.5s ease-in-out infinite; }
-        .status-pill.paused .status-dot { background: var(--md-custom-color-warning); animation: dotPulse 1.5s ease-in-out infinite; }
+        .status-pill.idle .status-dot { background: var(--md-custom-color-success); box-shadow: 0 0 6px var(--md-custom-color-success); animation: dotPulse 2.5s ease-in-out infinite; }
+        .status-pill.batching .status-dot { background: var(--md-sys-color-primary); box-shadow: 0 0 6px var(--md-sys-color-primary); animation: dotPulse 1.5s ease-in-out infinite; }
+        .status-pill.uploading .status-dot { background: var(--md-sys-color-primary); box-shadow: 0 0 8px var(--md-sys-color-primary); animation: dotPulse 1s ease-in-out infinite; }
+        .status-pill.paused .status-dot { background: var(--md-custom-color-warning); box-shadow: 0 0 6px var(--md-custom-color-warning); animation: dotPulse 1.5s ease-in-out infinite; }
 
         @keyframes dotPulse {
-            0%, 100% { opacity: 0.6; }
-            50% { opacity: 1; }
+            0%, 100% { opacity: 0.5; transform: scale(0.9); }
+            50% { opacity: 1; transform: scale(1.1); }
         }
 
         /* ═══════════════════════════════════════════════════════════════
@@ -334,8 +350,9 @@
             bottom: -1px;
             left: 12px; right: 12px;
             height: 3px;
-            background: var(--md-sys-color-primary);
+            background: linear-gradient(90deg, var(--md-sys-color-primary), var(--md-sys-color-tertiary));
             border-radius: 3px 3px 0 0;
+            box-shadow: 0 0 8px var(--md-sys-color-primary-glow);
         }
 
         .tab-badge {
@@ -396,22 +413,30 @@
 
         .empty-state {
             text-align: center;
-            padding: 2.5rem 1rem;
-            background: var(--md-sys-color-surface-container);
-            border-radius: var(--md-sys-shape-md);
+            padding: 3rem 1rem;
+            background: linear-gradient(145deg, var(--md-sys-color-surface-container), var(--md-sys-color-surface-container-low));
+            border-radius: var(--md-sys-shape-lg);
             color: var(--md-sys-color-outline);
+            border: 1px dashed var(--md-sys-color-outline-variant);
         }
-        .empty-state svg { width: 36px; height: 36px; stroke: var(--md-sys-color-outline); margin-bottom: 0.75rem; opacity: 0.5; }
+        .empty-state svg { width: 40px; height: 40px; stroke: var(--md-sys-color-primary); margin-bottom: 0.75rem; opacity: 0.4; }
 
         .batch-card {
             background: var(--md-sys-color-surface-container);
             border-radius: var(--md-sys-shape-md);
             overflow: hidden;
-            transition: background 0.15s, box-shadow 0.15s;
+            transition: background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+            border: 1px solid transparent;
+            border-left: 3px solid var(--md-sys-color-outline-variant);
         }
         .batch-card:hover {
             background: var(--md-sys-color-surface-container-high);
-            box-shadow: var(--md-sys-elevation-1);
+            box-shadow: var(--md-sys-elevation-2);
+            border-left-color: var(--md-sys-color-primary);
+        }
+        .batch-card.expanded {
+            border-left-color: var(--md-sys-color-primary);
+            box-shadow: 0 0 0 1px rgba(168,184,255,0.06), var(--md-sys-elevation-1);
         }
 
         .batch-summary {
@@ -711,20 +736,16 @@
             flex-shrink: 0;
             background: var(--md-sys-color-surface-container-lowest);
             border-radius: var(--md-sys-shape-md) var(--md-sys-shape-md) 0 0;
-            display: grid;
-            grid-template-rows: auto 0fr;
             margin-top: 0.5rem;
-            transition: grid-template-rows 0.3s ease;
-        }
-        .log-section.expanded {
-            grid-template-rows: auto 1fr;
         }
         .log-terminal-wrap {
+            display: none;
             overflow: hidden;
-            min-height: 0;
         }
         .log-section.expanded .log-terminal-wrap {
+            display: block;
             min-height: 184px;
+            max-height: 40vh;
         }
 
         .log-header {
@@ -927,6 +948,104 @@
         }
         .batch-size-select:focus { border-color: var(--md-sys-color-primary); }
 
+        /* ═══════════════════════════════════════════════════════════════
+           TOAST NOTIFICATIONS
+           ═══════════════════════════════════════════════════════════════ */
+        .toast-container {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 0.5rem;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        .toast {
+            pointer-events: auto;
+            background: var(--md-sys-color-surface-container-highest);
+            border: 1px solid var(--md-sys-color-outline-variant);
+            border-radius: var(--md-sys-shape-md);
+            padding: 0.6rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 260px;
+            max-width: 420px;
+            box-shadow: var(--md-sys-elevation-3);
+            animation: toastIn 0.3s ease forwards;
+            font-size: 0.78rem;
+            color: var(--md-sys-color-on-surface);
+        }
+        .toast.toast-out {
+            animation: toastOut 0.25s ease forwards;
+        }
+        .toast-icon {
+            width: 18px; height: 18px;
+            flex-shrink: 0;
+        }
+        .toast-body {
+            flex: 1;
+            min-width: 0;
+        }
+        .toast-title {
+            font-weight: 600;
+            font-size: 0.75rem;
+            margin-bottom: 1px;
+        }
+        .toast-msg {
+            font-size: 0.7rem;
+            color: var(--md-sys-color-on-surface-variant);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .toast-progress {
+            width: 100%;
+            height: 3px;
+            border-radius: 2px;
+            background: var(--md-sys-color-outline-variant);
+            overflow: hidden;
+            margin-top: 4px;
+        }
+        .toast-progress-bar {
+            height: 100%;
+            border-radius: 2px;
+            background: var(--md-sys-color-primary);
+            animation: progressIndeterminate 1.8s ease-in-out infinite;
+            width: 40%;
+        }
+        .toast-progress-bar.success {
+            background: var(--md-custom-color-success);
+            animation: none;
+            width: 100%;
+            transition: width 0.3s ease;
+        }
+        .toast-progress-bar.error {
+            background: var(--md-sys-color-error);
+            animation: none;
+            width: 100%;
+            transition: width 0.3s ease;
+        }
+        .toast.info { border-left: 3px solid var(--md-sys-color-primary); }
+        .toast.success { border-left: 3px solid var(--md-custom-color-success); }
+        .toast.error { border-left: 3px solid var(--md-sys-color-error); }
+        .toast.progress { border-left: 3px solid var(--md-sys-color-primary); }
+
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateY(12px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes toastOut {
+            from { opacity: 1; transform: translateY(0) scale(1); }
+            to { opacity: 0; transform: translateY(8px) scale(0.97); }
+        }
+        @keyframes progressIndeterminate {
+            0% { transform: translateX(-100%); }
+            50% { transform: translateX(150%); }
+            100% { transform: translateX(250%); }
+        }
+
         @media (max-width: 768px) {
             header { flex-direction: column; gap: 0.5rem; align-items: flex-start; }
             .header-actions { width: 100%; justify-content: flex-start; }
@@ -964,6 +1083,10 @@
                     <option value="75">75 MB</option>
                     <option value="100">100 MB</option>
                 </select>
+            </div>
+            <div class="batch-size-group">
+                <span>Max batches</span>
+                <input type="number" id="max-batches-input" class="batch-size-select" style="width:56px; text-align:center; font-weight:600;" value="10" min="1" max="999" title="Maximum number of batches to create per pipeline run">
             </div>
             <label class="header-checkbox-label">
                 <input type="checkbox" id="batch-only-chk"> Batch-only
@@ -1029,11 +1152,13 @@
                     <button class="btn btn-secondary" style="padding: 0.15rem 0.5rem; font-size: 0.65rem; border-radius: var(--md-sys-shape-sm);" onclick="clearLogs()">Clear</button>
                 </div>
             </div>
-            <div class="log-terminal-wrap">
+            <div class="log-terminal-wrap" id="log-terminal-wrap" style="display:none;">
                 <div id="terminal" class="log-terminal"></div>
             </div>
         </div>
     </div>
+
+    <div id="toast-container" class="toast-container"></div>
 
     <div id="video-modal" class="video-modal" onclick="if(event.target===this)closeVideoModal()">
         <div class="video-modal-inner">
@@ -1062,6 +1187,8 @@
             loadCsvOptions();
             setInterval(fetchBatches, 5000);
             setInterval(fetchLogs, 1500);
+            // Ensure console starts collapsed on every page load
+            document.getElementById('log-section').classList.remove('expanded');
             document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeVideoModal(); closeDropdown(); } });
         });
 
@@ -1419,6 +1546,7 @@
                 isUploadRunning = data.upload_running;
                 isUploadPaused = data.upload_paused;
                 const uploadBatchName = data.upload_batch_name;
+                updateOperationToasts();
 
                 document.getElementById('badge-pending').innerText = data.pending.length;
                 document.getElementById('badge-uploaded').innerText = data.uploaded.length;
@@ -1594,22 +1722,13 @@
             const ul = (activeUploadedBatch !== null && activeUploadedBatch !== batch.batch_name) || ur;
             const sb = isPipelineRunning || ur;
 
-            if (batch.status === 'pending_first_review' && batch.upload_completed) {
-                // Upload completed via Selenium, awaiting user confirmation
-                return `<div class="batch-action-panel" style="border:2px solid var(--md-sys-color-primary); background: rgba(var(--md-sys-color-primary-rgb, 103,80,164), 0.08);">
-                    <div class="panel-info"><span class="panel-info-title" style="color:var(--md-sys-color-primary)">✓ Upload Complete — Confirm to Proceed</span><span class="panel-info-value">Job ID: ${batch.upload_job_id||'—'}. Review the CMS, then click Mark Uploaded.</span></div>
-                    <div class="panel-actions">
-                        <button class="btn btn-success" onclick="markUploadedManually('${batch.batch_name}')" style="font-weight:700; font-size:0.95rem; padding: 8px 20px;">✓ Mark Uploaded</button>
-                        <button class="btn btn-secondary" onclick="triggerAutomatedUpload('${batch.batch_name}')">↻ Re-upload</button>
-                        <button class="btn btn-danger" onclick="deleteBatch('${batch.batch_name}', this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Delete</button>
-                    </div></div>`;
-            } else if (batch.status === 'pending_first_review') {
+            if (batch.status === 'pending_first_review') {
                 return `<div class="batch-action-panel">
                     <div class="panel-info"><span class="panel-info-title">Stage 1 — Local Review</span><span class="panel-info-value">Review files, then upload or mark as uploaded.</span></div>
                     <div class="panel-actions">
                         ${batch.local_folder_exists ? `<button class="btn btn-secondary" onclick="openBatchFolder('${batch.batch_name}')" ${sb?'disabled':''}><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> Open</button>` : ''}
                         <button class="btn btn-primary" onclick="triggerAutomatedUpload('${batch.batch_name}')" ${ul||isPipelineRunning?'disabled':''}>Auto Upload</button>
-                        <button class="btn btn-success" onclick="markUploadedManually('${batch.batch_name}')" ${ul||isPipelineRunning?'disabled':''}>Mark Uploaded</button>
+                        <button class="btn btn-success" onclick="markUploadedManually('${batch.batch_name}')">Mark Uploaded</button>
                         <button class="btn btn-secondary" onclick="regenerateCsv('${batch.batch_name}')" ${sb?'disabled':''} style="margin-left:auto"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg> Regen CSV</button>
                         <button class="btn btn-danger" onclick="deleteBatch('${batch.batch_name}', this)" ${sb?'disabled':''}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Delete</button>
                     </div></div>`;
@@ -1716,15 +1835,15 @@
 
         function stopActiveOperation() {
             const b = document.getElementById('stop-btn'); if (b.disabled) return;
-            if (!isPipelineRunning && !isUploadRunning) { fetchBatches(); return; }
             b.disabled = true; b.innerHTML = `<span class="spinner"></span> Stopping...`;
-            const ep = isPipelineRunning ? '/api/batches/stop-pipeline' : '/api/batches/stop-upload';
-            const at = isPipelineRunning ? 'pipeline batcher' : 'automated upload';
-            showLogTerminal(); appendTerminalText(`\n[SYSTEM] Requesting stop for ${at}...\n`);
-            fetch(ep, {method:'POST'}).then(r=>r.json()).then(d => {
+            const tid = showToast('progress', 'Stopping Everything', 'Killing all processes…');
+            appendTerminalText(`\n[SYSTEM] Stopping everything...\n`);
+            fetch('/api/stop-everything', {method:'POST'}).then(r=>r.json()).then(d => {
                 appendTerminalText(d.error ? `[ERROR] ${d.error}\n` : `[SUCCESS] ${d.message}\n`);
+                if (d.error) updateToast(tid, 'error', 'Stop Failed', d.error);
+                else updateToast(tid, 'success', 'Stopped', d.message);
                 b.disabled = false; isUploadRunning = false; isPipelineRunning = false; fetchBatches();
-            }).catch(e => { appendTerminalText(`[ERROR] Stop request failed.\n`); b.disabled = false; fetchBatches(); });
+            }).catch(e => { appendTerminalText(`[ERROR] Stop request failed.\n`); updateToast(tid, 'error', 'Stop Failed', 'Request failed'); b.disabled = false; fetchBatches(); });
         }
 
         function togglePauseOperation() {
@@ -1735,7 +1854,9 @@
             if (isPipelineRunning) { ep = isPipelinePaused?'/api/batches/resume-pipeline':'/api/batches/pause-pipeline'; at = isPipelinePaused?'resuming':'pausing'; }
             else if (isUploadRunning) { ep = isUploadPaused?'/api/batches/resume-upload':'/api/batches/pause-upload'; at = isUploadPaused?'resuming':'pausing'; }
             else { b.disabled = false; fetchBatches(); return; }
-            showLogTerminal(); appendTerminalText(`\n[SYSTEM] Requesting ${at}...\n`);
+            appendTerminalText(`\n[SYSTEM] Requesting ${at}...\n`);
+            const capAt = at.charAt(0).toUpperCase() + at.slice(1);
+            showToast('info', capAt, `Operation ${at}…`, 2500);
             fetch(ep, {method:'POST'}).then(r=>r.json()).then(d => {
                 appendTerminalText(d.error ? `[ERROR] ${d.error}\n` : `[SUCCESS] ${d.message}\n`);
                 b.disabled = false; fetchBatches();
@@ -1745,29 +1866,29 @@
         function runPipelineBatching() {
             if (isPipelineRunning) return;
             const bo = document.getElementById('batch-only-chk').checked;
-            showLogTerminal();
-            appendTerminalText(`\n[SYSTEM] Starting pipeline (${bo?'batch-only':'full'})...\n`);
+            const maxBatches = parseInt(document.getElementById('max-batches-input').value) || 10;
+            appendTerminalText(`\n[SYSTEM] Starting pipeline (${bo?'batch-only':'full'}, max ${maxBatches} batches)...\n`);
             isPipelineRunning = true;
+            pipelineToastId = showToast('progress', 'Pipeline Running', bo ? 'Batching existing downloads…' : 'Fetching from Notion & batching…');
             const rb = document.getElementById('run-pipeline-btn'); rb.disabled = true; rb.innerHTML = `<span class="spinner"></span> Starting...`;
             const si = document.getElementById('pipeline-status-indicator'); si.className = 'status-pill batching';
             document.getElementById('pipeline-status-text').innerText = 'Starting...';
             renderCurrentTab();
-            fetch('/api/batches/run-pipeline', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({batch_only:bo})})
+            fetch('/api/batches/run-pipeline', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({batch_only:bo, max_batches:maxBatches})})
                 .then(r=>r.json()).then(d => {
-                    if (d.error) { appendTerminalText(`[ERROR] ${d.error}\n`); isPipelineRunning = false; fetchBatches(); }
+                    if (d.error) { appendTerminalText(`[ERROR] ${d.error}\n`); updateToast(pipelineToastId, 'error', 'Pipeline Failed', d.error); isPipelineRunning = false; fetchBatches(); }
                     else appendTerminalText(`[INFO] ${d.message}\n`);
-                }).catch(e => { appendTerminalText(`[ERROR] Failed to start.\n`); isPipelineRunning = false; fetchBatches(); });
+                }).catch(e => { appendTerminalText(`[ERROR] Failed to start.\n`); updateToast(pipelineToastId, 'error', 'Pipeline Failed', 'Failed to start'); isPipelineRunning = false; fetchBatches(); });
         }
 
         function openBatchFolder(n) { fetch(`/api/batches/${n}/open-folder`,{method:'POST'}).then(r=>r.json()).then(d=>{if(d.error)alert(d.error)}); }
 
         function triggerAutomatedUpload(n) {
-            if (activeUploadedBatch && activeUploadedBatch !== n) { alert(`Batch '${activeUploadedBatch}' was uploaded but not yet confirmed. Click 'Mark Uploaded' on it first.`); return; }
-            if (!confirm(`Upload ${n} via Selenium?`)) return;
-            showLogTerminal(); appendTerminalText(`\n[SYSTEM] Starting upload for ${n}...\n`);
+            appendTerminalText(`\n[SYSTEM] Starting upload for ${n}...\n`);
             // Update all state immediately so buttons work
             cacheData.upload_running = true; cacheData.upload_batch_name = n;
             isUploadRunning = true; isUploadPaused = false;
+            uploadToastId = showToast('progress', `Uploading ${n}`, 'Selenium browser launching…');
             const si = document.getElementById('pipeline-status-indicator'); si.className = 'status-pill uploading';
             document.getElementById('pipeline-status-text').innerText = `Uploading ${n}...`;
             // Show Stop/Pause buttons immediately
@@ -1780,9 +1901,9 @@
             document.getElementById('run-pipeline-btn').disabled = true;
             renderCurrentTab();
             fetch(`/api/batches/${n}/upload`,{method:'POST'}).then(r=>r.json()).then(d => {
-                if (d.error) { appendTerminalText(`[ERROR] ${d.error}\n`); cacheData.upload_running = false; isUploadRunning = false; fetchBatches(); }
+                if (d.error) { appendTerminalText(`[ERROR] ${d.error}\n`); updateToast(uploadToastId, 'error', 'Upload Failed', d.error); cacheData.upload_running = false; isUploadRunning = false; fetchBatches(); }
                 else appendTerminalText(`[INFO] ${d.message}\n`);
-            }).catch(e => { appendTerminalText(`[ERROR] Upload request failed.\n`); });
+            }).catch(e => { appendTerminalText(`[ERROR] Upload request failed.\n`); updateToast(uploadToastId, 'error', 'Upload Failed', 'Request failed'); });
         }
 
         function markUploadedManually(n) {
@@ -1806,11 +1927,13 @@
 
         function finalizeBatchReal(n) {
             if (!confirm(`Finalize ${n}?\n\nThis will update Notion and delete local files. Irreversible.`)) return;
-            showLogTerminal(); appendTerminalText(`\n[SYSTEM] Finalizing ${n}...\n`);
+            appendTerminalText(`\n[SYSTEM] Finalizing ${n}...\n`);
+            const tid = showToast('progress', `Finalizing ${n}`, 'Syncing to Notion & cleaning up…');
             fetch(`/api/batches/${n}/finalize`,{method:'POST'}).then(r=>r.json()).then(d => {
                 appendTerminalText(d.error ? `[ERROR] ${d.error}\n` : `[INFO] ${d.message}\n`);
-                if (!d.error) fetchBatches();
-            }).catch(e => { appendTerminalText(`[ERROR] Finalization failed.\n`); });
+                if (d.error) updateToast(tid, 'error', 'Finalization Failed', d.error);
+                else { updateToast(tid, 'success', 'Finalized', d.message); fetchBatches(); }
+            }).catch(e => { appendTerminalText(`[ERROR] Finalization failed.\n`); updateToast(tid, 'error', 'Finalization Failed', 'Request failed'); });
         }
 
         // ── Video player (Plyr) ─────────────────────────────────────
@@ -1837,16 +1960,92 @@
 
         // ── Console drawer ────────────────────────────────────────
         let lastLogLine = '';
+        let pipelineToastId = null;
+        let uploadToastId = null;
+        let _toastIdCounter = 0;
 
         function toggleConsole() {
-            document.getElementById('log-section').classList.toggle('expanded');
+            const wrap = document.getElementById('log-terminal-wrap');
+            const section = document.getElementById('log-section');
+            if (wrap.style.display === 'none' || wrap.style.display === '') {
+                wrap.style.display = 'block';
+                section.classList.add('expanded');
+            } else {
+                wrap.style.display = 'none';
+                section.classList.remove('expanded');
+            }
         }
 
         function updateLogBadge(text) {
             const badge = document.getElementById('log-badge');
-            // Strip brackets and clean up for badge display
             const clean = text.replace(/\n/g, '').trim();
             if (clean) { badge.textContent = clean; lastLogLine = clean; }
+        }
+
+        // ── Toast notification system ─────────────────────────────
+        function showToast(type, title, msg, autoDismissMs) {
+            const id = 'toast-' + (++_toastIdCounter);
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.id = id;
+            const iconSvg = type === 'success'
+                ? `<svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="var(--md-custom-color-success)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`
+                : type === 'error'
+                ? `<svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="var(--md-sys-color-error)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`
+                : `<svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="var(--md-sys-color-primary)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>`;
+            const progressHtml = type === 'progress'
+                ? `<div class="toast-progress"><div class="toast-progress-bar" id="${id}-bar"></div></div>` : '';
+            toast.innerHTML = `${iconSvg}<div class="toast-body"><div class="toast-title">${title}</div><div class="toast-msg">${msg}</div>${progressHtml}</div>`;
+            container.appendChild(toast);
+            // Auto-dismiss for non-progress toasts
+            const dismissTime = autoDismissMs || (type === 'progress' ? 0 : 4000);
+            if (dismissTime > 0) {
+                setTimeout(() => dismissToast(id), dismissTime);
+            }
+            return id;
+        }
+
+        function updateToast(id, type, title, msg) {
+            const toast = document.getElementById(id);
+            if (!toast) return;
+            toast.className = `toast ${type}`;
+            const bar = document.getElementById(`${id}-bar`);
+            const iconSvg = type === 'success'
+                ? `<svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="var(--md-custom-color-success)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`
+                : type === 'error'
+                ? `<svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="var(--md-sys-color-error)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`
+                : `<svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="var(--md-sys-color-primary)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>`;
+            const progressHtml = type === 'progress'
+                ? `<div class="toast-progress"><div class="toast-progress-bar" id="${id}-bar"></div></div>`
+                : (type === 'success' ? `<div class="toast-progress"><div class="toast-progress-bar success"></div></div>` :
+                   type === 'error' ? `<div class="toast-progress"><div class="toast-progress-bar error"></div></div>` : '');
+            toast.innerHTML = `${iconSvg}<div class="toast-body"><div class="toast-title">${title}</div><div class="toast-msg">${msg}</div>${progressHtml}</div>`;
+            // Auto-dismiss success/error after 4s
+            if (type !== 'progress') {
+                setTimeout(() => dismissToast(id), 4000);
+            }
+        }
+
+        function dismissToast(id) {
+            const toast = document.getElementById(id);
+            if (!toast) return;
+            toast.classList.add('toast-out');
+            setTimeout(() => toast.remove(), 300);
+        }
+
+        // Update progress toasts based on live status changes
+        function updateOperationToasts() {
+            // Pipeline finished
+            if (pipelineToastId && !isPipelineRunning) {
+                updateToast(pipelineToastId, 'success', 'Pipeline Complete', 'Batching finished successfully');
+                pipelineToastId = null;
+            }
+            // Upload finished
+            if (uploadToastId && !isUploadRunning) {
+                updateToast(uploadToastId, 'success', 'Upload Complete', 'Click "Mark Uploaded" to confirm');
+                uploadToastId = null;
+            }
         }
 
         function fetchLogs() {
@@ -1865,6 +2064,23 @@
                     logIndex = d.next_index;
                     updateLogBadge(d.lines[d.lines.length - 1]);
                     if (document.getElementById('autoscroll-chk').checked) t.scrollTop = t.scrollHeight;
+                    // Update upload toast with latest log line
+                    if (uploadToastId && isUploadRunning) {
+                        const lastLine = d.lines[d.lines.length - 1].replace(/^.*?\s{2,}/, '').trim();
+                        if (lastLine) {
+                            const bar = document.getElementById(`${uploadToastId}-bar`);
+                            const msgEl = document.querySelector(`#${uploadToastId} .toast-msg`);
+                            if (msgEl) msgEl.textContent = lastLine;
+                        }
+                    }
+                    // Update pipeline toast with latest log line
+                    if (pipelineToastId && isPipelineRunning) {
+                        const lastLine = d.lines[d.lines.length - 1].replace(/^.*?\s{2,}/, '').trim();
+                        if (lastLine) {
+                            const msgEl = document.querySelector(`#${pipelineToastId} .toast-msg`);
+                            if (msgEl) msgEl.textContent = lastLine;
+                        }
+                    }
                 }
             }).catch(e => console.error("Log fetch error:", e));
         }
@@ -1882,6 +2098,7 @@
         }
         function clearLogs() { document.getElementById('terminal').innerHTML = ''; document.getElementById('log-badge').textContent = ''; }
         function showLogTerminal() {
+            document.getElementById('log-terminal-wrap').style.display = 'block';
             document.getElementById('log-section').classList.add('expanded');
             document.getElementById('terminal').scrollTop = document.getElementById('terminal').scrollHeight;
         }

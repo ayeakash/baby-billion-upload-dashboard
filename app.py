@@ -24,6 +24,14 @@ import uploader
 
 app = Flask(__name__, template_folder="templates")
 
+# Disable browser caching so HTML/JS changes are always picked up
+@app.after_request
+def add_no_cache_headers(response):
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
+
 # Initialize batches by scanning on startup
 try:
     batch_manager.scan_and_register_batches()
@@ -350,9 +358,16 @@ def regenerate_csv(batch_name):
 
 @app.route("/api/batches/<batch_name>/delete", methods=["POST"])
 def delete_batch(batch_name):
-    """Delete a batch: remove folder, CSV, zip, batches.json entry, reset state to pending."""
+    """Delete a batch: stop upload if running, remove files, reset state."""
     import shutil
     import state_manager as sm
+
+    # If this batch is currently uploading, stop it first
+    if batch_manager.upload_running and batch_manager.upload_batch_name == batch_name:
+        log.info(f"Stopping upload for {batch_name} before deleting...")
+        batch_manager.stop_automated_upload()
+        import time
+        time.sleep(2)  # Give Chrome time to die
 
     batch_dir = os.path.join(uploader.BATCHES_DIR, batch_name)
     csv_path = os.path.join(uploader.BATCHES_DIR, f"{batch_name}.csv")
@@ -449,7 +464,8 @@ def delete_all_batches():
 def run_pipeline():
     data = request.json or {}
     batch_only = data.get("batch_only", False)
-    success, msg = batch_manager.start_pipeline_batching(batch_only=batch_only)
+    max_batches = data.get("max_batches", None)
+    success, msg = batch_manager.start_pipeline_batching(batch_only=batch_only, max_batches=max_batches)
     if not success:
         return jsonify({"error": msg}), 400
     return jsonify({"message": msg})
@@ -485,8 +501,18 @@ def kill_all_python():
         batch_manager.pipeline_running = False
         batch_manager.active_pipeline_process = None
         batch_manager.pipeline_paused = False
-        batch_manager.global_log_buffer.write(f"\n[SYSTEM] Killed {killed} Python process(es). Dashboard still running (PID {my_pid}).")
-        return jsonify({"message": f"Killed {killed} Python process(es). Dashboard still running."})
+        # Reset internal upload state
+        batch_manager.upload_running = False
+        batch_manager.upload_batch_name = None
+        batch_manager.upload_paused = False
+        # Also kill Chrome/chromedriver
+        for proc in ("chromedriver", "chrome"):
+            try:
+                sp.run(["taskkill", "/F", "/IM", f"{proc}.exe", "/T"], capture_output=True, timeout=5)
+            except Exception:
+                pass
+        batch_manager.global_log_buffer.write(f"\n[SYSTEM] Killed {killed} Python process(es) + Chrome. Dashboard still running (PID {my_pid}).")
+        return jsonify({"message": f"Killed {killed} Python process(es) + Chrome. Dashboard still running."})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -496,6 +522,68 @@ def stop_upload():
     if not success:
         return jsonify({"error": msg}), 400
     return jsonify({"message": msg})
+
+@app.route("/api/stop-everything", methods=["POST"])
+def stop_everything():
+    """Nuclear stop: kill pipeline, upload, Chrome, reset all state."""
+    import subprocess as sp
+    msgs = []
+
+    # 1. Stop pipeline
+    if batch_manager.pipeline_running:
+        try:
+            batch_manager.stop_pipeline_batching()
+            msgs.append("Pipeline stopped")
+        except Exception as e:
+            msgs.append(f"Pipeline stop error: {e}")
+
+    # 2. Stop upload
+    if batch_manager.upload_running:
+        try:
+            batch_manager.stop_automated_upload()
+            msgs.append("Upload stopped")
+        except Exception as e:
+            msgs.append(f"Upload stop error: {e}")
+
+    # 3. Force-kill Chrome/chromedriver
+    for proc in ("chromedriver", "chrome"):
+        try:
+            sp.run(["taskkill", "/F", "/IM", f"{proc}.exe", "/T"],
+                   capture_output=True, timeout=5)
+        except Exception:
+            pass
+    msgs.append("Chrome killed")
+
+    # 4. Kill any other python processes (not us)
+    my_pid = os.getpid()
+    try:
+        result = sp.run(
+            ["powershell", "-Command",
+             f"Get-Process python* -ErrorAction SilentlyContinue | Where-Object {{ $_.Id -ne {my_pid} }} | Select-Object -ExpandProperty Id"],
+            capture_output=True, text=True, timeout=5
+        )
+        pids = [p.strip() for p in result.stdout.strip().split("\n") if p.strip()]
+        for pid in pids:
+            try:
+                sp.run(["taskkill", "/F", "/PID", pid], capture_output=True, timeout=5)
+            except Exception:
+                pass
+        if pids:
+            msgs.append(f"Killed {len(pids)} Python process(es)")
+    except Exception:
+        pass
+
+    # 5. Reset all flags
+    batch_manager.pipeline_running = False
+    batch_manager.active_pipeline_process = None
+    batch_manager.pipeline_paused = False
+    batch_manager.upload_running = False
+    batch_manager.upload_batch_name = None
+    batch_manager.upload_paused = False
+
+    summary = "; ".join(msgs) if msgs else "Nothing was running"
+    batch_manager.global_log_buffer.write(f"\n[STOP] Everything stopped: {summary}")
+    return jsonify({"message": f"All stopped. {summary}"})
 
 @app.route("/api/batches/pause-pipeline", methods=["POST"])
 def pause_pipeline():
@@ -620,6 +708,25 @@ def finalize_all_reviews():
     return jsonify({"ok": True, "success": success, "failed": failed, "message": msg})
 
 if __name__ == "__main__":
+    # Kill any zombie servers still on port 5000 from previous runs
+    import subprocess, re as _re
+    try:
+        my_pid = os.getpid()
+        result = subprocess.run(
+            ["netstat", "-ano"], capture_output=True, text=True, timeout=5
+        )
+        for line in result.stdout.splitlines():
+            if ":5000" in line and "LISTENING" in line:
+                parts = line.split()
+                pid = int(parts[-1])
+                if pid != my_pid:
+                    try:
+                        subprocess.run(["taskkill", "/F", "/PID", str(pid)], capture_output=True, timeout=5)
+                        print(f"  Killed zombie server on port 5000 (PID {pid})")
+                    except Exception:
+                        pass
+    except Exception:
+        pass
+
     # Start flask app locally
     app.run(host="127.0.0.1", port=5000, debug=False)
-

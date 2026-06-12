@@ -1,8 +1,8 @@
 {
-  "Batch_582": {
-    "batch_name": "Batch_582",
+  "Batch_607": {
+    "batch_name": "Batch_607",
     "status": "pending_first_review",
-    "created_at": "2026-06-10T17:47:36.012987",
+    "created_at": "2026-06-11T19:43:54.125172",
     "videos": [
       {
         "page_id": "37563e60-e8f4-8099-b2b6-fc188121775a",
@@ -27,10 +27,10 @@
     "upload_date": null,
     "finalized_date": null
   },
-  "Batch_583": {
-    "batch_name": "Batch_583",
+  "Batch_608": {
+    "batch_name": "Batch_608",
     "status": "pending_first_review",
-    "created_at": "2026-06-10T17:48:36.375750",
+    "created_at": "2026-06-11T19:43:54.125172",
     "videos": [
       {
         "page_id": "37263e60-e8f4-8037-8e78-feb6ab86d458",
@@ -64,10 +64,10 @@
     "upload_date": null,
     "finalized_date": null
   },
-  "Batch_584": {
-    "batch_name": "Batch_584",
+  "Batch_609": {
+    "batch_name": "Batch_609",
     "status": "pending_first_review",
-    "created_at": "2026-06-10T17:49:46.428303",
+    "created_at": "2026-06-11T19:43:54.126175",
     "videos": [
       {
         "page_id": "36f63e60-e8f4-80fd-a0f5-fba429fadf76",
@@ -92,23 +92,53 @@
     "upload_date": null,
     "finalized_date": null
   },
-  "Batch_585": {
-    "batch_name": "Batch_585",
-    "status": "pending_first_review",
-    "created_at": "2026-06-10T17:50:46.884247",
+  "Batch_610": {
+    "batch_name": "Batch_610",
+    "status": "pending_second_review",
+    "created_at": "2026-06-11T19:43:56.545978",
     "videos": [
       {
-        "page_id": "36f63e60-e8f4-8086-a41d-c051171cc7a6",
-        "video_name": "Long_6_My Body_03___pg_36f63e60e8f48086a41dc051171cc7a6___ln_Hi",
-        "age_group": "6+",
-        "category": "My Body",
-        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Long_6_My_Body_03___pg_36f63e60e8f48086a41dc051171cc7a6___ln_Hi.mp4",
-        "drive_link": "https://drive.google.com/file/d/1yjeW_vVutySLO7uInZkFO_bV2NgkpN9u/view?usp=drive_link",
-        "pipeline_status": "batched"
+        "page_id": "36c63e60-e8f4-8081-8087-e74fd1e29ad0",
+        "video_name": "Long_3-6_Science_02___pg_36c63e60e8f480818087e74fd1e29ad0___ln_Hi",
+        "age_group": "3-6",
+        "category": "Science",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Long_3-6_Science_02___pg_36c63e60e8f480818087e74fd1e29ad0___ln_Hi.mp4",
+        "drive_link": "https://drive.google.com/file/d/1DZfYMAlj_3Hqjwuxr3GWvTj7ztwqJMoI/view?usp=drive_link",
+        "pipeline_status": "uploaded_pending_final_review"
+      },
+      {
+        "page_id": "36c63e60-e8f4-8081-8087-e74fd1e29ad0",
+        "video_name": "Long_3-6_Science_02___pg_36c63e60e8f480818087e74fd1e29ad0___ln_En",
+        "age_group": "3-6",
+        "category": "Science",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Long_3-6_Science_02___pg_36c63e60e8f480818087e74fd1e29ad0___ln_En.mp4",
+        "drive_link": "https://drive.google.com/file/d/1cdm2gHXrgMbLp6o4JdhhKYPvcaEr7HHP/view?usp=drive_link",
+        "pipeline_status": "uploaded_pending_final_review"
       }
     ],
-    "upload_job_id": null,
-    "upload_date": null,
-    "finalized_date": null
+    "upload_job_id": "9edeeae4-8362-475c-bb28-583690cf6f34",
+    "upload_date": "2026-06-11",
+    "finalized_date": null,
+    "upload_completed": true
+  },
+  "Batch_611": {
+    "batch_name": "Batch_611",
+    "status": "pending_second_review",
+    "created_at": "2026-06-11T19:43:56.545978",
+    "videos": [
+      {
+        "page_id": "36c63e60-e8f4-8067-99b6-df22cf138d52",
+        "video_name": "Long_3-6_Science_01___pg_36c63e60e8f4806799b6df22cf138d52___ln_Hi",
+        "age_group": "3-6",
+        "category": "Science",
+        "local_file": "D:\\BabyBillion\\upload_dashboard\\downloads\\Long_3-6_Science_01___pg_36c63e60e8f4806799b6df22cf138d52___ln_Hi.mp4",
+        "drive_link": "https://drive.google.com/file/d/1kvF4yY9Ch9rLjnAgmKVq1B7BNjx13ZE-/view?usp=drive_link",
+        "pipeline_status": "uploaded_pending_final_review"
+      }
+    ],
+    "upload_job_id": "3788d746-380f-44aa-9e01-fac971a8f141",
+    "upload_date": "2026-06-11",
+    "finalized_date": null,
+    "upload_completed": false
   }
 }
