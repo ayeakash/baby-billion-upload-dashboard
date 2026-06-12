@@ -257,7 +257,7 @@ def mark_batch_uploaded(batch_name: str, job_id: str | None = None) -> tuple[boo
         try:
             success = notion_client.mark_pending_review_in_notion(
                 page_id, video_name=video_name, lang_suffix=lang_suffix,
-                batch_name=batch_name,
+                batch_name=b["upload_job_id"],
             )
             if success:
                 notion_ok += 1
@@ -360,7 +360,7 @@ def run_automated_upload_thread(batch_name: str):
                 try:
                     ok = notion_client.mark_pending_review_in_notion(
                         page_id, video_name=vname, lang_suffix=lang,
-                        batch_name=batch_name,
+                        batch_name=job_id,
                     )
                     if ok:
                         notion_ok += 1
