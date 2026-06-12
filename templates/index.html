@@ -1470,15 +1470,42 @@
                 return;
             }
 
-            let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
-                <span style="font-size:0.75rem;color:var(--md-sys-color-outline)">${notionReviewsTotal} page(s) pending review across ${notionReviewsGrouped.length} batch(es)</span>
+            // Filter by search query
+            let filteredGroups = notionReviewsGrouped;
+            let filteredTotal = notionReviewsTotal;
+            const nrq = notionReviewsSearchQuery.toLowerCase().trim();
+            if (nrq) {
+                filteredGroups = notionReviewsGrouped.map(g => {
+                    const batchMatch = g.batch_name.toLowerCase().includes(nrq);
+                    const filtered = g.reviews.filter(r =>
+                        (r.video_name && r.video_name.toLowerCase().includes(nrq)) ||
+                        (r.hindi_title && r.hindi_title.toLowerCase().includes(nrq)) ||
+                        (r.english_title && r.english_title.toLowerCase().includes(nrq)) ||
+                        (r.category && r.category.toLowerCase().includes(nrq)) ||
+                        (r.age_group && r.age_group.toLowerCase().includes(nrq)) ||
+                        (r.batch_id && r.batch_id.toLowerCase().includes(nrq))
+                    );
+                    if (batchMatch) return g;
+                    if (filtered.length > 0) return { ...g, reviews: filtered };
+                    return null;
+                }).filter(g => g !== null);
+                filteredTotal = filteredGroups.reduce((sum, g) => sum + g.reviews.length, 0);
+            }
+            let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;gap:0.5rem">
+                <div style="display:flex;align-items:center;gap:0.5rem;flex:1">
+                    <div style="position:relative;flex:1;max-width:320px">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--md-sys-color-outline)" stroke-width="2" style="position:absolute;left:8px;top:50%;transform:translateY(-50%)"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input type="text" id="notion-reviews-search" placeholder="Filter by batch ID, video, category…" value="${notionReviewsSearchQuery}" oninput="notionReviewsSearchQuery=this.value;renderNotionReviews()" style="width:100%;padding:0.4rem 0.5rem 0.4rem 2rem;border:1px solid var(--md-sys-color-outline-variant);border-radius:var(--md-sys-shape-md);background:var(--md-sys-color-surface-container);color:var(--md-sys-color-on-surface);font-size:0.72rem;font-family:inherit;outline:none;transition:border-color 0.2s" onfocus="this.style.borderColor='var(--md-sys-color-primary)'" onblur="this.style.borderColor='var(--md-sys-color-outline-variant)'" />
+                    </div>
+                    <span style="font-size:0.72rem;color:var(--md-sys-color-outline);white-space:nowrap">${filteredTotal} of ${notionReviewsTotal} page(s) across ${filteredGroups.length} batch(es)</span>
+                </div>
                 <button class="btn btn-success" onclick="finalizeAllReviews()" id="finalize-all-btn">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
                     Finalize All
                 </button>
             </div>`;
 
-            notionReviewsGrouped.forEach((group, gIdx) => {
+            filteredGroups.forEach((group, gIdx) => {
                 const bname = group.batch_name;
                 const reviews = group.reviews;
                 const isExp = notionReviewsExpandedBatches.has(bname) || (gIdx === 0 && notionReviewsExpandedBatches.size === 0);
@@ -1610,8 +1637,10 @@
         }
 
         let cacheData = { pending: [], uploaded: [], finalized: [] };
-        let notionReviews = [];
+        let notionReviewsGrouped = [];
+        let notionReviewsTotal = 0;
         let notionReviewsLoading = false;
+        let notionReviewsSearchQuery = '';
 
         function fetchBatches() {
             fetch('/api/batches').then(res => res.json()).then(data => {
