@@ -1545,8 +1545,8 @@
 
                 reviews.forEach(r => {
                     const variants = [];
-                    if (r.hindi_title) variants.push({ lang: 'Hi', title: cleanTitle(r.hindi_title), color: '#F59E0B' });
-                    if (r.english_title) variants.push({ lang: 'En', title: cleanTitle(r.english_title), color: '#60A5FA' });
+                    if (r.hindi_title) variants.push({ lang: 'Hi', title: r.hindi_title, color: '#F59E0B' });
+                    if (r.english_title) variants.push({ lang: 'En', title: r.english_title, color: '#60A5FA' });
                     if (variants.length === 0) variants.push({ lang: '—', title: '—', color: 'var(--md-sys-color-outline)' });
 
                     variants.forEach((v, vi) => {
@@ -1555,7 +1555,7 @@
                                 ${vi === 0 ? `<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.video_name || '—'}</span>` : `<span style="opacity:0.3;font-size:0.6rem">↳ same page</span>`}
                             </div>
                             <div class="video-meta-cell"><span style="font-size:0.6rem;font-weight:600;padding:1px 6px;border-radius:4px;background:${v.color}22;color:${v.color};letter-spacing:0.02em">${v.lang}</span></div>
-                            <div class="video-meta-cell" style="color:var(--md-custom-color-success)">${v.title}</div>
+                            <div class="video-meta-cell" style="color:var(--md-custom-color-success);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${v.title}">${v.title}</div>
                             <div class="video-meta-cell">${vi === 0 ? (r.age_group || '—') : ''}</div>
                             <div class="video-meta-cell">${vi === 0 ? (r.category || '—') : ''}</div>
                             <div>${vi === 0 ? `<button class="btn btn-primary" style="font-size:0.65rem;padding:0.3rem 0.6rem" onclick="finalizeOneReview('${r.page_id}', this)">Finalize</button>` : ''}</div>
