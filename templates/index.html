@@ -1514,7 +1514,8 @@
                 html += `<div id="${cardId}" class="batch-card ${isExp ? 'expanded' : ''}" style="border-left-color: ${bname === 'Ungrouped' ? 'var(--md-sys-color-outline)' : 'var(--md-sys-color-primary)'}">
                     <div class="batch-summary" onclick="toggleNotionReviewBatch('${cardId}', '${bname}')">
                         <div class="batch-meta-left">
-                            <span class="batch-title">${bname}</span>
+                            <span class="batch-title">${bname === 'Ungrouped' ? 'Ungrouped' : bname.substring(0, 8) + '…'}</span>
+                            ${bname !== 'Ungrouped' ? `<span style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;background:rgba(180,197,255,0.1);padding:2px 6px;border-radius:var(--md-sys-shape-sm);color:var(--md-sys-color-primary);cursor:pointer;display:inline-flex;align-items:center;gap:3px" onclick="copyToClipboard('${bname}',this,event)" title="Copy Batch ID: ${bname}"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>Copy ID</span>` : ''}
                             <span class="batch-status-badge status-uploaded">${reviews.length} video${reviews.length !== 1 ? 's' : ''}</span>
                         </div>
                         <div class="batch-meta-right">
