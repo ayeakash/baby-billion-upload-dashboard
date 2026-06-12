@@ -1414,6 +1414,14 @@
             });
         }
 
+        function cleanTitle(name) {
+            if (!name) return '—';
+            let clean = name;
+            if (clean.includes('___pg_')) clean = clean.split('___pg_')[0];
+            if (clean.includes('___ln_')) clean = clean.split('___ln_')[0];
+            return clean.trim();
+        }
+
         function copyToClipboard(text, element, event) {
             if (event) event.stopPropagation();
             navigator.clipboard.writeText(text).then(() => {
@@ -1537,8 +1545,8 @@
 
                 reviews.forEach(r => {
                     const variants = [];
-                    if (r.hindi_title) variants.push({ lang: 'Hi', title: r.hindi_title, color: '#F59E0B' });
-                    if (r.english_title) variants.push({ lang: 'En', title: r.english_title, color: '#60A5FA' });
+                    if (r.hindi_title) variants.push({ lang: 'Hi', title: cleanTitle(r.hindi_title), color: '#F59E0B' });
+                    if (r.english_title) variants.push({ lang: 'En', title: cleanTitle(r.english_title), color: '#60A5FA' });
                     if (variants.length === 0) variants.push({ lang: '—', title: '—', color: 'var(--md-sys-color-outline)' });
 
                     variants.forEach((v, vi) => {
