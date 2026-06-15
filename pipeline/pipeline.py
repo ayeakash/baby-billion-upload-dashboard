@@ -133,8 +133,7 @@ def stage_fetch(dry_run: bool = False) -> list[dict]:
             resolved = []
             for pid in unsynced_pids:
                 try:
-                    today_str = date.today().isoformat()
-                    if nc.mark_uploaded_in_notion(pid, today_str):
+                    if nc.mark_pending_review_in_notion(pid):
                         log.info(f"    [OK] Resolved: {pid}")
                         resolved.append(pid)
                     else:
@@ -831,7 +830,7 @@ def run_parallel_pipeline(all_videos: list[dict], headless: bool = False, skip_u
                 still_failed = []
                 for pid in remaining:
                     try:
-                        ok = nc.mark_uploaded_in_notion(pid, today)
+                        ok = nc.mark_pending_review_in_notion(pid)
                         if ok:
                             log.info(f"    [OK] Notion confirmed for {pid}")
                         else:

@@ -486,7 +486,7 @@ def _clean_title(video_name: str) -> str:
 def _build_upload_patch(upload_date_str: str, upload_prop_type: str = "checkbox") -> dict:
     """
     Build the PATCH body to finalize a page.
-    Sets Upload = True (checkbox), Upload Date, Upload Progress = 'First Review'.
+    Sets Upload = True (checkbox), Upload Date, Upload Progress = 'Uploaded'.
     """
     return {"properties": {
         PROP_UPLOAD_DATE: {"date": {"start": upload_date_str}},
@@ -1002,7 +1002,7 @@ def finalize_in_notion(
 ) -> bool:
     """
     Reviewer finalizes a page:
-      - Set Upload Progress = 'first review'
+      - Set Upload Progress = 'Uploaded'
       - Set Upload = Yes + Upload Date = today
     """
     _check_config()
