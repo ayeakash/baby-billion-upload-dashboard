@@ -336,14 +336,15 @@ def run_automated_upload_thread(batch_name: str):
             global_log_buffer.write(f"[WARNING] Upload did not return a Batch ID — syncing to Notion anyway.")
             job_id = "MANUAL"
 
-        # Auto-mark as uploaded (no confirmation needed)
-        global_log_buffer.write(f"[AUTO] Marking batch as uploaded...")
+        # Upload done — keep batch in "Pending Review" tab so user can verify
+        # User must click "Mark Uploaded" to move it to "Uploaded" tab
+        global_log_buffer.write(f"[AUTO] Upload complete — batch stays in Pending Review until you click 'Mark Uploaded'.")
         upload_date = date.today().isoformat()
         with _batches_lock:
             batches = load_batches()
             if batch_name in batches:
                 b = batches[batch_name]
-                b["status"] = "pending_second_review"
+                b["status"] = "pending_first_review"
                 b["upload_completed"] = True
                 b["upload_job_id"] = job_id
                 b["upload_date"] = upload_date
