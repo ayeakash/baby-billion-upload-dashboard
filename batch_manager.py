@@ -353,9 +353,31 @@ def run_automated_upload_thread(batch_name: str):
                         v["pipeline_status"] = "uploaded_pending_final_review"
                 save_batches(batches)
 
-        # NOTE: Notion sync (Upload Progress = 'Draft Upload') is NOT done here.
-        # It happens when user clicks "Mark Uploaded" → mark_batch_uploaded()
-        global_log_buffer.write(f"[DONE] Batch '{batch_name}' uploaded. Click 'Mark Uploaded' to sync to Notion.")
+        # Sync Notion: set Upload Progress = "Draft Upload" for each video
+        b_data = load_batches().get(batch_name, {})
+        videos = [v for v in b_data.get("videos", []) if v.get("pipeline_status") != "bad"]
+        global_log_buffer.write(f"[NOTION] Setting Upload Progress='Draft Upload' for {len(videos)} videos...")
+        notion_ok = 0
+        for v in videos:
+            page_id = v.get("page_id")
+            vname = v.get("video_name", "")
+            if page_id:
+                lang = "___ln_Hi" if "___ln_Hi" in vname else \
+                       "___ln_En" if "___ln_En" in vname else None
+                try:
+                    ok = notion_client.mark_pending_review_in_notion(
+                        page_id, video_name=vname, lang_suffix=lang,
+                        batch_name=job_id,
+                    )
+                    if ok:
+                        notion_ok += 1
+                        global_log_buffer.write(f"[NOTION] Draft Upload set: {vname}")
+                    else:
+                        global_log_buffer.write(f"[ERROR] Notion failed for: {vname}")
+                except Exception as ne:
+                    global_log_buffer.write(f"[ERROR] Notion exception for {vname}: {ne}")
+        global_log_buffer.write(f"[NOTION] Done — {notion_ok}/{len(videos)} synced.")
+        global_log_buffer.write(f"[DONE] Batch '{batch_name}' uploaded and synced to Notion.")
     except Exception as e:
         log.error(f"Error in automated upload background thread: {e}")
         global_log_buffer.write(f"[EXCEPTION] Automated upload error: {e}")
