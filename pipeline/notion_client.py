@@ -730,7 +730,8 @@ def claim_for_upload(page_id: str) -> bool:
     _check_config()
     url = f"{BASE}/pages/{page_id}"
 
-    # First, verify the page is still "Ready to Upload" (another PC may have claimed it)
+    # First, verify the page is still "Ready to Upload" and not in-progress
+    # (another PC may have claimed it or already uploaded it)
     try:
         resp = requests.get(url, headers=_headers(), timeout=15)
         if resp.status_code == 200:
@@ -740,6 +741,14 @@ def claim_for_upload(page_id: str) -> bool:
                 log.info(
                     f"  [CLAIM SKIP] {page_id[:12]}… status is '{current_status}' "
                     f"(not '{STATUS_READY}') — already claimed by another PC"
+                )
+                return False
+            # Also check Upload Progress — if set, another PC already uploaded
+            current_progress = _prop_value(props, PROP_UPLOAD_PROGRESS).strip()
+            if current_progress:
+                log.info(
+                    f"  [CLAIM SKIP] {page_id[:12]}… Upload Progress='{current_progress}' "
+                    f"— already processed by another PC"
                 )
                 return False
     except Exception as e:
@@ -872,6 +881,7 @@ def mark_pending_review_in_notion(
 
     props: dict = {
         PROP_UPLOAD_PROGRESS: {"select": {"name": UPLOAD_PROGRESS_DRAFT}},
+        PROP_STATUS: {"select": {"name": STATUS_UPLOADING}},
     }
 
     # Write batch name so other PCs can see which batch this belongs to

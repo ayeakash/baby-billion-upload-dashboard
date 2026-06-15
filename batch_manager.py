@@ -455,8 +455,8 @@ def finalize_batch(batch_name: str) -> tuple[bool, str]:
         global_log_buffer.write(f"[SKIP] Bad video '{video_name}' — reset to pending for redo.")
         bad_count += 1
 
-    # 1. Update state.json first, then set Status='Uploaded' + title in Notion
-    #    (Upload checkbox is NOT checked here — that's done from the Reviews tab)
+    # 1. Update state.json first, then set Upload Progress='Draft Upload' + title in Notion
+    #    Upload checkbox is NOT checked here — that's done from the Reviews tab.
     for v in good_videos:
         page_id = v["page_id"]
         video_name = v["video_name"]
@@ -475,11 +475,12 @@ def finalize_batch(batch_name: str) -> tuple[bool, str]:
         state_manager.mark_uploaded(state_key, job_id, upload_date)
         v["pipeline_status"] = "uploaded"
 
-        global_log_buffer.write(f"[NOTION] Setting Status='Uploaded' + title: {video_name}...")
-        notion_success = notion_client.mark_uploaded_in_notion(
-            page_id, upload_date,
+        global_log_buffer.write(f"[NOTION] Setting Upload Progress='Draft Upload' + title: {video_name}...")
+        notion_success = notion_client.mark_pending_review_in_notion(
+            page_id,
             video_name=video_name,
             lang_suffix=lang_suffix,
+            batch_name=batch_name,
         )
         
         if notion_success:
