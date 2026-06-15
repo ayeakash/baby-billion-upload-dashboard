@@ -1539,7 +1539,7 @@
                         </div>
                     </div>
                     <div class="batch-details"><div class="batch-details-inner">
-                        <div style="display:grid;grid-template-columns:2.5fr 0.6fr 2.5fr 1fr 1fr 0.8fr;padding:0.25rem 0.5rem;color:var(--md-sys-color-outline);font-size:0.58rem;font-weight:500;letter-spacing:0.04em;border-bottom:1px solid var(--md-sys-color-outline-variant)">
+                        <div style="display:grid;grid-template-columns:2.5fr 0.6fr 2.5fr 1fr 1fr 1.2fr;padding:0.25rem 0.5rem;color:var(--md-sys-color-outline);font-size:0.58rem;font-weight:500;letter-spacing:0.04em;border-bottom:1px solid var(--md-sys-color-outline-variant)">
                             <span>VIDEO NAME</span><span>LANG</span><span>TITLE ON APP</span><span>AGE GROUP</span><span>CATEGORY</span><span></span>
                         </div>`;
 
@@ -1550,7 +1550,7 @@
                     if (variants.length === 0) variants.push({ lang: '—', title: '—', color: 'var(--md-sys-color-outline)' });
 
                     variants.forEach((v, vi) => {
-                        html += `<div class="video-item" style="grid-template-columns:2.5fr 0.6fr 2.5fr 1fr 1fr 0.8fr${vi > 0 ? ';border-top:1px dashed var(--md-sys-color-outline-variant)' : ''}">
+                        html += `<div class="video-item" style="grid-template-columns:2.5fr 0.6fr 2.5fr 1fr 1fr 1.2fr${vi > 0 ? ';border-top:1px dashed var(--md-sys-color-outline-variant)' : ''}">
                             <div class="video-name-cell" title="${r.page_id}">
                                 ${vi === 0 ? `<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.video_name || '—'}</span>` : `<span style="opacity:0.3;font-size:0.6rem">↳ same page</span>`}
                             </div>
@@ -1558,7 +1558,7 @@
                             <div class="video-meta-cell" style="color:var(--md-custom-color-success);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${v.title}">${v.title}</div>
                             <div class="video-meta-cell">${vi === 0 ? (r.age_group || '—') : ''}</div>
                             <div class="video-meta-cell">${vi === 0 ? (r.category || '—') : ''}</div>
-                            <div>${vi === 0 ? `<button class="btn btn-primary" style="font-size:0.65rem;padding:0.3rem 0.6rem" onclick="finalizeOneReview('${r.page_id}', this)">Finalize</button>` : ''}</div>
+                            <div style="display:flex;gap:4px;align-items:center">${vi === 0 ? `<button class="btn btn-primary" style="font-size:0.65rem;padding:0.3rem 0.6rem" onclick="finalizeOneReview('${r.page_id}', this)">Finalize</button><button class="btn" style="font-size:0.65rem;padding:0.3rem 0.5rem;background:var(--md-sys-color-error-container);color:var(--md-sys-color-on-error-container);border:none;cursor:pointer" onclick="rejectOneReview('${r.page_id}', this)" title="Delete — clears Upload Progress so video can be re-downloaded">✕</button>` : ''}</div>
                         </div>`;
                     });
                 });
@@ -1605,6 +1605,30 @@
                         showToast('error', 'Failed', data.message, 4000);
                     }
                 }).catch(() => { btn.disabled = false; btn.innerHTML = 'Retry'; });
+        }
+
+        function rejectOneReview(pageId, btn) {
+            if (!confirm('Delete this video from reviews?\n\nThis will clear Upload Progress in Notion so the video can be re-downloaded.')) return;
+            btn.disabled = true;
+            btn.innerHTML = '…';
+            fetch(`/api/pending-reviews/${pageId}/reject`, { method: 'POST' })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.ok) {
+                        notionReviewsGrouped.forEach(g => {
+                            g.reviews = g.reviews.filter(r => r.page_id !== pageId);
+                        });
+                        notionReviewsGrouped = notionReviewsGrouped.filter(g => g.reviews.length > 0);
+                        notionReviewsTotal = notionReviewsGrouped.reduce((sum, g) => sum + g.reviews.length, 0);
+                        document.getElementById('badge-notion-reviews').innerText = notionReviewsTotal;
+                        renderNotionReviews();
+                        showToast('success', 'Deleted', 'Video removed — Upload Progress cleared in Notion', 3000);
+                    } else {
+                        btn.disabled = false;
+                        btn.innerHTML = '✕';
+                        showToast('error', 'Failed', data.message, 4000);
+                    }
+                }).catch(() => { btn.disabled = false; btn.innerHTML = '✕'; });
         }
 
         function finalizeBatchReviews(batchName) {

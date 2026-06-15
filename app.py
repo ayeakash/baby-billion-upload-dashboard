@@ -784,6 +784,19 @@ def finalize_batch_reviews():
         "message": f"Finalized {success}/{success + failed} pages."
     })
 
+@app.route("/api/pending-reviews/<page_id>/reject", methods=["POST"])
+def reject_one_review(page_id):
+    """Reject/delete a pending review: clear Upload Progress so it can be re-downloaded."""
+    try:
+        import notion_client
+        ok = notion_client.clear_upload_progress_in_notion(page_id)
+        if ok:
+            return jsonify({"ok": True, "message": f"Page {page_id} rejected — Upload Progress cleared."})
+        else:
+            return jsonify({"ok": False, "message": f"Failed to clear Upload Progress for {page_id}."})
+    except Exception as e:
+        return jsonify({"ok": False, "message": str(e)})
+
 if __name__ == "__main__":
     # Kill any zombie servers still on port 5000 from previous runs
     import subprocess, re as _re
