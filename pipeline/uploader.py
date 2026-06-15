@@ -401,11 +401,11 @@ def _do_upload(driver, By, WebDriverWait, EC, NoSuchElementException,
             upload_btn = btn
             break
 
-    # Priority 2: Any button with "submit" in the text
+    # Priority 2: Any button with "submit" — but NOT "Submit Batch for Approval"
     if not upload_btn:
         for btn in btns:
             txt = btn.text.strip().lower()
-            if "submit" in txt:
+            if "submit" in txt and "approval" not in txt:
                 upload_btn = btn
                 break
 
@@ -413,7 +413,7 @@ def _do_upload(driver, By, WebDriverWait, EC, NoSuchElementException,
     if not upload_btn:
         for btn in btns:
             txt = btn.text.strip().lower()
-            if "process" in txt and len(txt) > 5:
+            if "process" in txt and len(txt) > 5 and "approval" not in txt:
                 upload_btn = btn
                 break
 
@@ -421,8 +421,14 @@ def _do_upload(driver, By, WebDriverWait, EC, NoSuchElementException,
         log.error("  Could not find Submit & Process / Upload button!")
         return None
 
+    # Final safety: refuse to click if the matched button looks like the approval button
+    matched_text = (upload_btn.text or "").strip()
+    if "approval" in matched_text.lower():
+        log.error(f"  [SAFETY] Refusing to click '{matched_text}' — this is the review submission button, not the upload button!")
+        return None
+
     driver.execute_script("arguments[0].click();", upload_btn)
-    log.info("  >> Submit & Process button clicked -- waiting for Job ID …")
+    log.info(f"  >> Submit & Process button clicked ('{matched_text}') -- waiting for Job ID …")
     time.sleep(2)  # brief settle before polling starts
 
     # ── Capture Job ID (polls until success or explicit error) ───────────────
