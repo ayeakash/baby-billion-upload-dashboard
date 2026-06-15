@@ -294,6 +294,12 @@ def mark_video_bad(batch_name: str, page_id: str, bad: bool = True, reason: str 
                     global_log_buffer.write(f"[NOTION] Marked '{v['video_name']}' for re-do: {reason}")
                 else:
                     global_log_buffer.write(f"[WARNING] Saved locally but Notion sync failed for '{v['video_name']}'")
+                # Clear Upload Progress so the video can be re-downloaded
+                try:
+                    notion_client.clear_upload_progress_in_notion(page_id)
+                    global_log_buffer.write(f"[NOTION] Cleared upload progress for: {v['video_name']}")
+                except Exception as e:
+                    global_log_buffer.write(f"[WARNING] Failed to clear Notion progress for '{v['video_name']}': {e}")
                 log.info(f"Video '{v['video_name']}' in {batch_name} marked as bad: {reason}")
                 return True, f"'{v['video_name']}' marked as bad — will be skipped during finalization."
             else:
@@ -441,6 +447,11 @@ def finalize_batch(batch_name: str) -> tuple[bool, str]:
         page_id = v["page_id"]
         video_name = v["video_name"]
         state_manager.upsert(page_id, pipeline_status="pending", batch="", local_file="")
+        # Clear Upload Progress in Notion so the video can be re-downloaded
+        try:
+            notion_client.clear_upload_progress_in_notion(page_id)
+        except Exception as e:
+            global_log_buffer.write(f"[WARNING] Failed to clear Notion progress for '{video_name}': {e}")
         global_log_buffer.write(f"[SKIP] Bad video '{video_name}' — reset to pending for redo.")
         bad_count += 1
 

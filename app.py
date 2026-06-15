@@ -375,14 +375,33 @@ def delete_batch(batch_name):
 
     errors = []
 
-    # Reset video states back to "pending" (files are deleted with the batch)
+    # Reset video states back to "pending" and clear Notion Upload Progress
     try:
+        import notion_client
+        batches_data = batch_manager.load_batches()
+        batch_record = batches_data.get(batch_name, {})
+
+        # Clear Upload Progress in Notion for each video in this batch
+        for v in batch_record.get("videos", []):
+            pid = v.get("page_id")
+            if pid:
+                try:
+                    notion_client.clear_upload_progress_in_notion(pid)
+                    batch_manager.global_log_buffer.write(
+                        f"[NOTION] Cleared upload progress for: {v.get('video_name', pid)}"
+                    )
+                except Exception as ne:
+                    batch_manager.global_log_buffer.write(
+                        f"[WARNING] Failed to clear Notion progress for {v.get('video_name', pid)}: {ne}"
+                    )
+
+        # Reset state.json entries
         state = sm.get_all()
         for page_id, rec in state.items():
             if isinstance(rec, dict) and rec.get("batch") == batch_name:
                 sm.upsert(page_id, pipeline_status="pending", batch="", local_file="")
     except Exception as e:
-        errors.append(f"state reset: {e}")
+        errors.append(f"state/Notion reset: {e}")
 
     # Remove from batches.json
     try:
@@ -426,17 +445,30 @@ def delete_all_batches():
     import shutil
     import state_manager as sm
 
-    # 1. Clear ALL batch references from state.json (not just current batches)
+    # 1. Clear Notion Upload Progress for ALL batched videos, then reset state.json
     try:
+        import notion_client
+        batches_data = batch_manager.load_batches()
+
+        # Clear Upload Progress in Notion for every video across all batches
+        for bname, brec in batches_data.items():
+            for v in brec.get("videos", []):
+                pid = v.get("page_id")
+                if pid:
+                    try:
+                        notion_client.clear_upload_progress_in_notion(pid)
+                    except Exception:
+                        pass
+
         state = sm.get_all()
         cleared = 0
         for page_id, rec in state.items():
             if isinstance(rec, dict) and rec.get("batch"):
                 sm.upsert(page_id, pipeline_status="pending", batch="", local_file="")
                 cleared += 1
-        log.info(f"Cleared batch references from {cleared} state.json records")
+        log.info(f"Cleared batch references from {cleared} state.json records + Notion progress")
     except Exception as e:
-        log.error(f"Error clearing state.json batch refs: {e}")
+        log.error(f"Error clearing state.json batch refs / Notion: {e}")
 
     # 2. Delete all batch files from disk
     deleted_files = 0

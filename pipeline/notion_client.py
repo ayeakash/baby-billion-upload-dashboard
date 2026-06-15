@@ -14,6 +14,8 @@ Notion API docs: https://developers.notion.com/reference
 """
 from __future__ import annotations
 
+import re
+import unicodedata
 import requests
 import logging
 from datetime import date
@@ -146,6 +148,10 @@ def _prop_value(properties: dict, name: str) -> str:
     if t == "title":      return _extract_title(prop)
     if t == "rich_text":  return _extract_rich_text(prop)
     if t == "select":     return _extract_select(prop)
+    if t == "status":
+        # Notion 'status' type has same structure as 'select': {"name": "..."}
+        s = prop.get("status")
+        return s["name"] if s else ""
     if t == "url":        return _extract_url(prop)
     if t == "checkbox":   return "Yes" if _extract_checkbox(prop) else "No"
     if t == "date":
@@ -206,9 +212,10 @@ def query_ready_to_upload() -> list[dict]:
     Returns ONLY pages where:
       Layer 1 (API):    Status == "Ready to Upload"
       Layer 2 (API):    Upload == "No" / unchecked  (type auto-detected)
-      Layer 3 (Python): Re-confirms both fields + requires a drive.google.com link
+      Layer 2b (API):   Upload Progress is empty  (not 'Draft Upload' or 'Uploaded')
+      Layer 3 (Python): Re-confirms all fields + requires a drive.google.com link
 
-    This triple-validation ensures no video sneaks through.
+    This quadruple-validation ensures no video sneaks through.
     """
     _check_config()
     upload_type = _detect_upload_prop_type()
@@ -221,6 +228,7 @@ def query_ready_to_upload() -> list[dict]:
     total_fetched  = 0
     skipped_status = 0
     skipped_upload = 0
+    skipped_progress = 0
     skipped_link   = 0
     skipped_name   = 0
 
@@ -235,6 +243,10 @@ def query_ready_to_upload() -> list[dict]:
                         "select":   {"equals": STATUS_READY},
                     },
                     upload_filter,
+                    {
+                        "property": PROP_UPLOAD_PROGRESS,
+                        "select":   {"is_empty": True},
+                    },
                 ]
             },
             "page_size": 100,
@@ -272,7 +284,19 @@ def query_ready_to_upload() -> list[dict]:
                 skipped_upload += 1
                 continue
 
-            # ── Layer 3c: Must have at least one Google Drive link ─────────
+            # ── Layer 3c: Skip if Upload Progress is already set ──────────────
+            #    Videos with 'Draft Upload' or 'Uploaded' (or any progress)
+            #    have already been through the pipeline — do NOT re-download.
+            progress_val = _prop_value(props, PROP_UPLOAD_PROGRESS).strip()
+            if progress_val:
+                log.info(
+                    f"  SKIP [{video_name or page_id}]: Upload Progress='{progress_val}' "
+                    f"-- already in upload pipeline"
+                )
+                skipped_progress += 1
+                continue
+
+            # ── Layer 3d: Must have at least one Google Drive link ─────────
             hindi_link   = _prop_value(props, PROP_FINAL_VIDEO_HINDI_LINK).strip()
             english_link = _prop_value(props, PROP_FINAL_VIDEO_ENGLISH_LINK).strip()
 
@@ -288,7 +312,7 @@ def query_ready_to_upload() -> list[dict]:
                 skipped_link += 1
                 continue
 
-            # ── Layer 3d: Must have a video name ─────────────────────────────
+            # ── Layer 3e: Must have a video name ─────────────────────────────
             if not video_name:
                 log.warning(f"  SKIP [page {page_id}]: Empty video name")
                 skipped_name += 1
@@ -333,6 +357,7 @@ def query_ready_to_upload() -> list[dict]:
         f"\n  Fetched by API filter : {total_fetched}"
         f"\n  Skipped (wrong status): {skipped_status}"
         f"\n  Skipped (already done): {skipped_upload}"
+        f"\n  Skipped (in progress) : {skipped_progress}"
         f"\n  Skipped (no Drive link): {skipped_link}"
         f"\n  Skipped (no name)      : {skipped_name}"
         f"\n  [OK] Ready to process    : {len(results)}"
@@ -431,16 +456,32 @@ def query_failed_to_upload() -> list[dict]:
 # ── Update ─────────────────────────────────────────────────────────────────────
 
 def _clean_title(video_name: str) -> str:
-    """Strip internal pipeline tags (___pg_XXXX, ___ln_XX) from a video name
-    so only the clean title is written to Notion's Title on App fields."""
+    """Strip internal pipeline tags and produce a clean, web-safe title.
+
+    Steps:
+      1. Remove ___pg_<hex> and ___ln_Hi/___ln_En pipeline suffixes
+      2. Unicode-normalize and strip Devanagari / non-ASCII characters
+      3. Replace spaces with underscores
+      4. Remove any remaining special characters (keep only [A-Za-z0-9_])
+      5. Collapse consecutive underscores and strip leading/trailing underscores
+    """
     name = video_name
-    # Remove ___pg_<hex> suffix
+    # 1. Remove ___pg_<hex> suffix
     if "___pg_" in name:
         name = name.split("___pg_")[0]
     # Remove ___ln_Hi / ___ln_En suffix (if ___pg_ wasn't present)
     if "___ln_" in name:
         name = name.split("___ln_")[0]
-    return name.strip()
+    # 2. Unicode-normalize, then strip all non-ASCII (Devanagari, etc.)
+    name = unicodedata.normalize("NFKD", name)
+    name = name.encode("ascii", "ignore").decode("ascii")
+    # 3. Replace spaces with underscores
+    name = name.replace(" ", "_")
+    # 4. Remove any remaining special characters (keep alphanumeric + underscore)
+    name = re.sub(r"[^A-Za-z0-9_]", "", name)
+    # 5. Collapse consecutive underscores and strip edges
+    name = re.sub(r"_+", "_", name).strip("_")
+    return name or "untitled"
 
 def _build_upload_patch(upload_date_str: str, upload_prop_type: str = "checkbox") -> dict:
     """
@@ -475,7 +516,7 @@ def mark_uploaded_in_notion(
     # Title properties
     title_props: dict = {}
     if video_name and lang_suffix:
-        web_safe_name = video_name.replace(" ", "_")
+        web_safe_name = _clean_title(video_name)
         if lang_suffix == "___ln_Hi":
             title_props[PROP_HINDI_TITLE_ON_APP] = {
                 "rich_text": [{"text": {"content": web_safe_name}}]
@@ -510,6 +551,58 @@ def mark_uploaded_in_notion(
     log.error(f"[FAIL] Failed to update Notion page {page_id} after {retries} attempts.")
     return False
 
+
+def clear_upload_progress_in_notion(page_id: str, retries: int = 3) -> bool:
+    """
+    Clear upload-related fields in Notion so a deleted/reset video
+    can be re-downloaded by the pipeline.
+
+    Clears:
+      - Upload Progress  (select → empty)
+      - Status           (select → 'Ready to Upload')
+      - Upload           (checkbox → False)
+      - Upload Date      (date → None)
+      - Hindi Title on App  (rich_text → empty)
+      - English Title on App (rich_text → empty)
+      - Batch ID         (rich_text → empty)
+
+    Returns True on success.
+    """
+    _check_config()
+    url = f"{BASE}/pages/{page_id}"
+
+    props = {
+        PROP_UPLOAD_PROGRESS: {"select": None},
+        PROP_STATUS: {"select": {"name": STATUS_READY}},
+        PROP_UPLOAD: {"checkbox": False},
+        PROP_UPLOAD_DATE: {"date": None},
+        PROP_HINDI_TITLE_ON_APP: {"rich_text": []},
+        PROP_ENGLISH_TITLE_ON_APP: {"rich_text": []},
+        PROP_BATCH_ID: {"rich_text": []},
+    }
+
+    for attempt in range(1, retries + 1):
+        try:
+            resp = requests.patch(
+                url, headers=_headers(),
+                json={"properties": props}, timeout=30,
+            )
+            if resp.status_code == 200:
+                log.info(
+                    f"[OK] Notion upload progress cleared: {page_id} "
+                    f"(Status='{STATUS_READY}', Upload=No, Progress=cleared)"
+                )
+                return True
+            else:
+                log.warning(
+                    f"Notion clear-progress PATCH attempt {attempt}: "
+                    f"{resp.status_code} {resp.text[:200]}"
+                )
+        except Exception as e:
+            log.warning(f"Notion clear-progress PATCH attempt {attempt} error: {e}")
+
+    log.error(f"[FAIL] Could not clear upload progress for {page_id} after {retries} attempts.")
+    return False
 
 def mark_failed_in_notion(page_id: str, retries: int = 3) -> bool:
     """
@@ -789,7 +882,7 @@ def mark_pending_review_in_notion(
 
     # Write title field based on language
     if video_name and lang_suffix:
-        web_safe_name = video_name.replace(" ", "_")
+        web_safe_name = _clean_title(video_name)
         if lang_suffix == "___ln_Hi":
             props[PROP_HINDI_TITLE_ON_APP] = {
                 "rich_text": [{"text": {"content": web_safe_name}}]
