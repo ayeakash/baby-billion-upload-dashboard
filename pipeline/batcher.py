@@ -218,9 +218,21 @@ def run(videos: list[dict]) -> list[str]:
     batches: list[list[dict]] = []
     current_batch: list[dict] = []
     current_size = 0
+    max_mb = MAX_BATCH_BYTES / (1024 * 1024)
 
     for group in sorted_groups:
         group_size = sum(os.path.getsize(v["local_file"]) for v in group)
+        group_mb   = group_size / (1024 * 1024)
+
+        # Warn if a single page group already exceeds the limit
+        if group_size > MAX_BATCH_BYTES:
+            names = [v['video_name'] for v in group]
+            log.warning(
+                f"  [WARN] Page group {group[0]['page_id'][:12]}… ({group_mb:.1f} MB, "
+                f"{len(group)} variant(s): {names}) exceeds batch limit ({max_mb:.0f} MB). "
+                f"It will be placed in its own batch."
+            )
+
         # If adding this page group would exceed the limit, flush current batch
         if current_batch and (current_size + group_size) > MAX_BATCH_BYTES:
             batches.append(current_batch)

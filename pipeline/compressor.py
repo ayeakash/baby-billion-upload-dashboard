@@ -26,11 +26,20 @@ import shutil
 log = logging.getLogger(__name__)
 
 # ── Settings ──────────────────────────────────────────────────────────────────
-TARGET_MB        = 20          # hard ceiling in MB
-TARGET_BYTES     = TARGET_MB * 1024 * 1024
+# Per-video target is calculated dynamically from config.MAX_BATCH_BYTES
+# so that the dashboard batch-size selector is always respected.
 HEADROOM_BYTES   = 1.5 * 1024 * 1024   # 1.5 MB safety margin
 AUDIO_KBPS       = 128                  # AAC audio bitrate
 MAX_WIDTH        = 1280                 # cap at 720p-ish width
+
+
+def _get_target_mb() -> int:
+    """Target per-video size: half the batch limit, capped at [5, 20] MB."""
+    try:
+        from config import MAX_BATCH_BYTES
+        return min(20, max(5, int(MAX_BATCH_BYTES / (1024 * 1024) / 2)))
+    except ImportError:
+        return 15
 
 
 def _get_duration(path: str) -> float | None:
@@ -88,10 +97,14 @@ def _encode(src: str, dst: str, video_kbps: int) -> bool:
 
 def compress(page_id: str, video_name: str, local_file: str) -> str | None:
     """
-    Compress local_file to under TARGET_MB if needed.
+    Compress local_file to fit within the batch size limit if needed.
+    Target = half of MAX_BATCH_BYTES (so ≥2 videos fit per batch).
     Returns the path to the final file (may be the original if skipped).
     Returns None if compression hard-fails and original is unusable.
     """
+    TARGET_MB    = _get_target_mb()
+    TARGET_BYTES = TARGET_MB * 1024 * 1024
+
     if not os.path.isfile(local_file):
         log.error(f"  [COMPRESS] File not found: {local_file}")
         return None
