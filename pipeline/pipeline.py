@@ -244,33 +244,10 @@ def stage_fetch(dry_run: bool = False) -> list[dict]:
 
     log.info(f"  {len(sane_videos)} videos passed sanity check — entering pipeline.")
 
-    # ── Guard 6: Claim videos in Notion (multi-PC coordination) ───────────
-    #    Sets Status = "Uploading" in Notion so other PCs' queries (which
-    #    filter on Status = "Ready to Upload") will skip claimed videos.
-    #    Only videos successfully claimed will be downloaded.
-    claimed_videos = []
-    skipped_claimed = 0
-    seen_claimed_pages = set()  # avoid duplicate claims for Hi/En variants
-    for v in sane_videos:
-        pid = v["page_id"]
-        if pid not in seen_claimed_pages:
-            if nc.claim_for_upload(pid):
-                seen_claimed_pages.add(pid)
-                claimed_videos.append(v)
-            else:
-                log.info(
-                    f"  [CLAIM SKIP] {v['video_name']} "
-                    f"(page={pid[:12]}…) — already claimed by another PC"
-                )
-                skipped_claimed += 1
-        else:
-            # Same page_id, different language variant — already claimed
-            claimed_videos.append(v)
-
-    if skipped_claimed:
-        log.info(f"  {skipped_claimed} video(s) skipped — already claimed by another PC.")
-    log.info(f"  {len(claimed_videos)} video(s) claimed for this PC.")
-    sane_videos = claimed_videos
+    # ── Guard 6: Multi-PC claim (DISABLED — single user mode) ──────────────
+    #    Concurrency protection skipped. Upload Progress is only set
+    #    after a batch is successfully created and uploaded.
+    log.info(f"  {len(sane_videos)} video(s) ready for pipeline (single-user mode, no Notion claim).")
 
     for v in sane_videos:
         state_key = _state_key(v)
