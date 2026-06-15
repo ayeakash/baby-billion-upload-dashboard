@@ -1906,23 +1906,7 @@
 
         function deleteBatch(batchName, btn) {
             if (!btn) return;
-            // First click: ask for confirmation inline
-            if (!btn.dataset.confirmDelete) {
-                btn.dataset.confirmDelete = 'true';
-                const origHTML = btn.innerHTML;
-                btn.innerHTML = '⚠️ Click again to confirm';
-                btn.style.background = 'var(--md-sys-color-error-container)';
-                btn.style.color = 'var(--md-sys-color-error)';
-                setTimeout(() => {
-                    delete btn.dataset.confirmDelete;
-                    btn.innerHTML = origHTML;
-                    btn.style.background = '';
-                    btn.style.color = '';
-                }, 3000);
-                return;
-            }
-            // Second click: actually delete
-            delete btn.dataset.confirmDelete;
+            if (!confirm(`Delete batch ${batchName}?\n\nThis will:\n• Clear Upload Progress in Notion\n• Reset videos to 'pending' for re-download\n• Delete local files, CSV, and ZIP`)) return;
             btn.disabled = true;
             btn.innerHTML = '<span class="spinner"></span> Deleting...';
             appendTerminalText(`\n[SYSTEM] Deleting batch ${batchName}...\n`);
