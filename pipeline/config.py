@@ -44,15 +44,15 @@ PROP_BATCH_ID             = "Batch ID"
 
 # ── Status / upload values in Notion ──────────────────────────────────────────
 STATUS_READY          = "Ready to Upload"
-STATUS_UPLOADING      = "Uploading"          # claimed by a PC — other PCs skip it
 STATUS_FAILED_UPLOAD  = "Failed to upload"
 STATUS_UPLOADED       = "Uploaded"
 UPLOAD_NO      = "No"
 UPLOAD_YES     = "Yes"
 
-# Upload Progress status values (Notion property type: 'status', not 'select')
-UPLOAD_PROGRESS_DRAFT    = "Draft Upload"    # set after Selenium upload completes
-UPLOAD_PROGRESS_REVIEWED = "Uploaded"      # set by Finalize & Sync / Notion Reviews
+# Upload Progress values (used for multi-PC coordination)
+UPLOAD_PROGRESS_PROCESSING = "Processing"    # claimed by a PC — other PCs skip it
+UPLOAD_PROGRESS_DRAFT      = "Draft Upload"  # uploaded to admin, pending review
+UPLOAD_PROGRESS_REVIEWED   = "Uploaded"      # reviewer finalized
 
 # ── Paths ──────────────────────────────────────────────────────────────────────
 BASE_DIR      = os.path.dirname(os.path.abspath(__file__))           # pipeline/

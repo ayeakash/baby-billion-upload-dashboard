@@ -27,9 +27,9 @@ from config import (
     PROP_FAILED_UPLOAD, PROP_REDO, PROP_REDO_REASON,
     PROP_HINDI_TITLE_ON_APP, PROP_ENGLISH_TITLE_ON_APP,
     PROP_BATCH_ID,
-    STATUS_READY, STATUS_UPLOADING, STATUS_FAILED_UPLOAD, STATUS_UPLOADED,
+    STATUS_READY, STATUS_FAILED_UPLOAD, STATUS_UPLOADED,
     UPLOAD_NO, UPLOAD_YES,
-    UPLOAD_PROGRESS_DRAFT, UPLOAD_PROGRESS_REVIEWED,
+    UPLOAD_PROGRESS_PROCESSING, UPLOAD_PROGRESS_DRAFT, UPLOAD_PROGRESS_REVIEWED,
 )
 
 log = logging.getLogger(__name__)
@@ -719,51 +719,42 @@ def validate_connection() -> bool:
 
 def claim_for_upload(page_id: str) -> bool:
     """
-    Atomically claim a video for this PC by setting Status = 'Uploading'.
+    Claim a video for this PC by setting Upload Progress = 'Processing'.
 
     This prevents other PCs from picking up the same video, since their
-    Notion query filters for Status = 'Ready to Upload' only.
+    Notion query filters for Upload Progress = empty.
 
     Returns True if the claim succeeded (page was updated).
-    Returns False if Notion rejected the update (may already be claimed).
+    Returns False if the video is already claimed/processed.
     """
     _check_config()
     url = f"{BASE}/pages/{page_id}"
 
-    # First, verify the page is still "Ready to Upload" and not in-progress
-    # (another PC may have claimed it or already uploaded it)
+    # Verify Upload Progress is empty (no other PC has claimed it)
     try:
         resp = requests.get(url, headers=_headers(), timeout=15)
         if resp.status_code == 200:
             props = resp.json().get("properties", {})
-            current_status = _prop_value(props, PROP_STATUS).strip()
-            if current_status != STATUS_READY:
-                log.info(
-                    f"  [CLAIM SKIP] {page_id[:12]}… status is '{current_status}' "
-                    f"(not '{STATUS_READY}') — already claimed by another PC"
-                )
-                return False
-            # Also check Upload Progress — if set, another PC already uploaded
             current_progress = _prop_value(props, PROP_UPLOAD_PROGRESS).strip()
             if current_progress:
                 log.info(
                     f"  [CLAIM SKIP] {page_id[:12]}… Upload Progress='{current_progress}' "
-                    f"— already processed by another PC"
+                    f"— already claimed/processed by another PC"
                 )
                 return False
     except Exception as e:
-        log.warning(f"  [CLAIM] Could not verify page status: {e} — proceeding anyway")
+        log.warning(f"  [CLAIM] Could not verify page: {e} — proceeding anyway")
 
-    # Set Status = "Uploading"
+    # Set Upload Progress = "Processing" to claim it
     patch = {
         "properties": {
-            PROP_STATUS: {"select": {"name": STATUS_UPLOADING}},
+            PROP_UPLOAD_PROGRESS: {"select": {"name": UPLOAD_PROGRESS_PROCESSING}},
         }
     }
     try:
         resp = requests.patch(url, headers=_headers(), json=patch, timeout=15)
         if resp.status_code == 200:
-            log.info(f"  [CLAIM OK] {page_id[:12]}… → Status='{STATUS_UPLOADING}'")
+            log.info(f"  [CLAIM OK] {page_id[:12]}… → Upload Progress='{UPLOAD_PROGRESS_PROCESSING}'")
             return True
         else:
             log.warning(f"  [CLAIM FAIL] {page_id[:12]}…: {resp.status_code} {resp.text[:200]}")
@@ -775,20 +766,20 @@ def claim_for_upload(page_id: str) -> bool:
 
 def release_claim(page_id: str) -> bool:
     """
-    Release a claimed video back to 'Ready to Upload' status.
+    Release a claimed video by clearing Upload Progress back to empty.
     Used when the pipeline fails after claiming but before uploading.
     """
     _check_config()
     url = f"{BASE}/pages/{page_id}"
     patch = {
         "properties": {
-            PROP_STATUS: {"select": {"name": STATUS_READY}},
+            PROP_UPLOAD_PROGRESS: {"select": None},
         }
     }
     try:
         resp = requests.patch(url, headers=_headers(), json=patch, timeout=15)
         if resp.status_code == 200:
-            log.info(f"  [RELEASE] {page_id[:12]}… → Status='{STATUS_READY}'")
+            log.info(f"  [RELEASE] {page_id[:12]}… → Upload Progress cleared")
             return True
         else:
             log.warning(f"  [RELEASE FAIL] {page_id[:12]}…: {resp.status_code}")
@@ -881,7 +872,6 @@ def mark_pending_review_in_notion(
 
     props: dict = {
         PROP_UPLOAD_PROGRESS: {"select": {"name": UPLOAD_PROGRESS_DRAFT}},
-        PROP_STATUS: {"select": {"name": STATUS_UPLOADING}},
     }
 
     # Write batch name so other PCs can see which batch this belongs to
