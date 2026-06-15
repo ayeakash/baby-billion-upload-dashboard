@@ -419,6 +419,151 @@ def start_automated_upload(batch_name: str) -> tuple[bool, str]:
     t.start()
     return True, f"Automated upload started for {batch_name}. Monitor the terminal below for logs."
 
+
+# ── Upload All + Submit for Approval (separate flow) ─────────────────────────
+
+def run_upload_all_submit_thread():
+    """Upload ALL pending batches → Submit for Approval → Sync Notion.
+    Completely separate from the single-batch upload flow."""
+    global upload_running, upload_batch_name
+
+    upload_running = True
+    upload_batch_name = "ALL (auto-submit)"
+
+    global_log_buffer.write(f"\n{'='*60}")
+    global_log_buffer.write(f"  UPLOAD ALL + SUBMIT FOR APPROVAL")
+    global_log_buffer.write(f"{'='*60}\n")
+
+    try:
+        # Collect all pending batches that have CSV + ZIP ready
+        batches = load_batches()
+        pending = []
+        for bn, b in batches.items():
+            if b.get("status") == "pending_first_review":
+                csv_path = os.path.join(uploader.BATCHES_DIR, f"{bn}.csv")
+                zip_path = os.path.join(uploader.BATCHES_DIR, f"{bn}.zip")
+                if os.path.isfile(csv_path):
+                    # Auto-create ZIP if missing
+                    if not os.path.isfile(zip_path):
+                        global_log_buffer.write(f"[ZIP] Creating ZIP for {bn}...")
+                        zipper.zip_batch(bn)
+                    if os.path.isfile(zip_path):
+                        pending.append(bn)
+                    else:
+                        global_log_buffer.write(f"[SKIP] {bn} — no ZIP and couldn't create one")
+                else:
+                    global_log_buffer.write(f"[SKIP] {bn} — missing CSV")
+
+        if not pending:
+            global_log_buffer.write("[DONE] No pending batches to upload.")
+            return
+
+        global_log_buffer.write(f"[INFO] Found {len(pending)} batch(es) to upload+submit: {', '.join(pending)}\n")
+
+        # Run the upload+submit flow (single Selenium session for all batches)
+        results = uploader.run_all_and_submit(pending, headless=False)
+
+        # Process results
+        upload_date = date.today().isoformat()
+        submitted = 0
+        failed_upload = 0
+        failed_approval = 0
+
+        for bn, result in results.items():
+            upload_batch_name = bn
+            job_id = result.get("job_id")
+            status = result.get("status", "upload_failed")
+
+            if status == "upload_failed":
+                # Mark batch as failed
+                failed_upload += 1
+                global_log_buffer.write(f"[FAILED] {bn} — upload failed")
+                with _batches_lock:
+                    bs = load_batches()
+                    if bn in bs:
+                        bs[bn]["upload_failed"] = True
+                        bs[bn]["fail_reason"] = "Upload failed on admin site"
+                        save_batches(bs)
+                continue
+
+            if status == "approval_failed":
+                # Uploaded but approval failed (e.g., 'failed to fetch')
+                failed_approval += 1
+                global_log_buffer.write(f"[FAILED] {bn} — uploaded (Job: {job_id}) but approval submission failed (failed to fetch)")
+                with _batches_lock:
+                    bs = load_batches()
+                    if bn in bs:
+                        bs[bn]["upload_failed"] = True
+                        bs[bn]["fail_reason"] = f"Uploaded (Job: {job_id}) but 'Submit for Approval' failed"
+                        bs[bn]["upload_job_id"] = job_id
+                        save_batches(bs)
+                continue
+
+            # status == "submitted" — full success
+            submitted += 1
+            global_log_buffer.write(f"[SUCCESS] {bn} — uploaded + submitted for approval (Job: {job_id})")
+
+            # Update batch record
+            with _batches_lock:
+                bs = load_batches()
+                if bn in bs:
+                    b = bs[bn]
+                    b["status"] = "pending_first_review"
+                    b["upload_completed"] = True
+                    b["upload_job_id"] = job_id
+                    b["upload_date"] = upload_date
+                    b["approval_submitted"] = True
+                    for v in b["videos"]:
+                        if v["pipeline_status"] != "bad":
+                            v["pipeline_status"] = "uploaded_pending_final_review"
+                    save_batches(bs)
+
+            # Sync Notion: set Upload Progress = "Draft Upload"
+            b_data = load_batches().get(bn, {})
+            videos = [v for v in b_data.get("videos", []) if v.get("pipeline_status") != "bad"]
+            notion_ok = 0
+            for v in videos:
+                pid = v.get("page_id")
+                vname = v.get("video_name", "")
+                if pid:
+                    lang = "___ln_Hi" if "___ln_Hi" in vname else \
+                           "___ln_En" if "___ln_En" in vname else None
+                    try:
+                        ok = notion_client.mark_pending_review_in_notion(
+                            pid, video_name=vname, lang_suffix=lang,
+                            batch_name=job_id,
+                        )
+                        if ok:
+                            notion_ok += 1
+                    except Exception:
+                        pass
+            global_log_buffer.write(f"[NOTION] {bn}: {notion_ok}/{len(videos)} synced to Draft Upload")
+
+        global_log_buffer.write(f"\n{'='*60}")
+        global_log_buffer.write(f"  RESULTS: {submitted} submitted, {failed_upload} upload failed, {failed_approval} approval failed")
+        global_log_buffer.write(f"{'='*60}")
+
+    except Exception as e:
+        log.error(f"Error in upload-all-submit thread: {e}")
+        global_log_buffer.write(f"[EXCEPTION] Upload-all-submit error: {e}")
+    finally:
+        upload_running = False
+        upload_batch_name = None
+
+
+def start_upload_all_submit() -> tuple[bool, str]:
+    """Start the upload-all + submit-for-approval flow in a background thread."""
+    if upload_running:
+        return False, "An upload is already running. Wait for it to finish or stop it first."
+    if pipeline_running:
+        return False, "Pipeline is running. Wait for it to finish first."
+
+    t = threading.Thread(target=run_upload_all_submit_thread)
+    t.daemon = True
+    t.start()
+    return True, "Upload All + Submit started. All pending batches will be uploaded and submitted for approval."
+
+
 def finalize_batch(batch_name: str) -> tuple[bool, str]:
     """Real Finalization Step: Sync to Notion, update state.json, and delete local files."""
     batches = load_batches()

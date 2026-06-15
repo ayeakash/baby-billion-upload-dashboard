@@ -652,6 +652,14 @@ def upload_batch(batch_name):
         return jsonify({"error": msg}), 400
     return jsonify({"message": msg})
 
+@app.route("/api/batches/upload-all-submit", methods=["POST"])
+def upload_all_submit():
+    """Upload ALL pending batches + submit each for approval."""
+    success, msg = batch_manager.start_upload_all_submit()
+    if not success:
+        return jsonify({"error": msg}), 400
+    return jsonify({"message": msg})
+
 @app.route("/api/batches/<batch_name>/mark-uploaded", methods=["POST"])
 def mark_uploaded(batch_name):
     data = request.json or {}

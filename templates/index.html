@@ -1130,6 +1130,10 @@
                     <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                     <input type="text" id="search-input" class="search-input" placeholder="Search videos, IDs, categories..." oninput="handleSearch(this.value)">
                 </div>
+                <button class="btn btn-primary" onclick="uploadAllAndSubmit(this)" title="Upload all pending batches and submit for approval" style="padding: 6px 12px; font-size: 0.78rem; white-space: nowrap;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    Upload All &amp; Submit
+                </button>
                 <button class="btn btn-danger" onclick="deleteAllBatches(this)" title="Delete all batches" style="padding: 6px 12px; font-size: 0.78rem; white-space: nowrap;">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                     Delete All
@@ -1939,6 +1943,20 @@
                     btn.style.opacity = '0.8';
                     fetchBatches();
                 }).catch(e => { appendTerminalText(`[ERROR] ${e}\n`); btn.disabled = false; });
+        }
+
+        function uploadAllAndSubmit(btn) {
+            if (!btn) return;
+            if (!confirm('Upload ALL pending batches and submit each for approval?\n\nThis will:\n• Upload each batch via Selenium\n• Click "Submit Batch for Approval" after each\n• Mark failed batches automatically\n• Sync successful ones to Notion')) return;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Uploading All...';
+            appendTerminalText(`\n[SYSTEM] Starting Upload All & Submit for Approval...\n`);
+            fetch('/api/batches/upload-all-submit', {method:'POST'})
+                .then(r => r.json()).then(d => {
+                    appendTerminalText(d.error ? `[ERROR] ${d.error}\n` : `[STARTED] ${d.message}\n`);
+                    btn.disabled = false;
+                    btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Upload All &amp; Submit';
+                }).catch(e => { appendTerminalText(`[ERROR] ${e}\n`); btn.disabled = false; btn.innerHTML = 'Upload All &amp; Submit'; });
         }
 
         function deleteAllBatches(btn) {

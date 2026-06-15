@@ -503,6 +503,149 @@ def run_all(batch_names: list[str], headless: bool = False) -> dict[str, str | N
     return job_ids
 
 
+# ── Upload All + Submit for Approval ─────────────────────────────────────────
+
+def click_submit_for_approval(driver) -> bool:
+    """
+    After upload completes (Processed Results screen visible),
+    find and click 'Submit Batch for Approval', then wait for success or failure.
+
+    Returns True on success, False on failure (including 'failed to fetch').
+    """
+    _, _, _, By, WebDriverWait, EC, TimeoutException, _, _ = _get_selenium()
+
+    # Find the 'Submit Batch for Approval' button
+    btns = driver.find_elements(By.CSS_SELECTOR, "button")
+    approval_btn = None
+    for btn in btns:
+        txt = btn.text.strip().lower()
+        if "submit" in txt and "approval" in txt:
+            approval_btn = btn
+            break
+
+    if not approval_btn:
+        log.error("  [APPROVAL] 'Submit Batch for Approval' button not found on page!")
+        return False
+
+    log.info(f"  [APPROVAL] Clicking 'Submit Batch for Approval'...")
+    driver.execute_script("arguments[0].click();", approval_btn)
+    time.sleep(2)
+
+    # Poll for success or failure (up to 60 seconds)
+    for poll in range(20):
+        if abort_event.is_set():
+            log.info("  [ABORT] Approval aborted by user.")
+            return False
+
+        time.sleep(3)
+        try:
+            body = driver.execute_script(
+                "return document.body ? (document.body.innerText || '') : ''"
+            ) or ""
+            body_lower = body.lower()
+
+            # Check for failure indicators
+            for fail_pattern in (
+                "failed to fetch", "network error", "error occurred",
+                "something went wrong", "request failed", "server error",
+                "internal server error", "502", "503", "504",
+            ):
+                if fail_pattern in body_lower:
+                    log.error(f"  [APPROVAL FAIL] Detected '{fail_pattern}' on page (poll #{poll+1})")
+                    return False
+
+            # Check for success indicators
+            for success_pattern in (
+                "successfully submitted", "batch submitted",
+                "approved", "submission complete",
+            ):
+                if success_pattern in body_lower:
+                    log.info(f"  [APPROVAL OK] Batch submitted for approval (poll #{poll+1})")
+                    return True
+
+            # If the approval button is gone and no error, likely success
+            btns_now = driver.find_elements(By.CSS_SELECTOR, "button")
+            still_there = any(
+                "submit" in b.text.strip().lower() and "approval" in b.text.strip().lower()
+                for b in btns_now
+            )
+            if not still_there:
+                log.info(f"  [APPROVAL OK] Approval button disappeared — assuming success (poll #{poll+1})")
+                return True
+
+        except Exception as e:
+            log.debug(f"  [APPROVAL] Poll error: {e}")
+
+        log.info(f"  [APPROVAL POLL {poll+1}] Waiting for result...")
+
+    log.warning("  [APPROVAL] Timed out waiting for approval result — assuming failure")
+    return False
+
+
+def run_all_and_submit(batch_names: list[str], headless: bool = False) -> dict[str, dict]:
+    """
+    Upload ALL batches, clicking 'Submit for Approval' after each.
+
+    Returns {batch_name: {job_id, status}} where status is:
+      - 'submitted'        — uploaded + submitted for approval
+      - 'upload_failed'    — upload itself failed
+      - 'approval_failed'  — uploaded but approval submission failed (e.g., 'failed to fetch')
+    """
+    global active_driver
+    if not BB_USERNAME or not BB_PASSWORD:
+        raise ValueError("BB_USERNAME and BB_PASSWORD must be set.")
+
+    abort_event.clear()
+    driver = build_driver(headless)
+    active_driver = driver
+    results = {}
+
+    try:
+        if not login(driver):
+            log.error("Cannot proceed — login failed.")
+            return {bn: {"job_id": None, "status": "upload_failed"} for bn in batch_names}
+
+        for batch_name in batch_names:
+            if abort_event.is_set():
+                log.info(f"  [ABORT] Stopping before {batch_name}")
+                results[batch_name] = {"job_id": None, "status": "upload_failed"}
+                continue
+
+            upload_resume_event.wait()
+            log.info(f"\n{'='*55}")
+            log.info(f"  UPLOAD+SUBMIT: {batch_name}")
+            log.info(f"{'='*55}")
+
+            job_id = upload_batch(driver, batch_name)
+            if not job_id:
+                log.error(f"  [FAIL] Upload failed for {batch_name}")
+                results[batch_name] = {"job_id": None, "status": "upload_failed"}
+                time.sleep(3)
+                continue
+
+            log.info(f"  [OK] Uploaded: {batch_name} — Job ID: {job_id}")
+            log.info(f"  [STEP 2] Now submitting for approval...")
+
+            # The page should now show 'Processed Results' with the approval button
+            approved = click_submit_for_approval(driver)
+            if approved:
+                log.info(f"  [OK] {batch_name} submitted for approval!")
+                results[batch_name] = {"job_id": job_id, "status": "submitted"}
+            else:
+                log.error(f"  [FAIL] {batch_name} uploaded but approval failed!")
+                results[batch_name] = {"job_id": job_id, "status": "approval_failed"}
+
+            time.sleep(5)  # pause between batches
+
+    except KeyboardInterrupt:
+        log.info("Interrupted by user.")
+    finally:
+        _safe_quit_driver(driver)
+        active_driver = None
+
+    return results
+
+
 def _safe_quit_driver(driver, timeout=5):
     """Quit the Selenium driver with a timeout. If quit() hangs, force-kill the Chrome process."""
     if driver is None:
