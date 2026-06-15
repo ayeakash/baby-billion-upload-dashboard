@@ -503,41 +503,12 @@ def run_upload_all_submit_thread():
             submitted += 1
             global_log_buffer.write(f"[SUCCESS] {bn} — uploaded + submitted for approval (Job: {job_id})")
 
-            # Update batch record
-            with _batches_lock:
-                bs = load_batches()
-                if bn in bs:
-                    b = bs[bn]
-                    b["status"] = "pending_first_review"
-                    b["upload_completed"] = True
-                    b["upload_job_id"] = job_id
-                    b["upload_date"] = upload_date
-                    b["approval_submitted"] = True
-                    for v in b["videos"]:
-                        if v["pipeline_status"] != "bad":
-                            v["pipeline_status"] = "uploaded_pending_final_review"
-                    save_batches(bs)
-
-            # Sync Notion: set Upload Progress = "Draft Upload"
-            b_data = load_batches().get(bn, {})
-            videos = [v for v in b_data.get("videos", []) if v.get("pipeline_status") != "bad"]
-            notion_ok = 0
-            for v in videos:
-                pid = v.get("page_id")
-                vname = v.get("video_name", "")
-                if pid:
-                    lang = "___ln_Hi" if "___ln_Hi" in vname else \
-                           "___ln_En" if "___ln_En" in vname else None
-                    try:
-                        ok = notion_client.mark_pending_review_in_notion(
-                            pid, video_name=vname, lang_suffix=lang,
-                            batch_name=job_id,
-                        )
-                        if ok:
-                            notion_ok += 1
-                    except Exception:
-                        pass
-            global_log_buffer.write(f"[NOTION] {bn}: {notion_ok}/{len(videos)} synced to Draft Upload")
+            # Mark as uploaded (moves to Uploaded tab + syncs Notion)
+            ok, msg = mark_batch_uploaded(bn, job_id)
+            if ok:
+                global_log_buffer.write(f"[MARKED] {bn} → Uploaded tab. {msg}")
+            else:
+                global_log_buffer.write(f"[WARNING] {bn} mark-uploaded issue: {msg}")
 
         global_log_buffer.write(f"\n{'='*60}")
         global_log_buffer.write(f"  RESULTS: {submitted} submitted, {failed_upload} upload failed, {failed_approval} approval failed")
