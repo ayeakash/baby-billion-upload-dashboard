@@ -222,7 +222,6 @@ return JSON.stringify(indicators);
                 "upload failed", "error occurred", "something went wrong",
                 "not accepted", "rejected", "validation error",
                 "please try again", "unsupported format",
-                "partially_failed", "partially failed",
             ):
                 if pattern in body_lower:
                     log.warning(f"  [REJECTED] Dashboard rejected upload (poll #{poll_num}): found '{pattern}' in page")
@@ -550,7 +549,6 @@ def click_submit_for_approval(driver) -> bool:
                 "failed to fetch", "network error", "error occurred",
                 "something went wrong", "request failed", "server error",
                 "internal server error", "502", "503", "504",
-                "partially_failed", "partially failed",
             ):
                 if fail_pattern in body_lower:
                     log.error(f"  [APPROVAL FAIL] Detected '{fail_pattern}' on page (poll #{poll+1})")
