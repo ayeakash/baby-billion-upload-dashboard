@@ -920,7 +920,14 @@ def main():
     parser.add_argument("--status",        action="store_true", help="Print state summary and exit")
     parser.add_argument("--auto-finalize", action="store_true", help="Auto-finalize in Notion (skip review step)")
     parser.add_argument("--max-batches",   type=int, default=0, help="Max number of batches to create (0=unlimited)")
+    parser.add_argument("--batch-size-mb", type=int, default=0, help="Override MAX_BATCH_BYTES (in MB, 0=use config default)")
     args = parser.parse_args()
+
+    # ── Apply batch size override before anything else ──────────────────────
+    if args.batch_size_mb and args.batch_size_mb > 0:
+        import config as _cfg
+        _cfg.MAX_BATCH_BYTES = args.batch_size_mb * 1024 * 1024
+        log.info(f"  [CONFIG] MAX_BATCH_BYTES overridden to {args.batch_size_mb} MB")
 
     # ── Status mode ───────────────────────────────────────────────────────────
     if args.status:
