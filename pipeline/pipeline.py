@@ -163,9 +163,10 @@ def stage_fetch(dry_run: bool = False) -> list[dict]:
     new_videos = [v for v in videos if not sm.is_done(_state_key(v))]
     skipped_done = len(videos) - len(new_videos)
 
-    # ── Guard 2: Skip already in-progress (downloaded/batched/zipped/uploading)
-    #    This prevents re-runs from re-batching videos that got stuck.
-    IN_PROGRESS = {"downloading", "downloaded", "batched", "zipped", "uploading"}
+    # ── Guard 2: Skip actively in-progress videos ──────────────────────────
+    #    'downloaded' is NOT blocked — those files exist and just need batching.
+    #    Only truly stuck states are skipped.
+    IN_PROGRESS = {"downloading", "batched", "zipped", "uploading"}
     ready_videos = []
     skipped_inprogress = 0
     for v in new_videos:
