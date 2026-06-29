@@ -259,7 +259,8 @@ def update_csv(batch_name):
 def regenerate_csv(batch_name):
     """Delete the CSV and regenerate it from the batch folder using category mapping."""
     import csv as csv_mod
-    from category_mapper import get_category_fields
+    import re as _re
+    from category_mapper import get_category_fields, _normalize_age
     from config import ADMIN_CSV_HEADER, ADMIN_CHANNEL_NAME, ADMIN_CONTENT_TYPE
 
     csv_path = os.path.join(uploader.BATCHES_DIR, f"{batch_name}.csv")
@@ -268,54 +269,108 @@ def regenerate_csv(batch_name):
     if not os.path.isdir(batch_dir):
         return jsonify({"error": f"Batch folder '{batch_name}' not found"}), 404
 
+    # ── Build multiple lookup indexes for matching MP4 filenames → metadata ────
+    #    We need robust matching because filenames may differ from video_name
+    #    (e.g. parentheses/commas stripped, ___pg_ tags present or absent).
+
+    def _norm(n):
+        """Normalize name for matching: spaces→_, remove commas/parens, collapse underscores."""
+        n = n.replace(" ", "_").replace(",", "").replace("(", "").replace(")", "")
+        n = _re.sub(r"_+", "_", n)
+        return n.strip("_").lower()
+
+    def _extract_page_id_from_filename(stem):
+        """Extract page_id from ___pg_<hex> tag in filename, return with hyphens."""
+        m = _re.search(r"___pg_([0-9a-f]{32})", stem)
+        if m:
+            h = m.group(1)
+            return f"{h[:8]}-{h[8:12]}-{h[12:16]}-{h[16:20]}-{h[20:]}"
+        return None
+
     # Primary source: batches.json (always has age_group and category)
     batches = batch_manager.load_batches()
     batch_record = batches.get(batch_name, {})
     batch_videos = batch_record.get("videos", [])
-    
-    # Build lookup by video_name stem from batches.json
-    # Index by both original name and sanitized name (spaces→underscores, commas removed)
-    import re as _re
-    def _norm(n):
-        """Normalize name for matching: spaces→_, remove commas, collapse underscores."""
-        n = n.replace(" ", "_").replace(",", "")
-        n = _re.sub(r"_+", "_", n)
-        return n.strip("_")
-    
-    video_meta_by_name = {}
+
+    # Index batches.json videos by: video_name, normalized name, page_id, local_file basename
+    meta_by_name = {}       # video_name (exact & normalized) → video dict
+    meta_by_page_id = {}    # page_id → video dict
+    meta_by_local = {}      # local_file basename (no ext) → video dict
     for bv in batch_videos:
         vname = bv.get("video_name", "")
+        pid   = bv.get("page_id", "")
+        lf    = bv.get("local_file", "")
         if vname:
-            video_meta_by_name[vname] = bv
-            video_meta_by_name[_norm(vname)] = bv
-    
+            meta_by_name[vname] = bv
+            meta_by_name[_norm(vname)] = bv
+        if pid:
+            meta_by_page_id[pid] = bv
+        if lf:
+            meta_by_local[os.path.splitext(os.path.basename(lf))[0].lower()] = bv
+
     # Fallback source: state.json
     import state_manager as sm
     state = sm.get_all()
     state_by_name = {}
+    state_by_page_id = {}
+    state_by_local = {}
     for pid, rec in state.items():
-        if isinstance(rec, dict):
-            vname = rec.get("video_name", "")
-            if vname:
-                state_by_name[vname] = rec
-                state_by_name[_norm(vname)] = rec
+        if not isinstance(rec, dict):
+            continue
+        vname = rec.get("video_name", "")
+        lf    = rec.get("local_file", "")
+        if vname:
+            state_by_name[vname] = rec
+            state_by_name[_norm(vname)] = rec
+        if pid:
+            state_by_page_id[pid] = rec
+        if lf:
+            state_by_local[os.path.splitext(os.path.basename(lf))[0].lower()] = rec
 
-    # List mp4 files in the batch folder
+    # ── List mp4 files in the batch folder ────────────────────────────────────
     mp4_files = [f for f in os.listdir(batch_dir) if f.endswith(".mp4")]
     if not mp4_files:
         return jsonify({"error": "No .mp4 files found in batch folder"}), 400
 
     csv_rows = []
+    unmatched = []
     for mp4 in mp4_files:
         stem = os.path.splitext(mp4)[0]
-        
-        # Try batches.json first, then state.json (using both original and normalized keys)
-        rec = video_meta_by_name.get(stem) or video_meta_by_name.get(_norm(stem)) or state_by_name.get(stem) or state_by_name.get(_norm(stem)) or {}
-        age = rec.get("age_group", "")
+        norm_stem = _norm(stem)
+
+        # ── Waterfall matching: try multiple strategies ───────────────────────
+        rec = None
+        extracted_pid = _extract_page_id_from_filename(stem)
+
+        # 1. Exact or normalized name match in batches.json
+        rec = meta_by_name.get(stem) or meta_by_name.get(norm_stem)
+
+        # 2. Extract page_id from ___pg_ tag in filename → batches.json
+        if not rec and extracted_pid:
+            rec = meta_by_page_id.get(extracted_pid)
+
+        # 3. Match by local_file basename → batches.json
+        if not rec:
+            rec = meta_by_local.get(stem.lower())
+
+        # 4. Fallback to state.json with same strategies
+        if not rec:
+            rec = state_by_name.get(stem) or state_by_name.get(norm_stem)
+        if not rec and extracted_pid:
+            rec = state_by_page_id.get(extracted_pid)
+        if not rec:
+            rec = state_by_local.get(stem.lower())
+
+        if not rec:
+            rec = {}
+            unmatched.append(stem)
+
+        age_raw    = rec.get("age_group", "")
+        age        = _normalize_age(age_raw) if age_raw else ""
         notion_cat = rec.get("category", "")
-        
+
         if not age or not notion_cat:
-            log.warning(f"  [REGEN] No metadata for {stem} — age={repr(age)}, cat={repr(notion_cat)}")
+            log.warning(f"  [REGEN] No metadata for {stem} — age={repr(age_raw)}, cat={repr(notion_cat)}")
 
         # Resolve category mapping
         if "," in notion_cat:
@@ -341,6 +396,9 @@ def regenerate_csv(batch_name):
             "content_formats": "",
             "content_types": ADMIN_CONTENT_TYPE,
         })
+
+    if unmatched:
+        log.warning(f"  [REGEN] {len(unmatched)} file(s) had no metadata match: {unmatched[:5]}")
 
     # Delete old CSV and write new one
     try:

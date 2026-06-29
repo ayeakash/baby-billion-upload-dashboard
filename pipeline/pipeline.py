@@ -949,9 +949,16 @@ def main():
     if args.batch_only:
         state_all  = sm.get_all()
         all_videos = []
+        skipped_missing = 0
         for pid, rec in state_all.items():
             if rec.get("pipeline_status") != "downloaded":
                 continue
+            # ── Batch-only: skip videos whose local file no longer exists ──────
+            local_file = rec.get("local_file", "")
+            if not local_file or not os.path.isfile(local_file):
+                skipped_missing += 1
+                continue
+
             vname      = rec.get("video_name", "")
             page_id    = rec.get("page_id", pid)
             lang_suffix = rec.get("lang_suffix", "")
@@ -975,10 +982,12 @@ def main():
                 "age_group":   rec.get("age_group", ""),
                 "category":    rec.get("category", ""),
                 "drive_link":  rec.get("drive_link", ""),
-                "local_file":  rec.get("local_file", ""),
+                "local_file":  local_file,
                 "lang_suffix": lang_suffix,
             })
-        log.info(f"Batch-only mode: {len(all_videos)} downloaded videos found.")
+        if skipped_missing:
+            log.info(f"  [SKIP] {skipped_missing} 'downloaded' videos skipped (local file missing)")
+        log.info(f"Batch-only mode: {len(all_videos)} downloaded videos found (with files on disk).")
         # Sanity check even in batch-only mode (safety net)
         all_videos, batch_failed = sanity_checker.run(all_videos, mark_notion=True)
         if batch_failed:
@@ -989,6 +998,39 @@ def main():
         log.info(f"Batch-only mode: {len(all_videos)} videos passed sanity check.")
     else:
         all_videos = stage_fetch(dry_run=args.dry_run)
+
+        # ── Also pick up previously-downloaded videos from state.json ─────────
+        #    These were fetched in a prior run but never batched (e.g. pipeline
+        #    was stopped, or they were downloaded on a different run).
+        state_all  = sm.get_all()
+        fetched_pids = {_state_key(v) for v in all_videos}
+        extra = 0
+        for pid, rec in state_all.items():
+            if not isinstance(rec, dict):
+                continue
+            if rec.get("pipeline_status") != "downloaded":
+                continue
+            if pid in fetched_pids:
+                continue  # already in the list from Notion fetch
+            local_file = rec.get("local_file", "")
+            if not local_file or not os.path.isfile(local_file):
+                continue  # file missing — will need re-download via full pipeline
+            vname       = rec.get("video_name", "")
+            page_id     = rec.get("page_id", pid)
+            lang_suffix = rec.get("lang_suffix", "")
+            all_videos.append({
+                "page_id":     page_id,
+                "video_name":  vname,
+                "age_group":   rec.get("age_group", ""),
+                "category":    rec.get("category", ""),
+                "drive_link":  rec.get("drive_link", ""),
+                "local_file":  local_file,
+                "lang_suffix": lang_suffix,
+            })
+            fetched_pids.add(pid)
+            extra += 1
+        if extra:
+            log.info(f"  [MERGE] Added {extra} previously-downloaded video(s) from state.json for batching.")
 
     if not all_videos:
         log.info("Nothing to do. Exiting.")

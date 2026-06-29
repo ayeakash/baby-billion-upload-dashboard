@@ -1,0 +1,336 @@
+{
+  "success": [
+    {
+      "cat": "100-200",
+      "csv": "100_200__6plus.csv",
+      "rows": 10
+    },
+    {
+      "cat": "1-100",
+      "csv": "1_100__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "3D Shapes",
+      "csv": "3D_Shapes__6plus.csv",
+      "rows": 10
+    },
+    {
+      "cat": "About India",
+      "csv": "About_India__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Add With Fun",
+      "csv": "Addition__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Art & Craft",
+      "csv": "Art___Craft__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Baby Animals",
+      "csv": "Baby_Animals__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Cities",
+      "csv": "Cities__3to6.csv",
+      "rows": 1
+    },
+    {
+      "cat": "Count With Confidence",
+      "csv": "Count_With_Confidence__3to6.csv",
+      "rows": 8
+    },
+    {
+      "cat": "Counting",
+      "csv": "Counting__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Read Simple Words",
+      "csv": "CVC_Words__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Division",
+      "csv": "Division__6plus.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Speak With Confidence",
+      "csv": "English_Speaking__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "English Stories",
+      "csv": "English_Stories__6plus.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Explore Nature Around",
+      "csv": "Explore_Nature_Around__6plus.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Find Favorite Toys",
+      "csv": "Find_Favorite_Toys__3to6.csv",
+      "rows": 7
+    },
+    {
+      "cat": "Find Things Around",
+      "csv": "Find_Things_Around__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Choose Healthy Foods",
+      "csv": "Food__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Fractions",
+      "csv": "Fractions__6plus.csv",
+      "rows": 9
+    },
+    {
+      "cat": "Hindi Stories",
+      "csv": "Hindi_Stories__3to6.csv",
+      "rows": 5
+    },
+    {
+      "cat": "How Are You",
+      "csv": "How_Are_You__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Jungle Animals",
+      "csv": "Jungle_Animals__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Know Body Parts",
+      "csv": "Know_Body_Parts__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Knowledge",
+      "csv": "Knowledge__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Learn Color names",
+      "csv": "Learn_Color_names__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Learn New Words",
+      "csv": "Learn_New_Words__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Learn Your ABC",
+      "csv": "Learn_Your_ABC__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Listen to Poems",
+      "csv": "Listen_to_Poems__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Meet Cute Animals",
+      "csv": "Meet_Cute_Animals__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Meet Farm Animals",
+      "csv": "Meet_Farm_Animals__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Meet Ocean Animals",
+      "csv": "Meet_Ocean_Animals__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Meet Tiny Insects",
+      "csv": "Meet_Tiny_Insects__3to6.csv",
+      "rows": 8
+    },
+    {
+      "cat": "Meet Your Family",
+      "csv": "Meet_Your_Family__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Money",
+      "csv": "Money__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Multiplication",
+      "csv": "Multiplication__6plus.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Name Your Fruits",
+      "csv": "Name_Your_Fruits__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Name Your Veggies",
+      "csv": "Name_Your_Veggies__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Odd & Even",
+      "csv": "Odd_and_Even__3to6.csv",
+      "rows": 5
+    },
+    {
+      "cat": "Learn Opposite Words",
+      "csv": "Opposites__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Paryayvachi Shabd",
+      "csv": "Paryayvachi_Shabd__3to6.csv",
+      "rows": 3
+    },
+    {
+      "cat": "Play With Patterns",
+      "csv": "Patterns__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Sounds & Words",
+      "csv": "Phonics__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Place Your Numbers",
+      "csv": "Place_Your_Numbers__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Practice Good Habits",
+      "csv": "Practice_Good_Habits__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Prepositions",
+      "csv": "Prepositions__6plus.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Science Made Fun",
+      "csv": "Science_Made_Fun__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Why Seasons Change",
+      "csv": "Seasons__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Start With Sentences",
+      "csv": "Simple_Sentences__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Sing Along Rhymes",
+      "csv": "Sing_Along_Rhymes__3to6.csv",
+      "rows": 8
+    },
+    {
+      "cat": "Songs",
+      "csv": "Songs__3to6.csv",
+      "rows": 1
+    },
+    {
+      "cat": "Speak It Right",
+      "csv": "Speak_It_Right__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Speak Simple Hindi",
+      "csv": "Speak_Simple_Hindi__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Explore Different Sports",
+      "csv": "Sports__6plus.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Spot Colorful Birds",
+      "csv": "Spot_Colorful_Birds__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Spot Different Shapes",
+      "csv": "Spot_Different_Shapes__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Spot Moving Vehicles",
+      "csv": "Spot_Moving_Vehicles__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Stay Safe Everyday",
+      "csv": "Stay_Safe_Everyday__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Stories",
+      "csv": "Stories__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Subtract With Fun",
+      "csv": "Subtraction__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Time",
+      "csv": "Time__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Try These Actions",
+      "csv": "Try_These_Actions__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Varnmala",
+      "csv": "Varnmala__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Vilom Shabd",
+      "csv": "Vilom_Shabd__3to6.csv",
+      "rows": 10
+    },
+    {
+      "cat": "Visit Outer Space",
+      "csv": "Visit_Outer_Space__6plus.csv",
+      "rows": 9
+    },
+    {
+      "cat": "Watch Plants Grow",
+      "csv": "Watch_Plants_Grow__3to6.csv",
+      "rows": 4
+    },
+    {
+      "cat": "What Do They Do",
+      "csv": "What_Do_They_Do__3to6.csv",
+      "rows": 10
+    }
+  ],
+  "failed": [],
+  "skipped": []
+}

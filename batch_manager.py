@@ -665,8 +665,8 @@ def run_pipeline_thread(batch_only: bool = False, max_batches: int = None):
             cmd.extend(["--max-batches", str(max_batches)])
 
         # Pass the current batch size from the UI to the subprocess
-        from pipeline import config
-        batch_size_mb = round(config.MAX_BATCH_BYTES / (1024 * 1024))
+        import config as _pipeline_config
+        batch_size_mb = round(_pipeline_config.MAX_BATCH_BYTES / (1024 * 1024))
         cmd.extend(["--batch-size-mb", str(batch_size_mb)])
 
         # Force unbuffered output so logs appear in real-time
