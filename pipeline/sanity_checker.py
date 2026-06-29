@@ -186,12 +186,13 @@ def _validate_one(video: dict) -> tuple[list[SanityFailure], list[SanityAutoFix]
 
         for part in cat_parts:
             # ── 4a. Category exists in mapping CSV ────────────────────────────
+            #    Unknown categories are allowed through with a warning.
+            #    They'll use the raw Notion value in the CSV.
             if age_normalised in VALID_AGE_GROUPS:
                 if not is_valid_category(age_normalised, part):
-                    failures.append(SanityFailure(
-                        "bad_category",
-                        f"Category '{part}' (age={age_normalised}) is not in "
-                        f"'categories mapping.csv'"
+                    auto_fixes.append(SanityAutoFix(
+                        "category", part, part,
+                        f"Category '{part}' (age={age_normalised}) not in CSV — using raw value"
                     ))
 
     # ── 5. Drive link ─────────────────────────────────────────────────────────

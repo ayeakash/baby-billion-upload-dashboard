@@ -39,9 +39,11 @@ BASE = "https://api.notion.com/v1"
 
 # Cached data source ID (resolved from database on first connect)
 _data_source_id: str | None = None
+_use_data_source_url: bool = True  # True = /data_sources/{id}/query, False = /databases/{id}/query
 
 # Cached after first successful detection
 _upload_prop_type: str | None = None   # "select" | "checkbox" | "rich_text"
+_status_prop_type: str | None = None   # "select" | "status"
 
 
 def _resolve_data_source_id() -> str:
@@ -49,8 +51,9 @@ def _resolve_data_source_id() -> str:
     Discover the data source ID from the database.
     With Notion API 2025-09-03, databases are containers for data sources.
     Queries must target /v1/data_sources/{id}/query instead of /v1/databases/{id}/query.
+    Falls back to /v1/databases/{id}/query if no data sources exist.
     """
-    global _data_source_id
+    global _data_source_id, _use_data_source_url
     if _data_source_id:
         return _data_source_id
 
@@ -62,9 +65,10 @@ def _resolve_data_source_id() -> str:
     data_sources = db.get("data_sources", [])
 
     if not data_sources:
-        # Fallback: database has no multi-source — use database ID directly
-        log.warning("No data_sources found in database response — using database ID as fallback")
+        # Fallback: database has no multi-source — query via /databases/ endpoint
+        log.warning("No data_sources found — using /databases/ query endpoint as fallback")
         _data_source_id = NOTION_DATABASE_ID
+        _use_data_source_url = False
         return _data_source_id
 
     # Pick the first data source that has content (non-empty query)
@@ -75,11 +79,13 @@ def _resolve_data_source_id() -> str:
             test_resp = requests.post(test_url, headers=_headers(), json={"page_size": 1}, timeout=15)
             if test_resp.status_code == 200 and test_resp.json().get("results"):
                 _data_source_id = ds_id
+                _use_data_source_url = True
                 log.info(f"Resolved data source: {ds_id}")
                 return _data_source_id
 
     # If no data source had results, just use the first one
     _data_source_id = data_sources[0].get("id", NOTION_DATABASE_ID)
+    _use_data_source_url = True
     log.info(f"Using first data source: {_data_source_id}")
     return _data_source_id
 
@@ -87,7 +93,10 @@ def _resolve_data_source_id() -> str:
 def _query_url() -> str:
     """Return the correct query URL for the current Notion API."""
     ds_id = _resolve_data_source_id()
-    return f"{BASE}/data_sources/{ds_id}/query"
+    if _use_data_source_url:
+        return f"{BASE}/data_sources/{ds_id}/query"
+    else:
+        return f"{BASE}/databases/{ds_id}/query"
 
 
 def _headers():
@@ -163,11 +172,27 @@ def _prop_value(properties: dict, name: str) -> str:
     return ""
 
 
-# ── Upload property type detection ────────────────────────────────────────────
+# ── Property type detection ────────────────────────────────────────────────────
+
+def _get_schema() -> dict:
+    """Get the property schema from the database or data source. Cached implicitly via _resolve."""
+    ds_id = _resolve_data_source_id()
+    # Try data_source schema first, fall back to database schema
+    for endpoint in (f"{BASE}/data_sources/{ds_id}", f"{BASE}/databases/{NOTION_DATABASE_ID}"):
+        try:
+            resp = requests.get(endpoint, headers=_headers(), timeout=15)
+            if resp.status_code == 200:
+                schema = resp.json().get("properties", {})
+                if schema:
+                    return schema
+        except Exception:
+            continue
+    return {}
+
 
 def _detect_upload_prop_type() -> str:
     """
-    Inspect the data source schema to determine whether the Upload property
+    Inspect the schema to determine whether the Upload property
     is a 'select', 'checkbox', or 'rich_text'. Caches the result.
     """
     global _upload_prop_type
@@ -175,13 +200,9 @@ def _detect_upload_prop_type() -> str:
         return _upload_prop_type
 
     try:
-        ds_id = _resolve_data_source_id()
-        url  = f"{BASE}/data_sources/{ds_id}"
-        resp = requests.get(url, headers=_headers(), timeout=15)
-        resp.raise_for_status()
-        schema = resp.json().get("properties", {})
-        prop   = schema.get(PROP_UPLOAD, {})
-        ptype  = prop.get("type", "checkbox")  # default to checkbox for new API
+        schema = _get_schema()
+        prop = schema.get(PROP_UPLOAD, {})
+        ptype = prop.get("type", "checkbox")
         _upload_prop_type = ptype
         log.info(f"Upload property type detected: '{ptype}'")
         return ptype
@@ -189,6 +210,29 @@ def _detect_upload_prop_type() -> str:
         log.warning(f"Could not detect Upload property type: {e} -- defaulting to 'checkbox'")
         _upload_prop_type = "checkbox"
         return "checkbox"
+
+
+def _detect_status_prop_type() -> str:
+    """
+    Detect whether the Status property is 'status' or 'select'.
+    Notion has a dedicated 'status' type distinct from 'select'.
+    Using the wrong filter type causes the query to return 0 results.
+    """
+    global _status_prop_type
+    if _status_prop_type:
+        return _status_prop_type
+
+    try:
+        schema = _get_schema()
+        prop = schema.get(PROP_STATUS, {})
+        ptype = prop.get("type", "status")  # default to 'status' (most common)
+        _status_prop_type = ptype
+        log.info(f"Status property type detected: '{ptype}'")
+        return ptype
+    except Exception as e:
+        log.warning(f"Could not detect Status property type: {e} -- defaulting to 'status'")
+        _status_prop_type = "status"
+        return "status"
 
 
 def _build_upload_not_done_filter(prop_type: str) -> dict:
@@ -199,10 +243,18 @@ def _build_upload_not_done_filter(prop_type: str) -> dict:
     if prop_type == "checkbox":
         return {"property": PROP_UPLOAD, "checkbox": {"equals": False}}
     elif prop_type == "rich_text":
-        # Some boards store Yes/No as plain text
         return {"property": PROP_UPLOAD, "rich_text": {"does_not_contain": "Yes"}}
     else:  # select (default)
         return {"property": PROP_UPLOAD, "select": {"equals": UPLOAD_NO}}
+
+
+def _build_status_filter(status_value: str) -> dict:
+    """
+    Build the correct filter for the Status property based on its detected type.
+    Notion 'status' and 'select' types require different filter keys.
+    """
+    status_type = _detect_status_prop_type()
+    return {"property": PROP_STATUS, status_type: {"equals": status_value}}
 
 
 # ── Query ──────────────────────────────────────────────────────────────────────
@@ -210,12 +262,10 @@ def _build_upload_not_done_filter(prop_type: str) -> dict:
 def query_ready_to_upload() -> list[dict]:
     """
     Returns ONLY pages where:
-      Layer 1 (API):    Status == "Ready to Upload"
-      Layer 2 (API):    Upload == "No" / unchecked  (type auto-detected)
-      Layer 2b (API):   Upload Progress is empty  (not 'Draft Upload' or 'Uploaded')
+      Layer 1 (API):    Status == "Ready to Upload"  (type auto-detected)
+      Layer 2 (API):    Upload == "No" / unchecked   (type auto-detected)
+      Layer 2b (API):   Upload Progress is empty     (not 'Draft Upload' or 'Uploaded')
       Layer 3 (Python): Re-confirms all fields + requires a drive.google.com link
-
-    This quadruple-validation ensures no video sneaks through.
     """
     _check_config()
     upload_type = _detect_upload_prop_type()
@@ -235,13 +285,11 @@ def query_ready_to_upload() -> list[dict]:
     while True:
         # ── Layer 1 + 2: Compound server-side filter ──────────────────────────
         upload_filter = _build_upload_not_done_filter(upload_type)
+        status_filter = _build_status_filter(STATUS_READY)
         payload = {
             "filter": {
                 "and": [
-                    {
-                        "property": PROP_STATUS,
-                        "select":   {"equals": STATUS_READY},
-                    },
+                    status_filter,
                     upload_filter,
                     {
                         "property": PROP_UPLOAD_PROGRESS,
@@ -378,13 +426,11 @@ def query_failed_to_upload() -> list[dict]:
     cursor  = None
 
     while True:
+        status_filter = _build_status_filter(STATUS_FAILED_UPLOAD)
         payload = {
             "filter": {
                 "and": [
-                    {
-                        "property": PROP_STATUS,
-                        "select":   {"equals": STATUS_FAILED_UPLOAD},
-                    },
+                    status_filter,
                 ]
             },
             "page_size": 100,
@@ -559,7 +605,7 @@ def clear_upload_progress_in_notion(page_id: str, retries: int = 3) -> bool:
 
     Clears:
       - Upload Progress  (select → empty)
-      - Status           (select → 'Ready to Upload')
+      - Status           (status/select → 'Ready to Upload')  [type auto-detected]
       - Upload           (checkbox → False)
       - Upload Date      (date → None)
       - Hindi Title on App  (rich_text → empty)
@@ -571,9 +617,10 @@ def clear_upload_progress_in_notion(page_id: str, retries: int = 3) -> bool:
     _check_config()
     url = f"{BASE}/pages/{page_id}"
 
+    status_type = _detect_status_prop_type()
     props = {
         PROP_UPLOAD_PROGRESS: {"select": None},
-        PROP_STATUS: {"select": {"name": STATUS_READY}},
+        PROP_STATUS: {status_type: {"name": STATUS_READY}},
         PROP_UPLOAD: {"checkbox": False},
         PROP_UPLOAD_DATE: {"date": None},
         PROP_HINDI_TITLE_ON_APP: {"rich_text": []},
@@ -607,37 +654,37 @@ def clear_upload_progress_in_notion(page_id: str, retries: int = 3) -> bool:
 def mark_failed_in_notion(page_id: str, retries: int = 3) -> bool:
     """
     Update Notion page to mark a failed upload:
-      - Status = "Failed to upload"
-      - Failed to Upload (checkbox) = True
-      - Upload = No / unchecked
+      - Status = "Failed to upload"  (type auto-detected)
+      - Upload = No / unchecked     (type auto-detected)
       - Upload Date = cleared
     Returns True on success.
     """
     _check_config()
     url = f"{BASE}/pages/{page_id}"
 
-    for attempt in range(1, retries + 1):
-        # Try checkbox for Upload first, then select
-        for upload_type in ("checkbox", "select"):
-            props = {
-                PROP_STATUS: {"select": {"name": STATUS_FAILED_UPLOAD}},
-                PROP_FAILED_UPLOAD: {"checkbox": True},
-                PROP_UPLOAD_DATE: {"date": None},
-            }
-            if upload_type == "checkbox":
-                props[PROP_UPLOAD] = {"checkbox": False}
-            else:
-                props[PROP_UPLOAD] = {"select": {"name": UPLOAD_NO}}
+    status_type = _detect_status_prop_type()
+    upload_type = _detect_upload_prop_type()
 
+    props = {
+        PROP_STATUS: {status_type: {"name": STATUS_FAILED_UPLOAD}},
+        PROP_UPLOAD_DATE: {"date": None},
+    }
+    # Set Upload = No/False based on detected type
+    if upload_type == "checkbox":
+        props[PROP_UPLOAD] = {"checkbox": False}
+    else:
+        props[PROP_UPLOAD] = {"select": {"name": UPLOAD_NO}}
+
+    for attempt in range(1, retries + 1):
+        try:
             resp = requests.patch(url, headers=_headers(), json={"properties": props}, timeout=30)
             if resp.status_code == 200:
                 log.info(f"[OK] Notion marked FAILED: {page_id}")
                 return True
-            elif resp.status_code == 400:
-                continue
             else:
                 log.warning(f"Notion PATCH (fail) attempt {attempt}: {resp.status_code} {resp.text[:200]}")
-                break
+        except Exception as e:
+            log.warning(f"Notion PATCH (fail) attempt {attempt} error: {e}")
 
     log.error(f"[FAIL] Could not mark Notion page {page_id} as failed after {retries} attempts.")
     return False
@@ -715,78 +762,8 @@ def validate_connection() -> bool:
         return False
 
 
-# ── Multi-PC claim mechanism ──────────────────────────────────────────────────
-
-def claim_for_upload(page_id: str) -> bool:
-    """
-    Claim a video for this PC by setting Upload Progress = 'Processing'.
-
-    This prevents other PCs from picking up the same video, since their
-    Notion query filters for Upload Progress = empty.
-
-    Returns True if the claim succeeded (page was updated).
-    Returns False if the video is already claimed/processed.
-    """
-    _check_config()
-    url = f"{BASE}/pages/{page_id}"
-
-    # Verify Upload Progress is empty (no other PC has claimed it)
-    try:
-        resp = requests.get(url, headers=_headers(), timeout=15)
-        if resp.status_code == 200:
-            props = resp.json().get("properties", {})
-            current_progress = _prop_value(props, PROP_UPLOAD_PROGRESS).strip()
-            if current_progress:
-                log.info(
-                    f"  [CLAIM SKIP] {page_id[:12]}… Upload Progress='{current_progress}' "
-                    f"— already claimed/processed by another PC"
-                )
-                return False
-    except Exception as e:
-        log.warning(f"  [CLAIM] Could not verify page: {e} — proceeding anyway")
-
-    # Set Upload Progress = "Processing" to claim it
-    patch = {
-        "properties": {
-            PROP_UPLOAD_PROGRESS: {"select": {"name": UPLOAD_PROGRESS_PROCESSING}},
-        }
-    }
-    try:
-        resp = requests.patch(url, headers=_headers(), json=patch, timeout=15)
-        if resp.status_code == 200:
-            log.info(f"  [CLAIM OK] {page_id[:12]}… → Upload Progress='{UPLOAD_PROGRESS_PROCESSING}'")
-            return True
-        else:
-            log.warning(f"  [CLAIM FAIL] {page_id[:12]}…: {resp.status_code} {resp.text[:200]}")
-            return False
-    except Exception as e:
-        log.warning(f"  [CLAIM ERROR] {page_id[:12]}…: {e}")
-        return False
-
-
-def release_claim(page_id: str) -> bool:
-    """
-    Release a claimed video by clearing Upload Progress back to empty.
-    Used when the pipeline fails after claiming but before uploading.
-    """
-    _check_config()
-    url = f"{BASE}/pages/{page_id}"
-    patch = {
-        "properties": {
-            PROP_UPLOAD_PROGRESS: {"select": None},
-        }
-    }
-    try:
-        resp = requests.patch(url, headers=_headers(), json=patch, timeout=15)
-        if resp.status_code == 200:
-            log.info(f"  [RELEASE] {page_id[:12]}… → Upload Progress cleared")
-            return True
-        else:
-            log.warning(f"  [RELEASE FAIL] {page_id[:12]}…: {resp.status_code}")
-            return False
-    except Exception as e:
-        log.warning(f"  [RELEASE ERROR] {page_id[:12]}…: {e}")
-        return False
+# ── Multi-PC claim mechanism (REMOVED — single-computer mode) ─────────────────
+# claim_for_upload() and release_claim() removed — not needed for single-PC use.
 
 
 def mark_redo_in_notion(page_id: str, reason: str = "", retries: int = 3) -> bool:

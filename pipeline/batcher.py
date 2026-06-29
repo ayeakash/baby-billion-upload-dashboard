@@ -104,45 +104,17 @@ def run(videos: list[dict]) -> list[str]:
         log.info("No new videos to batch.")
         return []
 
-    # ── Validate categories against the mapping CSV ──────────────────────────
-    valid_videos = []
-    bad_category_videos = []
+    # ── Log unrecognised categories (they still get batched) ───────────────────
     for v in to_batch:
         age = _normalize_age(v.get("age_group", ""))
         notion_cat = v.get("category", "").strip()
-        # Handle comma-separated categories (e.g. "Action words, Words")
-        # Validate each part individually -- all must be valid
         if notion_cat and "," in notion_cat:
             parts = [p.strip() for p in notion_cat.split(",") if p.strip()]
-            if all(is_valid_category(age, p) for p in parts):
-                valid_videos.append(v)
-            else:
-                bad_category_videos.append(v)
-        elif not notion_cat or not is_valid_category(age, notion_cat):
-            bad_category_videos.append(v)
-        else:
-            valid_videos.append(v)
-
-    if bad_category_videos:
-        log.warning(f"\n  [== {len(bad_category_videos)} video(s) have UNRECOGNISED categories ==")
-        log.warning(f"  |  These will NOT be batched. Marked 'Failed to upload' in Notion.")
-        log.warning(f"  [{'='*60}")
-        for v in bad_category_videos:
-            age = _normalize_age(v.get("age_group", ""))
-            log.warning(f"    [X] [{age}] '{v.get('category','')}' -- {v['video_name']}")
-            sm.mark_failed(_state_key(v), "sanity:bad_category")
-            # Also mark in Notion so it shows up as "Failed to upload"
-            try:
-                import notion_client as nc
-                nc.mark_failed_in_notion(v["page_id"])  # real page_id for Notion API
-            except Exception as e:
-                log.warning(f"      Notion fail-mark error: {e}")
-        log.warning("")
-
-    to_batch = valid_videos
-    if not to_batch:
-        log.info("No videos with valid categories to batch.")
-        return []
+            unrecognised = [p for p in parts if not is_valid_category(age, p)]
+            if unrecognised:
+                log.warning(f"  [WARN] [{age}] Unrecognised category parts {unrecognised} for {v['video_name']} -- batching with raw value")
+        elif notion_cat and not is_valid_category(age, notion_cat):
+            log.warning(f"  [WARN] [{age}] Unrecognised category '{notion_cat}' for {v['video_name']} -- batching with raw value")
 
     # ── Guard: deduplicate by output filename ─────────────────────────────────
     #    Two videos with the same local filename would collide in the batch
