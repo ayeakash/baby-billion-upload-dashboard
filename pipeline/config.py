@@ -76,7 +76,7 @@ UPLOAD_TYPE     = "Normal videos"  # radio button label on the upload page
 # ── Admin CSV column mapping ───────────────────────────────────────────────────
 ADMIN_CSV_HEADER   = ["video_name", "categories_name", "age_groups",
                       "channel_name", "tags", "playlist_name",
-                      "content_formats", "content_types"]
+                      "content_formats", "content_types", "language"]
 ADMIN_CHANNEL_NAME = "BabyBillion_Education"
 ADMIN_CONTENT_TYPE = "Original"
 

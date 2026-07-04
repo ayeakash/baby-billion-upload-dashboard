@@ -266,15 +266,28 @@ def run(videos: list[dict]) -> list[str]:
                 f"-> parent='{parent_cat}', cat='{exact_cat}'"
             )
 
+            # Derive language from lang_suffix
+            lang_suffix = v.get("lang_suffix", "")
+            if lang_suffix == "___ln_Hi":
+                language = "Hindi"
+            elif lang_suffix == "___ln_En":
+                language = "English"
+            else:
+                language = ""
+
+            # Strip language suffix from video_name (now in separate column)
+            csv_video_name = re.sub(r"___ln_(Hi|En|H|E)$", "", video_name)
+
             csv_rows.append({
-                "video_name":        video_name,
-                "categories_name":   parent_cat,
+                "video_name":        csv_video_name,
+                "categories_name":   exact_cat,
                 "age_groups":        age,
                 "channel_name":      ADMIN_CHANNEL_NAME,
                 "tags":              "",
-                "playlist_name":     exact_cat,
+                "playlist_name":     parent_cat,
                 "content_formats":   "",
                 "content_types":     ADMIN_CONTENT_TYPE,
+                "language":          language,
             })
 
             sm.mark_batched(_state_key(v), batch_name)

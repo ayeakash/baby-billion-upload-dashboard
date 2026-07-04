@@ -1,132 +1,190 @@
 Age,Parent Category,Playlist Name
-3-6,English,ABC
-3-6,English,Phonics
-3-6,English,Opposites
-3-6,English,Songs
-3-6,English,CVC Words
-3-6,English,Words
-3-6,English,Sight words
-3-6,English,Simple sentences
-3-6,English,English Speaking
-3-6,Maths,123
-3-6,Maths,Shapes
+3-6,English Basics,Know Your Alphabets
+3-6,Ready for School,Sounds & Words
+3-6,English Fluency,Opposites
+3-6,English Fluency,Songs
+3-6,English Basics,Read Simple Words
+3-6,English Fluency,Words
+3-6,Ready for School,Speak It Right
+3-6,English Basics,Start With Sentences
+3-6,English Basics,Speak With Confidence
+3-6,English Basics,Write Your Alphabets
+3-6,Maths,Count With Confidence
+3-6,Ready for School,Learn Your Shapes
 3-6,Maths,1-100
 3-6,Maths,Greater & Lesser
-3-6,Maths,Number Ordering
-3-6,Maths,Before and After numbers
+3-6,Ready for School,Place Your Numbers
+3-6,Maths,Before & After Numbers
 3-6,Maths,Missing numbers
-3-6,Maths,Odd and even
-3-6,Maths,Patterns
+3-6,Maths,Odd & Even
+3-6,Ready for School,Play With Patterns
 3-6,Maths,Counting
-3-6,Maths,Addition
-3-6,Maths,Subtraction
+3-6,Maths,Add With Fun
+3-6,Maths,Subtract With Fun
 3-6,Maths,Money
-3-6,Hindi ,Varnmala
-3-6,Hindi ,Swar
-3-6,Hindi ,Vyanjan
-3-6,Hindi ,Vilom Shabd
-3-6,Hindi ,Paryayvachi Shabd
+3-6,Maths,Write Your Numbers
+3-6,Hindi,Varnmala
+3-6,Hindi,Swar
+3-6,Hindi,Vyanjan
+3-6,Hindi Basics,Vilom Shabd
+3-6,Hindi Basics,Paryayvachi Shabd
 3-6,Animals,Farm Animals
-3-6,Animals,Wild Animals
+3-6,Animals,Jungle Animals
 3-6,Animals,Baby Animals
-3-6,Animals,Sea Animals
+3-6,Animals,Water Animals
 3-6,Animals,Birds
 3-6,Animals,Insects
 3-6,Animals,Dinosaur
-3-6,Stories,Hindi stories
+3-6,Stories,Hindi Stories
 3-6,Stories,English Stories
-3-6,,Good Habits 
-3-6,,My Body
-3-6,,Colors 
-3-6,,Vehicles
-3-6,,Food 
-3-6,,Fruits 
-3-6,,Vegetables
-3-6,,Community Helpers
-3-6,,About India
+3-6,Good Habits,Build Good Habits
+3-6,Good Habits,Know Your Body
+3-6,Learn & Explore,Learn Color Names
+3-6,Kids' Favorites,Spot Cool Vehicles
+3-6,Food,What's On Plate
+3-6,Food,Name Tasty Fruits
+3-6,Food,Know Your Vegetables
+3-6,Good Habits,Meet Helpful People
+3-6,Geography,About India
 3-6,,Art & Craft
 3-6,,Home items
-3-6,,Safety 
-3-6,,Toys 
+3-6,Good Habits,Stay Safe Everyday
+3-6,Kids' Favorites,Discover Fun Toys
 3-6,,Seasons
-3-6,,Science
+3-6,Future Scientist,Science Made Fun
 3-6,,Miscellaneous
-3-6,,Knowledge
-3-6,,Emotions
-3-6,,Plants
-3-6,,Time
+3-6,Space Adventures,Knowledge
+3-6,Good Habits,What's That Feeling
+3-6,Future Scientist,Watch Plants Grow
+3-6,Maths,Time
 3-6,,Action Words
-3-6,,My Family
-0-3,,Categories
-0-3,,ABC
-0-3,,123
-0-3,,Colors
-0-3,,Hindi Basics
-0-3,,Rhymes
-0-3,,Hindi Poems
-0-3,,Good Habits
-0-3,,Animals 
-0-3,,My Body
-0-3,,Fruits 
-0-3,,Vegetables
-0-3,,Vehicles 
-0-3,,Toys
-0-3,,Shapes 
-0-3,,Birds
-0-3,,Home Items
+3-6,Me & My Family,My Family
+3-6,Future Scientist,Explore Nature Around
+3-6,Future Scientist,Visit Outer Space
+3-6,Ready for School,Spot Different Shapes
+3-6,Maths,100-200
+3-6,Maths,3D Shapes
+3-6,Maths,Division
+3-6,Maths,Fractions
+3-6,Maths,Multiplication
+3-6,English Fluency,Prepositions
+3-6,Geography,Why Seasons Change
+3-6,Learn & Explore,Numbers & Easy Math
+3-6,Bright Future,Practice Good Habits
+3-6,Bright Future,What Do They Do
+3-6,Kids' Favorites,Sing Along Rhymes
+3-6,Kids' Favorites,Meet Cute Animals
+3-6,Kids' Favorites,Spot Moving Vehicles
+3-6,English Fluency,Learn Opposite Words
+3-6,English Fluency,Learn New Words
+3-6,Learn & Explore,Try These Actions
+3-6,Good Habits,How Are You
+0-3,English Basics,Learn Your ABC
+0-3,Maths,Count With Confidence
+0-3,Kids' Favorites,Learn Color Names
+0-3,Hindi Basics,Speak Simple Hindi
+0-3,Rhymes & Music,Sing Along Rhymes
+0-3,Hindi Basics,Listen To Poems
+0-3,Kids' Favorites,Practice Good Habits
+0-3,Our World,Meet Cute Animals
+0-3,Me & My Family,Know Body Parts
+0-3,Food,Name Your Fruits
+0-3,Food,Name Your Veggies
+0-3,Kids' Favorites,Spot Moving Vehicles
+0-3,Kids' Favorites,Find Favorite Toys
+0-3,Maths,Spot Different Shapes
+0-3,Animals,Spot Colorful Birds
+0-3,Around Us,Find Things Around
 0-3,,Community Helpers
-0-3,,Emotions
-0-3,,My Family
-0-3,,Words
-0-3,,Knowledge
-0-3,,Plants
-0-3,,Nature
-0-3,,Food
-0-3,,Sea Animals
-0-3,,Insects
-0-3,,Opposites
-0-3,,Action Words
-0-3,,Cloths
-0-3,,Festivals
+0-3,Me & My Family,How Are You
+0-3,Me & My Family,Meet Your Family
+0-3,English Basics,Learn New Words
+0-3,Space Adventures,Knowledge
+0-3,Our World,Watch Plants Grow
+0-3,Our World,Explore Nature Around
+0-3,Food,Food
+0-3,Animals,Meet Ocean Animals
+0-3,Animals,Meet Tiny Insects
+0-3,English Fluency,Learn Opposite Words
+0-3,English Basics,Try These Actions
+0-3,Around Us,What's Everyone Wearing
+0-3,Around Us,Celebrate With Everyone
 0-3,,Golden Words
-0-3,,Musical Instruments
-0-3,,Places We Go
-0-3,,Hindi Counting
-0-3,,Professions
+0-3,Rhymes & Music,Listen And Enjoy
+0-3,Around Us,Let's Go Outside
+0-3,Maths,Count In Hindi
+0-3,Kids' Favorites,What Do They Do
 0-3,Maths,3D Shapes
 0-3,,Science
-6+,English,Phonics
-6+,English,Opposites
-6+,English,English Speaking
-6+,English,Prepositions
-6+,Maths  ,3D Shapes
-6+,Maths  ,100-200
-6+,Maths  ,Greater & Lesser
-6+,Maths  ,Number Ordering
-6+,Maths  ,Addition
-6+,Maths  ,Subtraction
-6+,Maths  ,Multiplication
-6+,Maths  ,Counting
-6+,Maths  ,Division
-6+,Maths  ,Fractions
-6+,Maths  ,Time 
-6+,Maths  ,Money
-6+,Stories,Hindi stories
-6+,Stories,English stories
-6+,,Good Habits
-6+,,Community Helpers
-6+,,My Body
-6+,,My Family
-6+,,Animals 
-6+,,Birds
-6+,,Food
-6+,,Plants 
-6+,,Science 
-6+,,Space
-6+,,Nature
-6+,,Seasons
-6+,,Sports
-6+,,About India
-6+,,Countries
-6+,,Emotions
-6+,,Knowledge
+0-3,Animals,Meet Farm Friends
+6+,English Fluency,Phonics
+6+,English Fluency,Opposites
+6+,English Fluency,English Speaking
+6+,English Fluency,Prepositions
+6+,Maths,3D Shapes
+6+,Maths,100-200
+6+,Maths,Greater & Lesser
+6+,Maths,Number Ordering
+6+,Maths,Addition
+6+,Maths,Subtraction
+6+,Maths,Multiplication
+6+,Maths,Counting
+6+,Maths,Division
+6+,Maths,Fractions
+6+,Maths,Time
+6+,Maths,Money
+6+,Stories,Hindi Stories
+6+,Stories,English Stories
+6+,Good Habits,Build Good Habits
+6+,Good Habits,Meet Everyday Helpers
+6+,Science,Know Your Body
+6+,Me & My Family,My Family
+6+,Animals,Meet Amazing Animals
+6+,Animals,Birds
+6+,Food,Choose Healthy Foods
+6+,Nature,Watch Plants Grow
+6+,Science,Discover Science Secrets
+6+,Space Adventures,Explore Outer Space
+6+,Geography,Explore Nature Around
+6+,Nature,Why Seasons Change
+6+,Kids' Favorites,Explore Different Sports
+6+,Geography,Know Your India
+6+,Geography,Visit New Countries
+6+,Good Habits,Understand Your Feelings
+6+,Space Adventures,Amazing Facts Inside
+6+,Space Adventures,How Gadgets Work
+6+,Good Habits,Stay Safe Everyday
+6+,Good Habits,What Do They Do
+6+,Good Habits,How Are You
+6+,Nature,Meet Cute Animals
+6+,Science,Know Body Parts
+6+,Animals,Meet Farm Animals
+6+,Animals,Meet Ocean Animals
+6+,Animals,Meet Tiny Insects
+6+,Animals,Spot Colorful Birds
+6+,Animals,Baby Animals
+6+,Animals,Jungle Animals
+6+,Animals,Dinosaur
+6+,Maths,Count With Confidence
+6+,Maths,Spot Different Shapes
+6+,Maths,1-100
+6+,Maths,Before & After Numbers
+6+,Maths,Odd & Even
+6+,Maths,Play With Patterns
+6+,Maths,Place Your Numbers
+6+,Maths,Add With Fun
+6+,Maths,Subtract With Fun
+6+,Maths,Numbers & Easy Math
+6+,English Fluency,Speak With Confidence
+6+,English Fluency,Sounds & Words
+6+,English Fluency,Learn Opposite Words
+6+,English Fluency,Learn Your ABC
+6+,English Fluency,Read Simple Words
+6+,English Fluency,Learn New Words
+6+,English Fluency,Speak It Right
+6+,English Fluency,Start With Sentences
+6+,English Fluency,Songs
+6+,Bright Future,Practice Good Habits
+6+,Space Adventures,Science Made Fun
+6+,Space Adventures,Visit Outer Space
+6+,Space Adventures,Knowledge

@@ -386,15 +386,27 @@ def regenerate_csv(batch_name):
         else:
             parent_cat, exact_cat = get_category_fields(age, notion_cat)
 
+        # Derive language from ___ln_ suffix in filename
+        if "___ln_Hi" in stem or "___ln_H" in stem:
+            language = "Hindi"
+        elif "___ln_En" in stem or "___ln_E" in stem:
+            language = "English"
+        else:
+            language = ""
+
+        # Strip language suffix from video_name (now in separate column)
+        csv_video_name = _re.sub(r"___ln_(Hi|En|H|E)$", "", stem)
+
         csv_rows.append({
-            "video_name": stem,
-            "categories_name": parent_cat,
+            "video_name": csv_video_name,
+            "categories_name": exact_cat,
             "age_groups": age,
             "channel_name": ADMIN_CHANNEL_NAME,
             "tags": "",
-            "playlist_name": exact_cat,
+            "playlist_name": parent_cat,
             "content_formats": "",
             "content_types": ADMIN_CONTENT_TYPE,
+            "language": language,
         })
 
     if unmatched:

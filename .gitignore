@@ -40,3 +40,6 @@ Thumbs.db
 
 # ── Pipeline scratch scripts ─────────────────────────────
 pipeline/_*.py
+
+re-upload batches/
+

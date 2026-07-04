@@ -42,20 +42,134 @@ def _normalize_age(age: str) -> str:
 
 
 def _normalize_cat(cat: str) -> str:
-    """Lowercase + collapse whitespace for fuzzy matching, then apply aliases."""
-    normalized = " ".join(cat.strip().lower().split())
-    return _KNOWN_ALIASES.get(normalized, normalized)
+    """Lowercase + collapse whitespace for fuzzy matching."""
+    return " ".join(cat.strip().lower().split())
 
 
-# Notion name (normalized) → Admin dashboard name (normalized)
-# These handle cases where Notion uses a different spelling than the dashboard
-_KNOWN_ALIASES: dict[str, str] = {
+# ── Aliases: Notion name (normalized) → CSV Playlist Name (normalized) ────────
+# Global aliases apply to all age groups (where the mapping is the same everywhere)
+_GLOBAL_ALIASES: dict[str, str] = {
     "varnamala": "varnmala",    # Notion says "Varnamala", dashboard says "Varnmala"
-    "relationships": "my family",        # Notion says "Relationships", dashboard says "My Family"
-    "music instruments": "musical instruments",  # Notion says "Music instruments", CSV says "Musical Instruments"
-    "weather": "seasons",      # Notion says "Weather", dashboard has "Seasons"
-    "physical movement": "action words",  # Notion says "Physical Movement", dashboard has "Action Words"
 }
+
+# Age-specific aliases: (age, notion_name_normalized) → csv_name_normalized
+# Maps old Notion category names to the new "3Word Promise" playlist names.
+# Generated from "Playlists new names - Sheet1.csv".
+_AGE_ALIASES: dict[tuple[str, str], str] = {
+    # ── 6+ ────────────────────────────────────────────────────────────────────
+    ("6+", "nature"):             "explore nature around",
+    ("6+", "seasons"):            "why seasons change",
+    ("6+", "about india"):        "know your india",
+    ("6+", "countries/geography"):"visit new countries",
+    ("6+", "countries"):          "visit new countries",
+    ("6+", "science"):            "discover science secrets",
+    ("6+", "space"):              "explore outer space",
+    ("6+", "technology"):         "how gadgets work",
+    ("6+", "my body"):            "know your body",
+    ("6+", "animals"):            "meet amazing animals",
+    ("6+", "plants"):             "watch plants grow",
+    ("6+", "food"):               "choose healthy foods",
+    ("6+", "good habits"):        "build good habits",
+    ("6+", "emotions"):           "understand your feelings",
+    ("6+", "safety"):             "stay safe everyday",
+    ("6+", "community helpers"):  "meet everyday helpers",
+    ("6+", "sports"):             "explore different sports",
+    ("6+", "knowledge"):          "amazing facts inside",
+
+    # ── 3-6 ───────────────────────────────────────────────────────────────────
+    ("3-6", "fruits"):            "name tasty fruits",
+    ("3-6", "vegetables"):        "know your vegetables",
+    ("3-6", "food items"):        "what's on plate",
+    ("3-6", "food"):              "what's on plate",
+    ("3-6", "plants"):            "watch plants grow",
+    ("3-6", "nature"):            "explore nature around",
+    ("3-6", "space"):             "visit outer space",
+    ("3-6", "science"):           "science made fun",
+    ("3-6", "good habits"):       "build good habits",
+    ("3-6", "emotions"):          "what's that feeling",
+    ("3-6", "safety"):            "stay safe everyday",
+    ("3-6", "community helpers"): "meet helpful people",
+    ("3-6", "vehicles"):          "spot cool vehicles",
+    ("3-6", "colors"):            "learn color names",
+    ("3-6", "my body"):           "know your body",
+    ("3-6", "toys"):              "discover fun toys",
+    ("3-6", "abc"):               "know your alphabets",
+    ("3-6", "cvc"):               "read simple words",
+    ("3-6", "cvc words"):         "read simple words",
+    ("3-6", "phonics"):           "sounds & words",
+    ("3-6", "sight words"):       "speak it right",
+    ("3-6", "simple sentences"):  "start with sentences",
+    ("3-6", "english speaking"):  "speak with confidence",
+    ("3-6", "tracing abc"):       "write your alphabets",
+    ("3-6", "123"):               "count with confidence",
+    ("3-6", "number ordering"):   "place your numbers",
+    ("3-6", "shapes"):            "learn your shapes",
+    ("3-6", "tracing 123"):       "write your numbers",
+    ("3-6", "patterns"):          "play with patterns",
+    ("3-6", "addition"):          "add with fun",
+    ("3-6", "subtraction"):       "subtract with fun",
+    ("3-6", "farm animals"):      "farm animals",
+    ("3-6", "wild animals"):      "jungle animals",
+    ("3-6", "sea animals"):       "water animals",
+    ("3-6", "baby animals"):      "baby animals",
+
+    # ── 0-3 ───────────────────────────────────────────────────────────────────
+    ("0-3", "abc"):               "learn your abc",
+    ("0-3", "action words"):      "try these actions",
+    ("0-3", "words"):             "learn new words",
+    ("0-3", "rhymes"):            "sing along rhymes",
+    ("0-3", "hindi poems"):       "listen to poems",
+    ("0-3", "musical instruments"): "listen and enjoy",
+    ("0-3", "music instruments"): "listen and enjoy",
+    ("0-3", "123"):               "count with confidence",
+    ("0-3", "hindi counting"):    "count in hindi",
+    ("0-3", "shapes"):            "spot different shapes",
+    ("0-3", "hindi basics"):      "speak simple hindi",
+    ("0-3", "farm animals"):      "meet farm friends",
+    ("0-3", "birds"):             "spot colorful birds",
+    ("0-3", "sea animals"):       "meet ocean animals",
+    ("0-3", "insects"):           "meet tiny insects",
+    ("0-3", "fruits"):            "name your fruits",
+    ("0-3", "vegetables"):        "name your veggies",
+    ("0-3", "nature"):            "explore nature around",
+    ("0-3", "plants"):            "watch plants grow",
+    ("0-3", "animals"):           "meet cute animals",
+    ("0-3", "colors"):            "learn color names",
+    ("0-3", "toys"):              "find favorite toys",
+    ("0-3", "vehicles"):          "spot moving vehicles",
+    ("0-3", "my family"):         "meet your family",
+    ("0-3", "my body"):           "know body parts",
+    ("0-3", "good habits"):       "practice good habits",
+    ("0-3", "emotions"):          "how are you",
+    ("0-3", "home items"):        "find things around",
+    ("0-3", "festivals"):         "celebrate with everyone",
+    ("0-3", "clothes"):           "what's everyone wearing",
+    ("0-3", "cloths"):            "what's everyone wearing",
+    ("0-3", "opposites"):         "learn opposite words",
+    ("0-3", "places we go"):      "let's go outside",
+    ("0-3", "professions"):       "what do they do",
+
+    # ── Legacy Notion aliases (kept from previous mapping) ────────────────────
+    ("3-6", "relationships"):     "my family",
+    ("0-3", "relationships"):     "meet your family",
+    ("3-6", "weather"):           "seasons",
+    ("6+", "weather"):            "why seasons change",
+    ("3-6", "physical movement"): "action words",
+    ("0-3", "physical movement"): "try these actions",
+}
+
+
+
+def _resolve_alias(age: str, normalized_cat: str) -> str:
+    """Resolve a Notion category name to its CSV playlist name, using
+    age-specific aliases first, then global aliases, then raw name."""
+    # Try age-specific alias first
+    age_key = (age, normalized_cat)
+    if age_key in _AGE_ALIASES:
+        return _AGE_ALIASES[age_key]
+    # Then global alias
+    return _GLOBAL_ALIASES.get(normalized_cat, normalized_cat)
+
 
 
 def _load():
@@ -100,17 +214,17 @@ def get_category_fields(age_group: str, notion_category: str) -> tuple[str, str]
     If no match is found, returns ("", notion_category) and logs a warning.
 
     Examples:
-        get_category_fields("3-6", "CVC Words")       -> ("English", "CVC Words")
-        get_category_fields("3-6", "ABC")              -> ("English", "ABC")
-        get_category_fields("3-6", "Good habits")      -> ("", "Good Habits")
-        get_category_fields("3-6", "Colors")           -> ("", "Colors")
-        get_category_fields("3-6", "Animals")          -> ("Animals", "Animals")
-        get_category_fields("0-3", "ABC")              -> ("", "ABC")
+        get_category_fields("3-6", "CVC")              -> ("English", "Read Simple Words")
+        get_category_fields("3-6", "ABC")               -> ("English", "Know Your Alphabets")
+        get_category_fields("3-6", "Good habits")       -> ("", "Build Good Habits")
+        get_category_fields("3-6", "Colors")            -> ("", "Learn Color Names")
+        get_category_fields("3-6", "Animals")           -> ("Animals", "Animals")
+        get_category_fields("0-3", "ABC")               -> ("", "Learn Your ABC")
     """
     _load()
 
     age = _normalize_age(age_group)
-    cat = _normalize_cat(notion_category)
+    cat = _resolve_alias(age, _normalize_cat(notion_category))
 
     # ── Exact match ────────────────────────────────────────────────────────────
     key = (age, cat)
@@ -135,9 +249,10 @@ def get_category_fields(age_group: str, notion_category: str) -> tuple[str, str]
             return parent, exact
 
     # ── No match ───────────────────────────────────────────────────────────────
+    # Unmapped Notion categories go into categories_name via exact_cat
     log.warning(
         f"  [WARN] No category mapping found for: age='{age_group}', "
-        f"category='{notion_category}'. Using raw value — check categories mapping.csv!"
+        f"category='{notion_category}'. Using as category — check categories mapping.csv!"
     )
     return "", notion_category
 
@@ -151,7 +266,7 @@ def is_valid_category(age_group: str, notion_category: str) -> bool:
     """
     _load()
     age = _normalize_age(age_group)
-    cat = _normalize_cat(notion_category)
+    cat = _resolve_alias(age, _normalize_cat(notion_category))
 
     # Exact match
     if (age, cat) in _LOOKUP:
