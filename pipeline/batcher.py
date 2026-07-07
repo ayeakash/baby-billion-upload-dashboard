@@ -275,11 +275,9 @@ def run(videos: list[dict]) -> list[str]:
             else:
                 language = ""
 
-            # Strip language suffix from video_name (now in separate column)
-            csv_video_name = re.sub(r"___ln_(Hi|En|H|E)$", "", video_name)
 
             csv_rows.append({
-                "video_name":        csv_video_name,
+                "video_name":        video_name,
                 "categories_name":   exact_cat,
                 "age_groups":        age,
                 "channel_name":      ADMIN_CHANNEL_NAME,

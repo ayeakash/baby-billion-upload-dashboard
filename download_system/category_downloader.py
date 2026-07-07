@@ -617,14 +617,12 @@ def create_batches(videos: list[dict]) -> list[str]:
             else:
                 language = v.get("language", "")
 
-            # Strip language suffix from video_name (now in separate column)
-            csv_video_name = re.sub(r"___ln_(Hi|En|H|E)$", "", video_name)
 
-            log.info(f"    [{batch_name}] {csv_video_name} [{language}]")
+            log.info(f"    [{batch_name}] {video_name} [{language}]")
             log.info(f"      category: '{notion_cat}' ({age}) -> parent='{parent_cat}', cat='{exact_cat}'")
 
             csv_rows.append({
-                "video_name":      csv_video_name,
+                "video_name":      video_name,
                 "categories_name": exact_cat,
                 "age_groups":      age,
                 "channel_name":    ADMIN_CHANNEL_NAME,

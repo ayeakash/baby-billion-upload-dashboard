@@ -100,6 +100,11 @@ def get_batches():
                     if not row:
                         # Fallback: try video_name as-is
                         row = csv_rows.get(v.get("video_name", ""))
+                    if not row:
+                        # Fallback: strip ___ln_Hi/___ln_En suffix (old CSVs without suffix)
+                        stripped = _re.sub(r"___ln_(Hi|En|H|E)$", "", stem)
+                        if stripped != stem:
+                            row = csv_rows.get(stripped)
                     if row:
                         # Sync video_name to the CSV version
                         v["video_name"] = row.get("video_name", v["video_name"])
@@ -394,11 +399,9 @@ def regenerate_csv(batch_name):
         else:
             language = ""
 
-        # Strip language suffix from video_name (now in separate column)
-        csv_video_name = _re.sub(r"___ln_(Hi|En|H|E)$", "", stem)
 
         csv_rows.append({
-            "video_name": csv_video_name,
+            "video_name": stem,
             "categories_name": exact_cat,
             "age_groups": age,
             "channel_name": ADMIN_CHANNEL_NAME,
