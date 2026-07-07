@@ -470,11 +470,14 @@ def download_all_videos(videos: list[dict], limit: int | None = None) -> list[di
 # ═══════════════════════════════════════════════════════════════════════════════
 
 def _sanitize_video_name(stem: str) -> str:
-    """Same as batcher.py's _sanitize_video_name — preserves ___pg_ and ___ln_ tags."""
-    name = stem.replace("___pg_", "\x00PG\x00").replace("___ln_", "\x00LN\x00")
-    name = re.sub(r"[^\w\-\x00]", "_", name)
+    """Strip ___pg_ and ___ln_ pipeline tags and clean up the name."""
+    # Strip ___pg_<hex> tag (12 or 32 hex chars)
+    name = re.sub(r"___pg_[0-9a-f]+", "", stem)
+    # Strip ___ln_Hi / ___ln_En language tag
+    name = re.sub(r"___ln_(Hi|En|H|E)", "", name)
+    # Clean up: replace non-word chars with _, collapse multiple _
+    name = re.sub(r"[^\w\-]", "_", name)
     name = re.sub(r"_+", "_", name)
-    name = name.replace("\x00PG\x00", "___pg_").replace("\x00LN\x00", "___ln_")
     name = name.strip("_").strip()
     return name or "untitled"
 
@@ -581,13 +584,34 @@ def create_batches(videos: list[dict]) -> list[str]:
         batch_videos_meta = []
 
         for v in batch:
-            fname = os.path.basename(v["local_file"])
-            dst   = os.path.join(batch_folder, fname)
+            orig_fname = os.path.basename(v["local_file"])
+            orig_ext   = os.path.splitext(orig_fname)[1]   # .mp4
+            orig_stem  = os.path.splitext(orig_fname)[0]
+
+            # Clean video name: strip ___pg_ and ___ln_ tags
+            video_name = _sanitize_video_name(orig_stem)
+
+            # Derive language from lang_suffix
+            lang_suffix = v.get("lang_suffix", "")
+            if lang_suffix == "___ln_Hi":
+                language = "Hindi"
+            elif lang_suffix == "___ln_En":
+                language = "English"
+            else:
+                language = v.get("language", "")
+
+            # Add short _Hi/_En suffix only if both variants exist in this batch
+            page_id = v["page_id"]
+            siblings = [bv for bv in batch if bv["page_id"] == page_id]
+            if len(siblings) > 1 and language:
+                video_name = f"{video_name}_{language[:2]}"  # _Hi or _En
+
+            # Copy file with clean name
+            clean_fname = f"{video_name}{orig_ext}"
+            dst = os.path.join(batch_folder, clean_fname)
             if not os.path.isfile(dst):
                 shutil.copy2(v["local_file"], dst)
 
-            stem       = os.path.splitext(fname)[0]
-            video_name = _sanitize_video_name(stem)
             age        = _normalize_age(v.get("age_group", ""))
             notion_cat = v.get("category", "")
 
@@ -607,15 +631,6 @@ def create_batches(videos: list[dict]) -> list[str]:
                 exact_cat  = ", ".join(child_cats)
             else:
                 parent_cat, exact_cat = get_category_fields(age, notion_cat)
-
-            # Derive language from lang_suffix
-            lang_suffix = v.get("lang_suffix", "")
-            if lang_suffix == "___ln_Hi":
-                language = "Hindi"
-            elif lang_suffix == "___ln_En":
-                language = "English"
-            else:
-                language = v.get("language", "")
 
 
             log.info(f"    [{batch_name}] {video_name} [{language}]")

@@ -399,9 +399,13 @@ def regenerate_csv(batch_name):
         else:
             language = ""
 
+        # Strip ___pg_<hex> and ___ln_Hi/En pipeline tags for clean output name
+        clean_name = _re.sub(r"___pg_[0-9a-f]+", "", stem)
+        clean_name = _re.sub(r"___ln_(Hi|En|H|E)", "", clean_name)
+        clean_name = _re.sub(r"_+", "_", clean_name).strip("_")
 
         csv_rows.append({
-            "video_name": stem,
+            "video_name": clean_name,
             "categories_name": exact_cat,
             "age_groups": age,
             "channel_name": ADMIN_CHANNEL_NAME,
