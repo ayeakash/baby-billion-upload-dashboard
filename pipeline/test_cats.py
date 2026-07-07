@@ -16,7 +16,7 @@ tests = [
     ('3-6', 'Fruits',            'Food',              'Name Tasty Fruits'),
     ('3-6', 'Animals',           'Animals',           'Animals'),
     ('3-6', 'Good habits',       'Good Habits',       'Build Good Habits'),
-    ('3-6', 'My Body',           'Good Habits',       'Know Your Body'),
+    ('3-6', 'My Body',           'Good Habits',       'Know Body Parts'),
     ('3-6', 'Vehicles',          "Kids' Favorites",   'Spot Cool Vehicles'),
     ('3-6', 'shapes',            'Ready for School',  'Learn Your Shapes'),
     # 0-3

@@ -38,7 +38,7 @@ Age,Parent Category,Playlist Name
 3-6,Stories,Hindi Stories
 3-6,Stories,English Stories
 3-6,Good Habits,Build Good Habits
-3-6,Good Habits,Know Your Body
+3-6,Good Habits,Know Body Parts
 3-6,Learn & Explore,Learn Color Names
 3-6,Kids' Favorites,Spot Cool Vehicles
 3-6,Food,What's On Plate
@@ -57,7 +57,7 @@ Age,Parent Category,Playlist Name
 3-6,Good Habits,What's That Feeling
 3-6,Future Scientist,Watch Plants Grow
 3-6,Maths,Time
-3-6,,Action Words
+
 3-6,Me & My Family,My Family
 3-6,Future Scientist,Explore Nature Around
 3-6,Future Scientist,Visit Outer Space
@@ -109,7 +109,7 @@ Age,Parent Category,Playlist Name
 0-3,English Basics,Try These Actions
 0-3,Around Us,What's Everyone Wearing
 0-3,Around Us,Celebrate With Everyone
-0-3,,Golden Words
+
 0-3,Rhymes & Music,Listen And Enjoy
 0-3,Around Us,Let's Go Outside
 0-3,Maths,Count In Hindi
@@ -117,7 +117,7 @@ Age,Parent Category,Playlist Name
 0-3,Maths,3D Shapes
 0-3,,Science
 0-3,Animals,Meet Farm Friends
-6+,English Fluency,Phonics
+
 6+,English Fluency,Opposites
 6+,English Fluency,English Speaking
 6+,English Fluency,Prepositions
@@ -137,7 +137,7 @@ Age,Parent Category,Playlist Name
 6+,Stories,English Stories
 6+,Good Habits,Build Good Habits
 6+,Good Habits,Meet Everyday Helpers
-6+,Science,Know Your Body
+6+,Science,Know Body Parts
 6+,Me & My Family,My Family
 6+,Animals,Meet Amazing Animals
 6+,Animals,Birds
@@ -188,3 +188,23 @@ Age,Parent Category,Playlist Name
 6+,Space Adventures,Science Made Fun
 6+,Space Adventures,Visit Outer Space
 6+,Space Adventures,Knowledge
+3-6,Maths,Maths With Ms Pranika
+3-6,English Fluency,Pronounce With Ms Nidhi
+0-3,Stories,Aladdin
+0-3,Stories,Hanuman
+0-3,Stories,Sindbad
+0-3,Stories,Tenali
+0-3,Stories,Panchatantra
+0-3,Stories,Krishna
+3-6,Stories,Aladdin
+3-6,Stories,Hanuman
+3-6,Stories,Sindbad
+3-6,Stories,Tenali
+3-6,Stories,Panchatantra
+3-6,Stories,Krishna
+6+,Stories,Aladdin
+6+,Stories,Hanuman
+6+,Stories,Sindbad
+6+,Stories,Tenali
+6+,Stories,Panchatantra
+6+,Stories,Krishna
