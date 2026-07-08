@@ -546,7 +546,7 @@
            ═══════════════════════════════════════════════════════════════ */
         .video-grid-header {
             display: grid;
-            grid-template-columns: 2fr 1fr 0.5fr 1fr 0.5fr 1fr 0.7fr 0.6fr 0.5fr;
+            grid-template-columns: 2.5fr 1fr 0.6fr 0.8fr 0.6fr 1fr 0.7fr 0.7fr 0.5fr;
             padding: 0.25rem 0.5rem;
             color: var(--md-sys-color-outline);
             font-size: 0.58rem;
@@ -557,7 +557,7 @@
 
         .video-item {
             display: grid;
-            grid-template-columns: 2fr 1fr 0.5fr 1fr 0.5fr 1fr 0.7fr 0.6fr 0.5fr;
+            grid-template-columns: 2.5fr 1fr 0.6fr 0.8fr 0.6fr 1fr 0.7fr 0.7fr 0.5fr;
             padding: 0.3rem 0.5rem;
             align-items: center;
             border-bottom: 1px solid rgba(255,255,255,0.03);
@@ -565,6 +565,19 @@
             transition: background 0.1s;
         }
         .video-item:hover { background: rgba(255,255,255,0.025); }
+
+        .video-meta-cell {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            padding: 0 0.2rem;
+        }
+        .video-meta-cell span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: block;
+        }
 
         .video-name-cell {
             display: flex;
@@ -1842,21 +1855,18 @@
                                 <div class="video-name-cell">
                                     ${b.local_folder_exists ? `<button class="play-icon-btn" onclick="playVideo('${b.batch_name}','${v.video_name}.mp4')" title="Preview"><svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></button>` : `<div style="width:22px;height:22px;display:flex;align-items:center;justify-content:center;opacity:0.2"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2"/></svg></div>`}
                                     <div style="display:flex;flex-direction:column;gap:1px;min-width:0">
-                                        <div class="video-meta-cell text-edit" contenteditable="true" data-batch="${b.batch_name}" data-video="${v.video_name}" data-field="video_name" data-original="${esc(v.video_name)}" onblur="saveTextField(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}" onfocus="this.dataset.original=this.textContent.trim()" style="font-weight:500" title="${esc(v.video_name)}">${esc(v.video_name)}</div>
+                                        <div class="video-meta-cell" style="font-weight:500" title="${esc(v.video_name)}">${esc(v.video_name)}</div>
                                         <span style="font-family:'JetBrains Mono',monospace;font-size:0.55rem;color:var(--md-sys-color-outline);cursor:pointer;display:inline-flex;align-items:center;gap:3px;padding:1px 3px;border-radius:3px;background:rgba(255,255,255,0.03)" onclick="copyToClipboard('${v.page_id}',this,event)" title="Copy Page ID">${v.page_id}</span>
                                     </div>
                                 </div>
-                                <div class="video-meta-cell cell-dropdown-trigger" onclick="openDropdown(this,'${b.batch_name}','${esc(v.video_name)}','categories_name','${esc(v.categories_name)}')" title="${esc(v.categories_name)}"><span>${v.categories_name||''}</span></div>
-                                <div class="video-meta-cell cell-dropdown-trigger" onclick="openDropdown(this,'${b.batch_name}','${esc(v.video_name)}','age_groups','${esc(v.age_group)}')"><span>${v.age_group||''}</span></div>
-                                <div class="video-meta-cell text-edit" contenteditable="true" data-batch="${b.batch_name}" data-video="${v.video_name}" data-field="channel_name" data-original="${esc(v.channel_name)}" onblur="saveTextField(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}" onfocus="this.dataset.original=this.textContent.trim()" title="${esc(v.channel_name)}">${v.channel_name||''}</div>
-                                <div class="video-meta-cell text-edit" contenteditable="true" data-batch="${b.batch_name}" data-video="${v.video_name}" data-field="tags" data-original="${esc(v.tags)}" onblur="saveTextField(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}" onfocus="this.dataset.original=this.textContent.trim()" title="${esc(v.tags)}">${v.tags||''}</div>
-                                <div class="video-meta-cell cell-dropdown-trigger" onclick="openDropdown(this,'${b.batch_name}','${esc(v.video_name)}','playlist_name','${esc(v.playlist_name||v.category)}')" title="${esc(v.playlist_name||v.category)}"><span>${v.playlist_name||v.category||''}</span></div>
-                                <div class="video-meta-cell cell-dropdown-trigger" onclick="openDropdown(this,'${b.batch_name}','${esc(v.video_name)}','content_formats','${esc(v.content_formats)}')" style="font-size:0.62rem"><span>${v.content_formats||''}</span></div>
-                                <div class="video-meta-cell cell-dropdown-trigger" onclick="openDropdown(this,'${b.batch_name}','${esc(v.video_name)}','content_types','${esc(v.content_types)}')" style="font-size:0.62rem"><span>${v.content_types||''}</span></div>
-                                <div class="video-meta-cell" style="text-align:right;padding-right:0.4rem;text-transform:capitalize;font-weight:500;font-size:0.62rem;display:flex;align-items:center;justify-content:flex-end;gap:2px">${v.pipeline_status === 'bad'
-                                    ? `<span style="color:var(--md-sys-color-error)">Bad</span><button class="mark-bad-btn" onclick="event.stopPropagation();toggleBadVideo('${b.batch_name}','${v.page_id}',false)" title="Restore — undo bad mark">↺</button>`
-                                    : `<span style="color:${v.pipeline_status==='uploaded'?'var(--md-custom-color-success)':'var(--md-sys-color-outline)'}">${v.pipeline_status.replace(/_/g,' ')}</span>${b.status !== 'finalized' ? `<button class="mark-bad-btn" onclick="event.stopPropagation();toggleBadVideo('${b.batch_name}','${v.page_id}',true)" title="Mark as bad — will be skipped during finalization">✕</button>` : ''}`
-                                }</div>
+                                <div class="video-meta-cell" title="${esc(v.categories_name)}"><span>${v.categories_name||''}</span></div>
+                                <div class="video-meta-cell"><span>${v.age_group||''}</span></div>
+                                <div class="video-meta-cell" title="${esc(v.channel_name)}"><span>${v.channel_name||''}</span></div>
+                                <div class="video-meta-cell" title="${esc(v.tags)}"><span>${v.tags||''}</span></div>
+                                <div class="video-meta-cell" title="${esc(v.playlist_name||v.category)}"><span>${v.playlist_name||v.category||''}</span></div>
+                                <div class="video-meta-cell" style="font-size:0.62rem" title="${esc(v.content_formats)}"><span>${v.content_formats||''}</span></div>
+                                <div class="video-meta-cell" style="font-size:0.62rem" title="${esc(v.content_types)}"><span>${v.content_types||''}</span></div>
+                                <div class="video-meta-cell" style="text-align:right;padding-right:0.4rem;text-transform:capitalize;font-weight:500;font-size:0.62rem"><span style="color:${v.pipeline_status==='uploaded'?'var(--md-custom-color-success)':v.pipeline_status==='bad'?'var(--md-sys-color-error)':'var(--md-sys-color-outline)'}">${v.pipeline_status.replace(/_/g,' ')}</span></div>
                             </div>`}).join('')}
                         </div>
                     </div></div>
