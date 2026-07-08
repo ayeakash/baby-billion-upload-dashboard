@@ -169,6 +169,11 @@ def _prop_value(properties: dict, name: str) -> str:
     # Multi-select -- join with comma
     if t == "multi_select":
         return ", ".join(o["name"] for o in prop.get("multi_select", []))
+    # Formula -- extract the computed value
+    if t == "formula":
+        f = prop.get("formula", {})
+        ftype = f.get("type", "")
+        return str(f.get(ftype, "") or "")
     return ""
 
 
@@ -259,13 +264,16 @@ def _build_status_filter(status_value: str) -> dict:
 
 # ── Query ──────────────────────────────────────────────────────────────────────
 
-def query_ready_to_upload() -> list[dict]:
+def query_ready_to_upload(date_filter: list[str] | None = None) -> list[dict]:
     """
     Returns ONLY pages where:
       Layer 1 (API):    Status == "Ready to Upload"  (type auto-detected)
       Layer 2 (API):    Upload == "No" / unchecked   (type auto-detected)
       Layer 2b (API):   Upload Progress is empty     (not 'Draft Upload' or 'Uploaded')
       Layer 3 (Python): Re-confirms all fields + requires a drive.google.com link
+
+    If date_filter is provided, only pages whose Submission Date matches
+    one of the given dates (YYYY-MM-DD strings) are returned.
     """
     _check_config()
     upload_type = _detect_upload_prop_type()
@@ -299,6 +307,22 @@ def query_ready_to_upload() -> list[dict]:
             },
             "page_size": 100,
         }
+        # If day filter is specified, add Submission Date filter
+        if date_filter:
+            if len(date_filter) == 1:
+                # Single date — simple equals
+                payload["filter"]["and"].append({
+                    "property": "Submission Date",
+                    "date": {"equals": date_filter[0]},
+                })
+            else:
+                # Multiple dates — OR clause
+                payload["filter"]["and"].append({
+                    "or": [
+                        {"property": "Submission Date", "date": {"equals": d}}
+                        for d in date_filter
+                    ]
+                })
         if cursor:
             payload["start_cursor"] = cursor
 
@@ -411,6 +435,77 @@ def query_ready_to_upload() -> list[dict]:
         f"\n  [OK] Ready to process    : {len(results)}"
     )
     return results
+
+
+def query_available_days() -> list[dict]:
+    """Fetch all 'Ready to Upload' pages and group them by Day Lable.
+
+    Returns a sorted list of dicts:
+        [{"day_label": "Day 82 — Jul 08", "day_number": "82",
+          "submission_date": "2026-07-08", "video_count": 5}, ...]
+    """
+    _check_config()
+    upload_type = _detect_upload_prop_type()
+
+    url     = _query_url()
+    cursor  = None
+
+    from collections import defaultdict
+    day_groups: dict[str, dict] = {}  # submission_date -> info
+
+    while True:
+        upload_filter = _build_upload_not_done_filter(upload_type)
+        status_filter = _build_status_filter(STATUS_READY)
+        payload = {
+            "filter": {
+                "and": [
+                    status_filter,
+                    upload_filter,
+                    {
+                        "property": PROP_UPLOAD_PROGRESS,
+                        "select":   {"is_empty": True},
+                    },
+                ]
+            },
+            "page_size": 100,
+        }
+        if cursor:
+            payload["start_cursor"] = cursor
+
+        resp = requests.post(url, headers=_headers(), json=payload, timeout=30)
+        if resp.status_code != 200:
+            log.error(f"Failed to fetch available days: {resp.status_code}")
+            break
+        data = resp.json()
+
+        for page in data.get("results", []):
+            props = page["properties"]
+
+            # Extract Day Lable (formula → string)
+            day_lbl = _prop_value(props, "Day Lable").strip() or "(no day)"
+            day_num = _prop_value(props, "Day Number").strip() or "0"
+            sub_date = _prop_value(props, "Submission Date").strip() or ""
+
+            if sub_date not in day_groups:
+                day_groups[sub_date] = {
+                    "day_label": day_lbl,
+                    "day_number": day_num,
+                    "submission_date": sub_date,
+                    "video_count": 0,
+                }
+            day_groups[sub_date]["video_count"] += 1
+
+        if not data.get("has_more"):
+            break
+        cursor = data.get("next_cursor")
+
+    # Sort by day number (numeric), then by date
+    result = sorted(
+        day_groups.values(),
+        key=lambda d: (int(d["day_number"]) if d["day_number"].isdigit() else 9999, d["submission_date"]),
+    )
+    log.info(f"Available days: {len(result)} day(s), {sum(d['video_count'] for d in result)} total videos")
+    return result
 
 
 def query_failed_to_upload() -> list[dict]:

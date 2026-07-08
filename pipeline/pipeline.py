@@ -126,9 +126,11 @@ def _all_page_variants_uploaded(page_id: str) -> bool:
 #  STAGE 1 -- Fetch from Notion
 # ════════════════════════════════════════════════════════════════════════════════
 
-def stage_fetch(dry_run: bool = False) -> list[dict]:
+def stage_fetch(dry_run: bool = False, date_filter: list[str] | None = None) -> list[dict]:
     log.info("\n" + "="*60)
     log.info("STAGE 1: Fetching from Notion …")
+    if date_filter:
+        log.info(f"  Day filter active: {', '.join(date_filter)}")
     log.info("="*60)
 
     if not NOTION_TOKEN or not NOTION_DATABASE_ID:
@@ -187,7 +189,7 @@ def stage_fetch(dry_run: bool = False) -> list[dict]:
                 os.remove(unsynced_path)
                 log.info(f"  All unsynced updates resolved. Proceeding normally.\n")
 
-    videos = nc.query_ready_to_upload()
+    videos = nc.query_ready_to_upload(date_filter=date_filter)
 
     # ── Guard 1: Skip already-uploaded ────────────────────────────────────────
     new_videos = [v for v in videos if not sm.is_done(_state_key(v))]
@@ -954,6 +956,7 @@ def main():
     parser.add_argument("--status",        action="store_true", help="Print state summary and exit")
     parser.add_argument("--max-batches",   type=int, default=0, help="Max number of batches to create (0=unlimited)")
     parser.add_argument("--batch-size-mb", type=int, default=0, help="Override MAX_BATCH_BYTES (in MB, 0=use config default)")
+    parser.add_argument("--day-filter",    type=str, default="", help="Comma-separated submission dates (YYYY-MM-DD) to filter by")
     args = parser.parse_args()
 
     # ── Apply batch size override before anything else ──────────────────────
@@ -1029,7 +1032,9 @@ def main():
             )
         log.info(f"Batch-only mode: {len(all_videos)} videos passed sanity check.")
     else:
-        all_videos = stage_fetch(dry_run=args.dry_run)
+        # Parse day filter
+        day_dates = [d.strip() for d in args.day_filter.split(",") if d.strip()] if args.day_filter else None
+        all_videos = stage_fetch(dry_run=args.dry_run, date_filter=day_dates)
 
         # ── Also pick up previously-downloaded videos from state.json ─────────
         #    These were fetched in a prior run but never batched (e.g. pipeline

@@ -676,12 +676,13 @@ def finalize_batch(batch_name: str) -> tuple[bool, str]:
     return True, f"Batch '{batch_name}' finalized: {success_count} uploaded, {fail_count} failed{bad_msg}."
 
 # Pipeline background execution
-def run_pipeline_thread(batch_only: bool = False, max_batches: int = None):
+def run_pipeline_thread(batch_only: bool = False, max_batches: int = None, day_filter: list[str] | None = None):
     global pipeline_running, active_pipeline_process
     log_mode = "BATCH-ONLY MODE (processing existing downloads)" if batch_only else "NORMAL MODE (fetching new from Notion)"
     batch_limit_msg = f", max {max_batches} batches" if max_batches else ""
+    day_msg = f", days={','.join(day_filter)}" if day_filter else ""
     global_log_buffer.write(f"\n============================================================")
-    global_log_buffer.write(f"STARTING PIPELINE RUN: {log_mode}{batch_limit_msg}")
+    global_log_buffer.write(f"STARTING PIPELINE RUN: {log_mode}{batch_limit_msg}{day_msg}")
     global_log_buffer.write(f"============================================================\n")
 
     try:
@@ -692,6 +693,8 @@ def run_pipeline_thread(batch_only: bool = False, max_batches: int = None):
             cmd.append("--batch-only")
         if max_batches and max_batches > 0:
             cmd.extend(["--max-batches", str(max_batches)])
+        if day_filter:
+            cmd.extend(["--day-filter", ",".join(day_filter)])
 
         # Pass the current batch size from the UI to the subprocess
         import config as _pipeline_config
@@ -734,7 +737,7 @@ def run_pipeline_thread(batch_only: bool = False, max_batches: int = None):
         active_pipeline_process = None
         pipeline_paused = False
 
-def start_pipeline_batching(batch_only: bool = False, max_batches: int = None) -> tuple[bool, str]:
+def start_pipeline_batching(batch_only: bool = False, max_batches: int = None, day_filter: list[str] | None = None) -> tuple[bool, str]:
     global pipeline_running
     global pipeline_run_thread
     
@@ -742,10 +745,11 @@ def start_pipeline_batching(batch_only: bool = False, max_batches: int = None) -
         return False, "Pipeline is already running in the background."
 
     pipeline_running = True
-    pipeline_run_thread = threading.Thread(target=run_pipeline_thread, args=(batch_only, max_batches))
+    pipeline_run_thread = threading.Thread(target=run_pipeline_thread, args=(batch_only, max_batches, day_filter))
     pipeline_run_thread.daemon = True
     pipeline_run_thread.start()
-    return True, "Pipeline started in the background. Monitor logs below."
+    day_msg = f" Filtering by days: {', '.join(day_filter)}." if day_filter else ""
+    return True, f"Pipeline started in the background.{day_msg} Monitor logs below."
 
 def stop_pipeline_batching() -> tuple[bool, str]:
     global active_pipeline_process, pipeline_running, pipeline_paused

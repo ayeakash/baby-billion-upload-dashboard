@@ -569,12 +569,24 @@ def delete_all_batches():
     log.info(msg)
     return jsonify({"message": msg})
 
+@app.route("/api/notion-days", methods=["GET"])
+def get_notion_days():
+    """Return available day groupings from the Notion 'Ready to Upload' view."""
+    import notion_client
+    try:
+        days = notion_client.query_available_days()
+        return jsonify({"days": days})
+    except Exception as e:
+        log.error(f"Error fetching Notion days: {e}")
+        return jsonify({"error": str(e), "days": []}), 500
+
 @app.route("/api/batches/run-pipeline", methods=["POST"])
 def run_pipeline():
     data = request.json or {}
     batch_only = data.get("batch_only", False)
     max_batches = data.get("max_batches", None)
-    success, msg = batch_manager.start_pipeline_batching(batch_only=batch_only, max_batches=max_batches)
+    day_filter = data.get("day_filter", None)  # list of YYYY-MM-DD strings
+    success, msg = batch_manager.start_pipeline_batching(batch_only=batch_only, max_batches=max_batches, day_filter=day_filter)
     if not success:
         return jsonify({"error": msg}), 400
     return jsonify({"message": msg})
