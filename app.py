@@ -112,12 +112,15 @@ def get_batches():
                             sanitized = _sanitize_video_name(stem)
                             row = csv_rows.get(sanitized)
                             if not row:
-                                # Also try sanitized + _Hi/_En suffix
-                                lang = v.get("lang_suffix", "")
-                                if "Hi" in lang:
+                                # Determine language from video_name suffix (___ln_Hi or ___ln_En)
+                                vname = v.get("video_name", "")
+                                if "___ln_Hi" in vname:
                                     row = csv_rows.get(f"{sanitized}_Hi")
-                                elif "En" in lang:
+                                elif "___ln_En" in vname:
                                     row = csv_rows.get(f"{sanitized}_En")
+                                else:
+                                    # Try both as last resort
+                                    row = csv_rows.get(f"{sanitized}_Hi") or csv_rows.get(f"{sanitized}_En")
                         except ImportError:
                             pass
                     if not row and len(csv_rows) == 1:
