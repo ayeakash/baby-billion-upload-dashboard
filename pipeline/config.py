@@ -54,6 +54,12 @@ UPLOAD_PROGRESS_PROCESSING = "Processing"    # claimed by a PC — other PCs ski
 UPLOAD_PROGRESS_DRAFT      = "Draft Upload"  # uploaded to admin, pending review
 UPLOAD_PROGRESS_REVIEWED   = "Uploaded"      # reviewer finalized
 
+# ── Notion Read-Only Mode ─────────────────────────────────────────────────────
+# When True, ALL Notion write operations (mark uploaded, clear progress, etc.)
+# become no-ops. Notion is used only for reading video lists.
+# Set to False if you want the pipeline to update Notion after uploads.
+NOTION_READ_ONLY = True
+
 # ── Paths ──────────────────────────────────────────────────────────────────────
 BASE_DIR      = os.path.dirname(os.path.abspath(__file__))           # pipeline/
 PROJECT_ROOT  = os.path.dirname(BASE_DIR)                            # upload_dashboard/

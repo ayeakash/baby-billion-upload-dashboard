@@ -30,12 +30,21 @@ from config import (
     STATUS_READY, STATUS_FAILED_UPLOAD, STATUS_UPLOADED,
     UPLOAD_NO, UPLOAD_YES,
     UPLOAD_PROGRESS_PROCESSING, UPLOAD_PROGRESS_DRAFT, UPLOAD_PROGRESS_REVIEWED,
+    NOTION_READ_ONLY,
 )
 
 log = logging.getLogger(__name__)
 
 NOTION_VERSION = "2025-09-03"
 BASE = "https://api.notion.com/v1"
+
+
+def _notion_write_blocked(fn_name: str) -> bool:
+    """Return True (and log) if Notion is in read-only mode."""
+    if NOTION_READ_ONLY:
+        log.info(f"  [READ-ONLY] Skipped Notion write: {fn_name}()")
+        return True
+    return False
 
 # Cached data source ID (resolved from database on first connect)
 _data_source_id: str | None = None
@@ -647,6 +656,7 @@ def mark_uploaded_in_notion(
     Finalize & Sync: set Upload Progress = 'first review',
     Upload = Yes, Upload Date = today, and write Hindi/English Title.
     """
+    if _notion_write_blocked("mark_uploaded_in_notion"): return True
     _check_config()
     if upload_date is None:
         upload_date = date.today().isoformat()
@@ -708,6 +718,7 @@ def clear_upload_progress_in_notion(page_id: str, retries: int = 3) -> bool:
 
     Returns True on success.
     """
+    if _notion_write_blocked("clear_upload_progress_in_notion"): return True
     _check_config()
     url = f"{BASE}/pages/{page_id}"
 
@@ -753,6 +764,7 @@ def mark_failed_in_notion(page_id: str, retries: int = 3) -> bool:
       - Upload Date = cleared
     Returns True on success.
     """
+    if _notion_write_blocked("mark_failed_in_notion"): return True
     _check_config()
     url = f"{BASE}/pages/{page_id}"
 
@@ -791,6 +803,7 @@ def update_category_in_notion(page_id: str, new_category: str, retries: int = 3)
     (e.g. "Swar" or "Vyanjan") alongside it.
     Returns True on success.
     """
+    if _notion_write_blocked("update_category_in_notion"): return True
     _check_config()
     url = f"{BASE}/pages/{page_id}"
 
@@ -867,6 +880,7 @@ def mark_redo_in_notion(page_id: str, reason: str = "", retries: int = 3) -> boo
       - reason for re-do (rich_text) = reason string
     Returns True on success.
     """
+    if _notion_write_blocked("mark_redo_in_notion"): return True
     _check_config()
     url = f"{BASE}/pages/{page_id}"
 
@@ -899,6 +913,7 @@ def clear_redo_in_notion(page_id: str, retries: int = 3) -> bool:
       - reason for re-do (rich_text) = cleared
     Returns True on success.
     """
+    if _notion_write_blocked("clear_redo_in_notion"): return True
     _check_config()
     url = f"{BASE}/pages/{page_id}"
 
@@ -938,6 +953,7 @@ def mark_pending_review_in_notion(
     Does NOT check the Upload checkbox or set the Upload Date —
     those are deferred until a reviewer calls finalize_in_notion().
     """
+    if _notion_write_blocked("mark_pending_review_in_notion"): return True
     _check_config()
     url = f"{BASE}/pages/{page_id}"
 
@@ -1066,6 +1082,7 @@ def finalize_in_notion(
       - Set Upload Progress = 'Uploaded'
       - Set Upload = Yes + Upload Date = today
     """
+    if _notion_write_blocked("finalize_in_notion"): return True
     _check_config()
     if upload_date is None:
         upload_date = date.today().isoformat()
