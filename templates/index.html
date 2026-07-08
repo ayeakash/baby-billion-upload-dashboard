@@ -1145,20 +1145,11 @@
                     <button class="tab-btn active" onclick="switchTab('pending')">Pending Review <span id="badge-pending" class="tab-badge">0</span></button>
                     <button class="tab-btn" onclick="switchTab('uploaded')">Uploaded <span id="badge-uploaded" class="tab-badge">0</span></button>
                     <button class="tab-btn" onclick="switchTab('finalized')">Finalized <span id="badge-finalized" class="tab-badge">0</span></button>
-                    <button class="tab-btn" onclick="switchTab('notion-reviews')" id="tab-notion-reviews">Notion Reviews <span id="badge-notion-reviews" class="tab-badge">0</span></button>
                 </div>
                 <div class="search-wrapper">
                     <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                     <input type="text" id="search-input" class="search-input" placeholder="Search videos, IDs, categories..." oninput="handleSearch(this.value)">
                 </div>
-                <button class="btn btn-primary" onclick="uploadAllAndSubmit(this)" title="Upload all pending batches and submit for approval" style="padding: 6px 12px; font-size: 0.78rem; white-space: nowrap;">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                    Upload All &amp; Submit
-                </button>
-                <button class="btn btn-danger" onclick="deleteAllBatches(this)" title="Delete all batches + clear Notion" style="padding: 6px 12px; font-size: 0.78rem; white-space: nowrap;">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                    Delete All
-                </button>
                 <button class="btn" onclick="clearAllLocalBatches(this)" title="Clear all from local storage only (Notion untouched)" style="padding: 6px 12px; font-size: 0.78rem; white-space: nowrap; background:#2a2a3a; border:1px solid #555; color:#ccc;">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
                     Clear All Local
@@ -1902,11 +1893,8 @@
                     <div class="panel-info"><span class="panel-info-title">Stage 1 — Local Review</span><span class="panel-info-value">Review files, then upload or mark as uploaded.</span></div>
                     <div class="panel-actions">
                         ${batch.local_folder_exists ? `<button class="btn btn-secondary" onclick="openBatchFolder('${batch.batch_name}')" ${sb?'disabled':''}><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> Open</button>` : ''}
-                        <button class="btn btn-primary" onclick="triggerAutomatedUpload('${batch.batch_name}')" ${ul||isPipelineRunning?'disabled':''}>Auto Upload</button>
-                        <button class="btn btn-success" onclick="markUploadedManually('${batch.batch_name}')">Mark Uploaded</button>
                         <button class="btn btn-secondary" onclick="regenerateCsv('${batch.batch_name}')" ${sb?'disabled':''} style="margin-left:auto"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg> Regen CSV</button>
                         <button class="btn" onclick="forceCompress('${batch.batch_name}', this)" ${sb?'disabled':''} style="font-size:0.65rem;padding:0.3rem 0.6rem;background:#1a1a2e;border:1px solid #7c3aed;color:#a78bfa" title="Force-compress all videos in this batch with ffmpeg"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg> Compress</button>
-                        <button class="btn btn-danger" onclick="deleteBatch('${batch.batch_name}', this)" ${sb?'disabled':''}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Delete</button>
                         <button class="btn" onclick="clearLocalBatch('${batch.batch_name}', this)" ${sb?'disabled':''} style="font-size:0.65rem;padding:0.3rem 0.6rem;background:#2a2a3a;border:1px solid #555;color:#ccc" title="Clear from local storage only (Notion untouched)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg> Clear Local</button>
                     </div></div>`;
             } else if (batch.status === 'pending_second_review') {
@@ -1914,9 +1902,7 @@
                     <div class="panel-info"><span class="panel-info-title" style="color:var(--md-sys-color-primary)">Stage 2 — Awaiting Approval</span><span class="panel-info-value">Job ID: ${batch.upload_job_id||'Manual'}. Review in CMS, then finalize.</span></div>
                     <div class="panel-actions">
                         ${batch.local_folder_exists ? `<button class="btn btn-secondary" onclick="openBatchFolder('${batch.batch_name}')" ${sb?'disabled':''}>Open</button>` : ''}
-                        <button class="btn btn-danger" onclick="finalizeBatchReal('${batch.batch_name}')" ${sb?'disabled':''}>Finalize &amp; Sync</button>
                         <button class="btn btn-secondary" onclick="regenerateCsv('${batch.batch_name}')" ${sb?'disabled':''} style="margin-left:auto"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg> Regen CSV</button>
-                        <button class="btn btn-danger" onclick="deleteBatch('${batch.batch_name}', this)" ${sb?'disabled':''}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Delete</button>
                         <button class="btn" onclick="clearLocalBatch('${batch.batch_name}', this)" ${sb?'disabled':''} style="font-size:0.65rem;padding:0.3rem 0.6rem;background:#2a2a3a;border:1px solid #555;color:#ccc" title="Clear from local storage only (Notion untouched)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg> Clear Local</button>
                     </div></div>`;
             } else {
