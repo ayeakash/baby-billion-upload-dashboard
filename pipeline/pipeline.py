@@ -213,21 +213,23 @@ def stage_fetch(dry_run: bool = False, date_filter: list[str] | None = None) -> 
     new_videos = pre_batch_guard
 
     # ── Guard 2: Skip actively in-progress videos ──────────────────────────
-    #    'downloaded' is NOT blocked in normal mode — those files exist and
-    #    just need batching.  BUT when a day filter is active, we also block
-    #    'downloaded' because those are leftovers from prior runs on OTHER
-    #    days that Notion still returns (since we're in READ-ONLY mode and
-    #    can't mark them as done in Notion).
-    IN_PROGRESS = {"downloading", "batched", "zipped", "uploading"}
-    if date_filter:
-        IN_PROGRESS.add("downloaded")
+    #    In NOTION_READ_ONLY mode, Notion can never be updated, so every
+    #    processed video keeps appearing in queries forever.  Block ANY
+    #    video that already has a pipeline_status in state.json.
+    #    In normal mode, only block truly in-progress statuses — 'downloaded'
+    #    is allowed through so those files can flow to the batcher.
+    from config import NOTION_READ_ONLY
+    if NOTION_READ_ONLY:
+        BLOCK_STATUSES = {"downloading", "downloaded", "batched", "zipped", "uploading"}
+    else:
+        BLOCK_STATUSES = {"downloading", "batched", "zipped", "uploading"}
     ready_videos = []
     skipped_inprogress = 0
     for v in new_videos:
         rec = sm.get(_state_key(v))
-        if rec and rec.get("pipeline_status") in IN_PROGRESS:
+        if rec and rec.get("pipeline_status") in BLOCK_STATUSES:
             log.info(
-                f"  [SKIP] Already in-progress ({rec['pipeline_status']}): "
+                f"  [SKIP] Already processed ({rec['pipeline_status']}): "
                 f"{v['video_name']} [page={v['page_id'][:12]}…]"
             )
             skipped_inprogress += 1
