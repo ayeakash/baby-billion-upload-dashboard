@@ -105,6 +105,24 @@ def get_batches():
                         stripped = _re.sub(r"___ln_(Hi|En|H|E)$", "", stem)
                         if stripped != stem:
                             row = csv_rows.get(stripped)
+                    if not row:
+                        # Fallback: use batcher sanitization (strips ___pg_ and ___ln_ tags)
+                        try:
+                            from batcher import _sanitize_video_name
+                            sanitized = _sanitize_video_name(stem)
+                            row = csv_rows.get(sanitized)
+                            if not row:
+                                # Also try sanitized + _Hi/_En suffix
+                                lang = v.get("lang_suffix", "")
+                                if "Hi" in lang:
+                                    row = csv_rows.get(f"{sanitized}_Hi")
+                                elif "En" in lang:
+                                    row = csv_rows.get(f"{sanitized}_En")
+                        except ImportError:
+                            pass
+                    if not row and len(csv_rows) == 1:
+                        # Last resort: if CSV has only 1 row, just use it
+                        row = next(iter(csv_rows.values()))
                     if row:
                         # Sync video_name to the CSV version
                         v["video_name"] = row.get("video_name", v["video_name"])
