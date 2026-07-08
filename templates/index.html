@@ -1155,9 +1155,13 @@
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                     Upload All &amp; Submit
                 </button>
-                <button class="btn btn-danger" onclick="deleteAllBatches(this)" title="Delete all batches" style="padding: 6px 12px; font-size: 0.78rem; white-space: nowrap;">
+                <button class="btn btn-danger" onclick="deleteAllBatches(this)" title="Delete all batches + clear Notion" style="padding: 6px 12px; font-size: 0.78rem; white-space: nowrap;">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                     Delete All
+                </button>
+                <button class="btn" onclick="clearAllLocalBatches(this)" title="Clear all from local storage only (Notion untouched)" style="padding: 6px 12px; font-size: 0.78rem; white-space: nowrap; background:#2a2a3a; border:1px solid #555; color:#ccc;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
+                    Clear All Local
                 </button>
             </div>
 
@@ -1902,6 +1906,7 @@
                         <button class="btn btn-success" onclick="markUploadedManually('${batch.batch_name}')">Mark Uploaded</button>
                         <button class="btn btn-secondary" onclick="regenerateCsv('${batch.batch_name}')" ${sb?'disabled':''} style="margin-left:auto"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg> Regen CSV</button>
                         <button class="btn btn-danger" onclick="deleteBatch('${batch.batch_name}', this)" ${sb?'disabled':''}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Delete</button>
+                        <button class="btn" onclick="clearLocalBatch('${batch.batch_name}', this)" ${sb?'disabled':''} style="font-size:0.65rem;padding:0.3rem 0.6rem;background:#2a2a3a;border:1px solid #555;color:#ccc" title="Clear from local storage only (Notion untouched)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg> Clear Local</button>
                     </div></div>`;
             } else if (batch.status === 'pending_second_review') {
                 return `<div class="batch-action-panel">
@@ -1911,6 +1916,7 @@
                         <button class="btn btn-danger" onclick="finalizeBatchReal('${batch.batch_name}')" ${sb?'disabled':''}>Finalize &amp; Sync</button>
                         <button class="btn btn-secondary" onclick="regenerateCsv('${batch.batch_name}')" ${sb?'disabled':''} style="margin-left:auto"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg> Regen CSV</button>
                         <button class="btn btn-danger" onclick="deleteBatch('${batch.batch_name}', this)" ${sb?'disabled':''}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Delete</button>
+                        <button class="btn" onclick="clearLocalBatch('${batch.batch_name}', this)" ${sb?'disabled':''} style="font-size:0.65rem;padding:0.3rem 0.6rem;background:#2a2a3a;border:1px solid #555;color:#ccc" title="Clear from local storage only (Notion untouched)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg> Clear Local</button>
                     </div></div>`;
             } else {
                 return `<div class="batch-action-panel">
@@ -1940,6 +1946,44 @@
                     appendTerminalText(d.error ? `[ERROR] ${d.error}\n` : `[SUCCESS] ${d.message}\n`);
                     fetchBatches();
                 }).catch(e => { appendTerminalText(`[ERROR] Request failed.\n`); fetchBatches(); });
+        }
+
+        function clearLocalBatch(batchName, btn) {
+            if (!btn) return;
+            if (!confirm(`Clear ${batchName} from local storage?\n\nThis will:\n• Remove local files, CSV, and ZIP\n• Clear from dashboard UI\n• Reset state.json entries\n\n⚠️ Notion will NOT be touched.`)) return;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Clearing...';
+            appendTerminalText(`\n[SYSTEM] Clearing ${batchName} from local storage...\n`);
+            fetch(`/api/batches/${batchName}/clear-local`, {method:'POST'})
+                .then(r => r.json()).then(d => {
+                    appendTerminalText(d.error ? `[ERROR] ${d.error}\n` : `[SUCCESS] ${d.message}\n`);
+                    fetchBatches();
+                }).catch(e => { appendTerminalText(`[ERROR] Request failed.\n`); fetchBatches(); });
+        }
+
+        function clearAllLocalBatches(btn) {
+            if (!btn) return;
+            if (!btn.dataset.confirmClear) {
+                btn.dataset.confirmClear = 'true';
+                const orig = btn.innerHTML;
+                btn.innerHTML = '⚠️ Confirm Clear All';
+                btn.style.borderColor = '#f87171';
+                btn.style.color = '#f87171';
+                setTimeout(() => { delete btn.dataset.confirmClear; btn.innerHTML = orig; btn.style.borderColor = '#555'; btn.style.color = '#ccc'; }, 3000);
+                return;
+            }
+            delete btn.dataset.confirmClear;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Clearing...';
+            appendTerminalText('\n[SYSTEM] Clearing ALL batches from local storage (Notion untouched)...\n');
+            fetch('/api/batches/clear-all-local', {method:'POST'})
+                .then(r => r.json()).then(d => {
+                    appendTerminalText(d.error ? `[ERROR] ${d.error}\n` : `[SUCCESS] ${d.message}\n`);
+                    fetchBatches();
+                    btn.disabled = false;
+                    btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg> Clear All Local';
+                    btn.style.borderColor = '#555'; btn.style.color = '#ccc';
+                }).catch(e => { appendTerminalText(`[ERROR] Request failed.\n`); fetchBatches(); btn.disabled = false; });
         }
 
         function killAllPython(btn) {

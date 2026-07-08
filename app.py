@@ -569,6 +569,106 @@ def delete_all_batches():
     log.info(msg)
     return jsonify({"message": msg})
 
+@app.route("/api/batches/<batch_name>/clear-local", methods=["POST"])
+def clear_local_batch(batch_name):
+    """Clear a batch from local storage and UI only — does NOT touch Notion."""
+    import shutil
+    import state_manager as sm
+
+    errors = []
+
+    # Stop upload if running for this batch
+    if batch_manager.upload_running and batch_manager.upload_batch_name == batch_name:
+        batch_manager.stop_automated_upload()
+        import time
+        time.sleep(1)
+
+    # Reset state.json entries (clear batch assignment, keep everything else)
+    try:
+        state = sm.get_all()
+        for page_id, rec in state.items():
+            if isinstance(rec, dict) and rec.get("batch") == batch_name:
+                sm.upsert(page_id, pipeline_status="pending", batch="", local_file="")
+    except Exception as e:
+        errors.append(f"state reset: {e}")
+
+    # Remove from batches.json
+    try:
+        batches = batch_manager.load_batches()
+        if batch_name in batches:
+            del batches[batch_name]
+            batch_manager.save_batches(batches)
+    except Exception as e:
+        errors.append(f"batches.json: {e}")
+
+    # Delete files from disk
+    batch_dir = os.path.join(uploader.BATCHES_DIR, batch_name)
+    csv_path = os.path.join(uploader.BATCHES_DIR, f"{batch_name}.csv")
+    zip_path = os.path.join(uploader.BATCHES_DIR, f"{batch_name}.zip")
+    import time
+    for path, label in [(batch_dir, "folder"), (csv_path, "CSV"), (zip_path, "ZIP")]:
+        for attempt in range(3):
+            try:
+                if os.path.isdir(path):
+                    shutil.rmtree(path)
+                elif os.path.isfile(path):
+                    os.remove(path)
+                break
+            except PermissionError:
+                if attempt < 2:
+                    time.sleep(1)
+                else:
+                    errors.append(f"{label}: file locked")
+            except Exception as e:
+                errors.append(f"{label}: {e}")
+                break
+
+    if errors:
+        return jsonify({"message": f"Cleared locally with warnings: {'; '.join(errors)}"})
+
+    log.info(f"Batch {batch_name} cleared from local storage (Notion untouched)")
+    return jsonify({"message": f"'{batch_name}' cleared from local storage. Notion untouched."})
+
+@app.route("/api/batches/clear-all-local", methods=["POST"])
+def clear_all_local_batches():
+    """Clear ALL batches from local storage and UI — does NOT touch Notion."""
+    import shutil
+    import state_manager as sm
+
+    # Reset state.json batch references
+    try:
+        state = sm.get_all()
+        cleared = 0
+        for page_id, rec in state.items():
+            if isinstance(rec, dict) and rec.get("batch"):
+                sm.upsert(page_id, pipeline_status="pending", batch="", local_file="")
+                cleared += 1
+    except Exception as e:
+        log.error(f"Error clearing state refs: {e}")
+        cleared = 0
+
+    # Delete all batch files from disk
+    deleted_files = 0
+    if os.path.isdir(uploader.BATCHES_DIR):
+        for entry in os.listdir(uploader.BATCHES_DIR):
+            full = os.path.join(uploader.BATCHES_DIR, entry)
+            try:
+                if os.path.isdir(full) and entry.startswith("Batch_"):
+                    shutil.rmtree(full)
+                    deleted_files += 1
+                elif os.path.isfile(full) and entry.startswith("Batch_"):
+                    os.remove(full)
+                    deleted_files += 1
+            except Exception as e:
+                log.warning(f"Could not delete {entry}: {e}")
+
+    # Clear batches.json
+    batch_manager.save_batches({})
+
+    msg = f"Cleared all batches locally. {cleared} state refs reset, {deleted_files} files removed. Notion untouched."
+    log.info(msg)
+    return jsonify({"message": msg})
+
 @app.route("/api/notion-days", methods=["GET"])
 def get_notion_days():
     """Return available day groupings from the Notion 'Ready to Upload' view."""
