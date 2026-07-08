@@ -433,6 +433,88 @@ def regenerate_csv(batch_name):
         log.error(f"Error regenerating CSV for {batch_name}: {e}")
         return jsonify({"error": str(e)}), 500
 
+@app.route("/api/batches/<batch_name>/force-compress", methods=["POST"])
+def force_compress_batch(batch_name):
+    """Force-compress all MP4s in a batch folder using ffmpeg, ignoring size checks."""
+    import threading
+
+    batch_dir = os.path.join(uploader.BATCHES_DIR, batch_name)
+    if not os.path.isdir(batch_dir):
+        return jsonify({"error": f"Batch folder '{batch_name}' not found."}), 404
+
+    mp4s = [f for f in os.listdir(batch_dir) if f.lower().endswith('.mp4')]
+    if not mp4s:
+        return jsonify({"error": f"No MP4 files found in {batch_name}."}), 400
+
+    def _compress_thread():
+        import compressor
+        buf = batch_manager.global_log_buffer
+        buf.write(f"\n[COMPRESS] Force-compressing {len(mp4s)} video(s) in {batch_name}...")
+        total_before = 0
+        total_after = 0
+        for i, fname in enumerate(mp4s, 1):
+            fpath = os.path.join(batch_dir, fname)
+            before = os.path.getsize(fpath)
+            total_before += before
+            buf.write(f"  [{i}/{len(mp4s)}] {fname} ({before/(1024*1024):.1f} MB) — compressing...")
+
+            # Force compress by calling _encode directly at CRF 28 (good quality + smaller)
+            base, ext = os.path.splitext(fpath)
+            tmp = f"{base}_fcomp{ext}"
+            import subprocess
+            crf_cmd = [
+                "ffmpeg", "-y", "-i", fpath,
+                "-vcodec", "libx264", "-crf", "28",
+                "-vf", f"scale='min(1280,iw)':-2",
+                "-acodec", "aac", "-b:a", "128k",
+                "-movflags", "+faststart",
+                tmp,
+            ]
+            try:
+                result = subprocess.run(
+                    crf_cmd,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.PIPE,
+                    timeout=600,
+                )
+                if result.returncode == 0 and os.path.isfile(tmp):
+                    after = os.path.getsize(tmp)
+                    total_after += after
+                    os.replace(tmp, fpath)
+                    buf.write(f"    ✓ {before/(1024*1024):.1f} MB → {after/(1024*1024):.1f} MB")
+                else:
+                    total_after += before
+                    buf.write(f"    ✗ ffmpeg failed — keeping original")
+                    if os.path.isfile(tmp):
+                        os.remove(tmp)
+            except subprocess.TimeoutExpired:
+                total_after += before
+                buf.write(f"    ✗ ffmpeg timed out — keeping original")
+                if os.path.isfile(tmp):
+                    os.remove(tmp)
+            except Exception as e:
+                total_after += before
+                buf.write(f"    ✗ Error: {e}")
+                if os.path.isfile(tmp):
+                    os.remove(tmp)
+
+        buf.write(f"\n[COMPRESS] Done! {total_before/(1024*1024):.1f} MB → {total_after/(1024*1024):.1f} MB total")
+
+        # Update batch size in batches.json
+        try:
+            batches = batch_manager.load_batches()
+            if batch_name in batches:
+                new_size = sum(os.path.getsize(os.path.join(batch_dir, f))
+                               for f in os.listdir(batch_dir) if f.lower().endswith('.mp4'))
+                batches[batch_name]["total_size_mb"] = round(new_size / (1024 * 1024), 2)
+                batch_manager.save_batches(batches)
+        except Exception:
+            pass
+
+    t = threading.Thread(target=_compress_thread, daemon=True)
+    t.start()
+    return jsonify({"message": f"Force-compressing {len(mp4s)} video(s) in {batch_name}. Check logs."})
+
 @app.route("/api/batches/<batch_name>/delete", methods=["POST"])
 def delete_batch(batch_name):
     """Delete a batch: stop upload if running, remove files, reset state."""

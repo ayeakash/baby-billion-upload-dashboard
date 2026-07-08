@@ -1905,6 +1905,7 @@
                         <button class="btn btn-primary" onclick="triggerAutomatedUpload('${batch.batch_name}')" ${ul||isPipelineRunning?'disabled':''}>Auto Upload</button>
                         <button class="btn btn-success" onclick="markUploadedManually('${batch.batch_name}')">Mark Uploaded</button>
                         <button class="btn btn-secondary" onclick="regenerateCsv('${batch.batch_name}')" ${sb?'disabled':''} style="margin-left:auto"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg> Regen CSV</button>
+                        <button class="btn" onclick="forceCompress('${batch.batch_name}', this)" ${sb?'disabled':''} style="font-size:0.65rem;padding:0.3rem 0.6rem;background:#1a1a2e;border:1px solid #7c3aed;color:#a78bfa" title="Force-compress all videos in this batch with ffmpeg"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg> Compress</button>
                         <button class="btn btn-danger" onclick="deleteBatch('${batch.batch_name}', this)" ${sb?'disabled':''}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Delete</button>
                         <button class="btn" onclick="clearLocalBatch('${batch.batch_name}', this)" ${sb?'disabled':''} style="font-size:0.65rem;padding:0.3rem 0.6rem;background:#2a2a3a;border:1px solid #555;color:#ccc" title="Clear from local storage only (Notion untouched)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg> Clear Local</button>
                     </div></div>`;
@@ -1933,6 +1934,21 @@
                     appendTerminalText(d.error ? `[ERROR] ${d.error}\n` : `[SUCCESS] ${d.message}\n`);
                     fetchBatches();
                 }).catch(e => appendTerminalText(`[ERROR] Request failed.\n`));
+        }
+
+        function forceCompress(batchName, btn) {
+            if (!btn) return;
+            if (!confirm(`Force-compress all videos in ${batchName}?\n\nThis will re-encode all MP4s with ffmpeg (CRF 28).\nOriginal files will be overwritten with compressed versions.`)) return;
+            btn.disabled = true;
+            const orig = btn.innerHTML;
+            btn.innerHTML = '<span class="spinner"></span> Compressing...';
+            appendTerminalText(`\n[SYSTEM] Force-compressing ${batchName}...\n`);
+            fetch(`/api/batches/${batchName}/force-compress`, {method:'POST'})
+                .then(r => r.json()).then(d => {
+                    appendTerminalText(d.error ? `[ERROR] ${d.error}\n` : `[INFO] ${d.message}\n`);
+                    // Re-enable after a delay since compression runs in background
+                    setTimeout(() => { btn.disabled = false; btn.innerHTML = orig; fetchBatches(); }, 3000);
+                }).catch(e => { appendTerminalText(`[ERROR] Request failed.\n`); btn.disabled = false; btn.innerHTML = orig; });
         }
 
         function deleteBatch(batchName, btn) {
