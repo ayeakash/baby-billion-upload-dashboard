@@ -295,10 +295,10 @@ def query_ready_to_upload(date_filter: list[str] | None = None) -> list[dict]:
         status_filter = _build_status_filter(STATUS_READY)
 
         if date_filter:
-            # Day-filtered mode: RELAXED filters — only Status + date
-            # so videos with Upload Progress already set (e.g. "Processing")
-            # are included. The user explicitly picked this day.
-            filter_clauses = [status_filter]
+            # Day-filtered mode: Status + Upload=No + date
+            # (no Upload Progress filter — user uploads manually)
+            upload_filter = _build_upload_not_done_filter(upload_type)
+            filter_clauses = [status_filter, upload_filter]
             if len(date_filter) == 1:
                 filter_clauses.append({
                     "property": "Submission Date",
@@ -449,6 +449,7 @@ def query_available_days() -> list[dict]:
           "submission_date": "2026-07-08", "video_count": 5}, ...]
     """
     _check_config()
+    upload_type = _detect_upload_prop_type()
 
     url     = _query_url()
     cursor  = None
@@ -457,8 +458,14 @@ def query_available_days() -> list[dict]:
 
     while True:
         status_filter = _build_status_filter(STATUS_READY)
+        upload_filter = _build_upload_not_done_filter(upload_type)
         payload = {
-            "filter": status_filter,
+            "filter": {
+                "and": [
+                    status_filter,
+                    upload_filter,
+                ]
+            },
             "page_size": 100,
         }
         if cursor:
