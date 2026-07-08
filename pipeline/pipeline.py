@@ -56,7 +56,7 @@ log = logging.getLogger(__name__)
 from config import (
     NOTION_TOKEN, NOTION_DATABASE_ID,
     BB_USERNAME, BB_PASSWORD, DOWNLOADS_DIR, BATCHES_DIR,
-    ADMIN_UPLOAD_URL,
+    ADMIN_UPLOAD_URL, NOTION_READ_ONLY,
 )
 import state_manager as sm
 import notion_client as nc
@@ -212,24 +212,29 @@ def stage_fetch(dry_run: bool = False, date_filter: list[str] | None = None) -> 
         pre_batch_guard.append(v)
     new_videos = pre_batch_guard
 
-    # ── Guard 2: Skip actively in-progress videos ──────────────────────────
+    # ── Guard 2: Skip already-known videos ───────────────────────────────
     #    In NOTION_READ_ONLY mode, Notion can never be updated, so every
     #    processed video keeps appearing in queries forever.  Block ANY
-    #    video that already has a pipeline_status in state.json.
+    #    video that already has a record in state.json — regardless of
+    #    status (pending, downloaded, batched, etc.).
     #    In normal mode, only block truly in-progress statuses — 'downloaded'
     #    is allowed through so those files can flow to the batcher.
     from config import NOTION_READ_ONLY
-    if NOTION_READ_ONLY:
-        BLOCK_STATUSES = {"downloading", "downloaded", "batched", "zipped", "uploading"}
-    else:
-        BLOCK_STATUSES = {"downloading", "batched", "zipped", "uploading"}
     ready_videos = []
     skipped_inprogress = 0
     for v in new_videos:
         rec = sm.get(_state_key(v))
-        if rec and rec.get("pipeline_status") in BLOCK_STATUSES:
+        if NOTION_READ_ONLY and rec:
+            # READ-ONLY: skip anything already touched
             log.info(
-                f"  [SKIP] Already processed ({rec['pipeline_status']}): "
+                f"  [SKIP] Already in state.json ({rec.get('pipeline_status','?')}): "
+                f"{v['video_name']} [page={v['page_id'][:12]}…]"
+            )
+            skipped_inprogress += 1
+            continue
+        elif rec and rec.get("pipeline_status") in {"downloading", "batched", "zipped", "uploading"}:
+            log.info(
+                f"  [SKIP] Already in-progress ({rec['pipeline_status']}): "
                 f"{v['video_name']} [page={v['page_id'][:12]}…]"
             )
             skipped_inprogress += 1
@@ -1050,6 +1055,8 @@ def main():
         #    selected day's videos, not old leftovers.
         if day_dates:
             log.info(f"  [MERGE] Skipped state.json merge — day filter is active ({', '.join(day_dates)})")
+        elif NOTION_READ_ONLY:
+            log.info(f"  [MERGE] Skipped state.json merge — NOTION_READ_ONLY is active")
         else:
             state_all  = sm.get_all()
             fetched_pids = {_state_key(v) for v in all_videos}
