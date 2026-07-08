@@ -1039,43 +1039,48 @@ def main():
         # ── Also pick up previously-downloaded videos from state.json ─────────
         #    These were fetched in a prior run but never batched (e.g. pipeline
         #    was stopped, or they were downloaded on a different run).
-        state_all  = sm.get_all()
-        fetched_pids = {_state_key(v) for v in all_videos}
-        merge_batched_pids = _load_batched_page_ids()  # safety net vs batches.json
-        extra = 0
-        skipped_merge_batch = 0
-        for pid, rec in state_all.items():
-            if not isinstance(rec, dict):
-                continue
-            if rec.get("pipeline_status") != "downloaded":
-                continue
-            if pid in fetched_pids:
-                continue  # already in the list from Notion fetch
-            local_file = rec.get("local_file", "")
-            if not local_file or not os.path.isfile(local_file):
-                continue  # file missing — will need re-download via full pipeline
-            # Guard: skip if page_id is already in a dashboard batch
-            page_id = rec.get("page_id", pid)
-            if page_id in merge_batched_pids:
-                skipped_merge_batch += 1
-                continue
-            vname       = rec.get("video_name", "")
-            lang_suffix = rec.get("lang_suffix", "")
-            all_videos.append({
-                "page_id":     page_id,
-                "video_name":  vname,
-                "age_group":   rec.get("age_group", ""),
-                "category":    rec.get("category", ""),
-                "drive_link":  rec.get("drive_link", ""),
-                "local_file":  local_file,
-                "lang_suffix": lang_suffix,
-            })
-            fetched_pids.add(pid)
-            extra += 1
-        if skipped_merge_batch:
-            log.info(f"  [MERGE] Skipped {skipped_merge_batch} downloaded video(s) already in a dashboard batch.")
-        if extra:
-            log.info(f"  [MERGE] Added {extra} previously-downloaded video(s) from state.json for batching.")
+        #    SKIP this merge when a day filter is active — user wants ONLY the
+        #    selected day's videos, not old leftovers.
+        if day_dates:
+            log.info(f"  [MERGE] Skipped state.json merge — day filter is active ({', '.join(day_dates)})")
+        else:
+            state_all  = sm.get_all()
+            fetched_pids = {_state_key(v) for v in all_videos}
+            merge_batched_pids = _load_batched_page_ids()  # safety net vs batches.json
+            extra = 0
+            skipped_merge_batch = 0
+            for pid, rec in state_all.items():
+                if not isinstance(rec, dict):
+                    continue
+                if rec.get("pipeline_status") != "downloaded":
+                    continue
+                if pid in fetched_pids:
+                    continue  # already in the list from Notion fetch
+                local_file = rec.get("local_file", "")
+                if not local_file or not os.path.isfile(local_file):
+                    continue  # file missing — will need re-download via full pipeline
+                # Guard: skip if page_id is already in a dashboard batch
+                page_id = rec.get("page_id", pid)
+                if page_id in merge_batched_pids:
+                    skipped_merge_batch += 1
+                    continue
+                vname       = rec.get("video_name", "")
+                lang_suffix = rec.get("lang_suffix", "")
+                all_videos.append({
+                    "page_id":     page_id,
+                    "video_name":  vname,
+                    "age_group":   rec.get("age_group", ""),
+                    "category":    rec.get("category", ""),
+                    "drive_link":  rec.get("drive_link", ""),
+                    "local_file":  local_file,
+                    "lang_suffix": lang_suffix,
+                })
+                fetched_pids.add(pid)
+                extra += 1
+            if skipped_merge_batch:
+                log.info(f"  [MERGE] Skipped {skipped_merge_batch} downloaded video(s) already in a dashboard batch.")
+            if extra:
+                log.info(f"  [MERGE] Added {extra} previously-downloaded video(s) from state.json for batching.")
 
     if not all_videos:
         log.info("Nothing to do. Exiting.")
