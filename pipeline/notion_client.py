@@ -292,37 +292,41 @@ def query_ready_to_upload(date_filter: list[str] | None = None) -> list[dict]:
 
     while True:
         # ── Layer 1 + 2: Compound server-side filter ──────────────────────────
-        upload_filter = _build_upload_not_done_filter(upload_type)
         status_filter = _build_status_filter(STATUS_READY)
-        payload = {
-            "filter": {
-                "and": [
-                    status_filter,
-                    upload_filter,
-                    {
-                        "property": PROP_UPLOAD_PROGRESS,
-                        "select":   {"is_empty": True},
-                    },
-                ]
-            },
-            "page_size": 100,
-        }
-        # If day filter is specified, add Submission Date filter
+
         if date_filter:
+            # Day-filtered mode: RELAXED filters — only Status + date
+            # so videos with Upload Progress already set (e.g. "Processing")
+            # are included. The user explicitly picked this day.
+            filter_clauses = [status_filter]
             if len(date_filter) == 1:
-                # Single date — simple equals
-                payload["filter"]["and"].append({
+                filter_clauses.append({
                     "property": "Submission Date",
                     "date": {"equals": date_filter[0]},
                 })
             else:
-                # Multiple dates — OR clause
-                payload["filter"]["and"].append({
+                filter_clauses.append({
                     "or": [
                         {"property": "Submission Date", "date": {"equals": d}}
                         for d in date_filter
                     ]
                 })
+            payload = {
+                "filter": {"and": filter_clauses},
+                "page_size": 100,
+            }
+        else:
+            # Normal mode: Status + Upload=No
+            upload_filter = _build_upload_not_done_filter(upload_type)
+            payload = {
+                "filter": {
+                    "and": [
+                        status_filter,
+                        upload_filter,
+                    ]
+                },
+                "page_size": 100,
+            }
         if cursor:
             payload["start_cursor"] = cursor
 
@@ -356,17 +360,14 @@ def query_ready_to_upload(date_filter: list[str] | None = None) -> list[dict]:
                 skipped_upload += 1
                 continue
 
-            # ── Layer 3c: Skip if Upload Progress is already set ──────────────
-            #    Videos with 'Draft Upload' or 'Uploaded' (or any progress)
-            #    have already been through the pipeline — do NOT re-download.
+            # ── Layer 3c: Upload Progress — logged but NOT skipped ─────────
+            #    User uploads manually; progress state doesn't block fetching.
             progress_val = _prop_value(props, PROP_UPLOAD_PROGRESS).strip()
             if progress_val:
                 log.info(
-                    f"  SKIP [{video_name or page_id}]: Upload Progress='{progress_val}' "
-                    f"-- already in upload pipeline"
+                    f"  NOTE [{video_name or page_id}]: Upload Progress='{progress_val}' "
+                    f"-- continuing anyway (manual upload mode)"
                 )
-                skipped_progress += 1
-                continue
 
             # ── Layer 3d: Must have at least one Google Drive link ─────────
             hindi_link   = _prop_value(props, PROP_FINAL_VIDEO_HINDI_LINK).strip()
@@ -440,33 +441,24 @@ def query_ready_to_upload(date_filter: list[str] | None = None) -> list[dict]:
 def query_available_days() -> list[dict]:
     """Fetch all 'Ready to Upload' pages and group them by Day Lable.
 
+    Uses RELAXED filters (Status only) so every day appears in the picker,
+    even if some videos have Upload Progress already set.
+
     Returns a sorted list of dicts:
         [{"day_label": "Day 82 — Jul 08", "day_number": "82",
           "submission_date": "2026-07-08", "video_count": 5}, ...]
     """
     _check_config()
-    upload_type = _detect_upload_prop_type()
 
     url     = _query_url()
     cursor  = None
 
-    from collections import defaultdict
     day_groups: dict[str, dict] = {}  # submission_date -> info
 
     while True:
-        upload_filter = _build_upload_not_done_filter(upload_type)
         status_filter = _build_status_filter(STATUS_READY)
         payload = {
-            "filter": {
-                "and": [
-                    status_filter,
-                    upload_filter,
-                    {
-                        "property": PROP_UPLOAD_PROGRESS,
-                        "select":   {"is_empty": True},
-                    },
-                ]
-            },
+            "filter": status_filter,
             "page_size": 100,
         }
         if cursor:
