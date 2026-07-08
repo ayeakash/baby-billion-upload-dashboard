@@ -236,10 +236,20 @@ def mark_batch_uploaded(batch_name: str, job_id: str | None = None) -> tuple[boo
     b["upload_date"] = upload_date
     b["upload_completed"] = False  # Clear the blocking flag
 
-    # Update pipeline_status of videos in batches.json (preserve bad status)
+    # Update pipeline_status of videos in batches.json AND state.json (preserve bad status)
+    effective_job_id = job_id or b.get("upload_job_id") or "MANUAL"
     for v in b["videos"]:
         if v["pipeline_status"] != "bad":
             v["pipeline_status"] = "uploaded_pending_final_review"
+            # ── Sync state.json so pipeline guards see this video as uploaded ──
+            video_name = v.get("video_name", "")
+            lang_suffix = ""
+            if "___ln_Hi" in video_name:
+                lang_suffix = "___ln_Hi"
+            elif "___ln_En" in video_name:
+                lang_suffix = "___ln_En"
+            state_key = v["page_id"] + lang_suffix if lang_suffix else v["page_id"]
+            state_manager.mark_uploaded(state_key, effective_job_id, upload_date)
 
     save_batches(batches)
 
@@ -351,6 +361,12 @@ def run_automated_upload_thread(batch_name: str):
                 for v in b["videos"]:
                     if v["pipeline_status"] != "bad":
                         v["pipeline_status"] = "uploaded_pending_final_review"
+                        # ── Sync state.json so pipeline guards see this as uploaded ──
+                        vname = v.get("video_name", "")
+                        lang = "___ln_Hi" if "___ln_Hi" in vname else \
+                               "___ln_En" if "___ln_En" in vname else ""
+                        sk = v["page_id"] + lang if lang else v["page_id"]
+                        state_manager.mark_uploaded(sk, job_id, upload_date)
                 save_batches(batches)
 
         # Sync Notion: set Upload Progress = "Draft Upload" for each video

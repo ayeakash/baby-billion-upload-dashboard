@@ -99,6 +99,30 @@ def run(videos: list[dict]) -> list[str]:
         v["local_file"] = local_file
         to_batch.append(v)
 
+    # ── Guard: cross-check against batches.json (dashboard batches) ────────
+    #    Even if state.json was reset or is stale, never re-batch a video
+    #    that already exists in a dashboard batch.
+    _batches_json = os.path.join(os.path.dirname(os.path.dirname(__file__)), "batches.json")
+    if os.path.isfile(_batches_json):
+        try:
+            import json as _json
+            with open(_batches_json, "r", encoding="utf-8") as _f:
+                _bj = _json.load(_f)
+            _existing_pids = set()
+            for _bd in _bj.values():
+                if isinstance(_bd, dict):
+                    for _bv in _bd.get("videos", []):
+                        pid = _bv.get("page_id", "")
+                        if pid:
+                            _existing_pids.add(pid)
+            pre = len(to_batch)
+            to_batch = [v for v in to_batch if v["page_id"] not in _existing_pids]
+            skipped_bj = pre - len(to_batch)
+            if skipped_bj:
+                log.info(f"  [SKIP] {skipped_bj} video(s) already in a dashboard batch -- skipping.")
+        except Exception as _e:
+            log.warning(f"  [WARN] Could not read batches.json for cross-check: {_e}")
+
     if not to_batch:
         log.info("No new videos to batch.")
         return []

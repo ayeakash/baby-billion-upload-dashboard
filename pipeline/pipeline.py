@@ -68,11 +68,41 @@ import zipper
 import uploader
 from dedup_utils import normalize_video_key, normalize_age, build_uploaded_keys_from_state
 
+# Path to the dashboard's batches.json (one level up from pipeline/)
+_BATCHES_JSON = os.path.join(os.path.dirname(os.path.dirname(__file__)), "batches.json")
+
 
 def _state_key(v: dict) -> str:
     """Composite state key: page_id + lang_suffix.
     Hindi and English variants of the same Notion page are tracked independently."""
     return v["page_id"] + v.get("lang_suffix", "")
+
+
+def _load_batched_page_ids() -> set[str]:
+    """Load all page_ids that already exist in any batch in batches.json.
+
+    This is a safety net: if the dashboard has already batched/uploaded a
+    video, the pipeline should never re-download or re-batch it, regardless
+    of what state.json or Notion says.
+    """
+    import json as _json
+    if not os.path.isfile(_BATCHES_JSON):
+        return set()
+    try:
+        with open(_BATCHES_JSON, "r", encoding="utf-8") as f:
+            batches = _json.load(f)
+    except Exception:
+        return set()
+    pids = set()
+    for _bn, bd in batches.items():
+        if not isinstance(bd, dict):
+            continue
+        for v in bd.get("videos", []):
+            pid = v.get("page_id", "")
+            if pid:
+                # Store both raw page_id and with lang suffixes
+                pids.add(pid)
+    return pids
 
 
 def _all_page_variants_uploaded(page_id: str) -> bool:
@@ -163,6 +193,23 @@ def stage_fetch(dry_run: bool = False) -> list[dict]:
     new_videos = [v for v in videos if not sm.is_done(_state_key(v))]
     skipped_done = len(videos) - len(new_videos)
 
+    # ── Guard 1b: Skip videos already in a dashboard batch (batches.json) ──
+    #    Catches videos whose state.json was lost/reset but still exist in a
+    #    batch that was already uploaded through the dashboard.
+    batched_pids = _load_batched_page_ids()
+    pre_batch_guard = []
+    skipped_in_batch = 0
+    for v in new_videos:
+        if v["page_id"] in batched_pids:
+            log.info(
+                f"  [SKIP] Already in a dashboard batch: "
+                f"{v['video_name']} [page={v['page_id'][:12]}…]"
+            )
+            skipped_in_batch += 1
+            continue
+        pre_batch_guard.append(v)
+    new_videos = pre_batch_guard
+
     # ── Guard 2: Skip actively in-progress videos ──────────────────────────
     #    'downloaded' is NOT blocked — those files exist and just need batching.
     #    Only truly stuck states are skipped.
@@ -227,6 +274,7 @@ def stage_fetch(dry_run: bool = False) -> list[dict]:
 
     log.info(f"Found {len(videos)} ready-to-upload videos.")
     log.info(f"  {skipped_done} already uploaded (in state.json) -- skipping.")
+    log.info(f"  {skipped_in_batch} already in a dashboard batch -- skipping.")
     log.info(f"  {skipped_inprogress} already in-progress -- skipping.")
     log.info(f"  {skipped_dupes} duplicate video names -- skipping.")
     log.info(f"  {skipped_already_uploaded} content already uploaded (name+age match) -- skipping.")
@@ -988,7 +1036,9 @@ def main():
         #    was stopped, or they were downloaded on a different run).
         state_all  = sm.get_all()
         fetched_pids = {_state_key(v) for v in all_videos}
+        merge_batched_pids = _load_batched_page_ids()  # safety net vs batches.json
         extra = 0
+        skipped_merge_batch = 0
         for pid, rec in state_all.items():
             if not isinstance(rec, dict):
                 continue
@@ -999,8 +1049,12 @@ def main():
             local_file = rec.get("local_file", "")
             if not local_file or not os.path.isfile(local_file):
                 continue  # file missing — will need re-download via full pipeline
+            # Guard: skip if page_id is already in a dashboard batch
+            page_id = rec.get("page_id", pid)
+            if page_id in merge_batched_pids:
+                skipped_merge_batch += 1
+                continue
             vname       = rec.get("video_name", "")
-            page_id     = rec.get("page_id", pid)
             lang_suffix = rec.get("lang_suffix", "")
             all_videos.append({
                 "page_id":     page_id,
@@ -1013,6 +1067,8 @@ def main():
             })
             fetched_pids.add(pid)
             extra += 1
+        if skipped_merge_batch:
+            log.info(f"  [MERGE] Skipped {skipped_merge_batch} downloaded video(s) already in a dashboard batch.")
         if extra:
             log.info(f"  [MERGE] Added {extra} previously-downloaded video(s) from state.json for batching.")
 
