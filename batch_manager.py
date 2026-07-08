@@ -214,7 +214,20 @@ def scan_and_register_batches():
                 if not batch_record.get("finalized_date"):
                     batch_record["finalized_date"] = datetime.now().isoformat()
                 changed = True
-                
+
+    # ── Prune ghost batches whose files no longer exist on disk ────────────
+    ghost_names = []
+    for bn in list(batches.keys()):
+        batch_dir = os.path.join(uploader.BATCHES_DIR, bn)
+        csv_file = os.path.join(uploader.BATCHES_DIR, f"{bn}.csv")
+        if not os.path.isdir(batch_dir) and not os.path.isfile(csv_file):
+            ghost_names.append(bn)
+    if ghost_names:
+        for bn in ghost_names:
+            del batches[bn]
+        changed = True
+        log.info(f"Pruned {len(ghost_names)} ghost batch(es) with no files on disk.")
+
     if changed:
         save_batches(batches)
 
