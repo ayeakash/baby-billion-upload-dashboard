@@ -494,6 +494,17 @@ def query_available_days() -> list[dict]:
             day_num = _prop_value(props, "Day Number").strip() or "0"
             sub_date = _prop_value(props, "Submission Date").strip() or ""
 
+            # Count language variants (same as query_ready_to_upload)
+            hindi_link   = _prop_value(props, PROP_FINAL_VIDEO_HINDI_LINK).strip()
+            english_link = _prop_value(props, PROP_FINAL_VIDEO_ENGLISH_LINK).strip()
+            variant_count = 0
+            if "drive.google.com" in hindi_link:
+                variant_count += 1
+            if "drive.google.com" in english_link:
+                variant_count += 1
+            if variant_count == 0:
+                variant_count = 1  # page has no valid links but still counts
+
             if sub_date not in day_groups:
                 day_groups[sub_date] = {
                     "day_label": day_lbl,
@@ -501,7 +512,7 @@ def query_available_days() -> list[dict]:
                     "submission_date": sub_date,
                     "video_count": 0,
                 }
-            day_groups[sub_date]["video_count"] += 1
+            day_groups[sub_date]["video_count"] += variant_count
 
         if not data.get("has_more"):
             break

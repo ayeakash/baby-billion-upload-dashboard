@@ -213,9 +213,14 @@ def stage_fetch(dry_run: bool = False, date_filter: list[str] | None = None) -> 
     new_videos = pre_batch_guard
 
     # ── Guard 2: Skip actively in-progress videos ──────────────────────────
-    #    'downloaded' is NOT blocked — those files exist and just need batching.
-    #    Only truly stuck states are skipped.
+    #    'downloaded' is NOT blocked in normal mode — those files exist and
+    #    just need batching.  BUT when a day filter is active, we also block
+    #    'downloaded' because those are leftovers from prior runs on OTHER
+    #    days that Notion still returns (since we're in READ-ONLY mode and
+    #    can't mark them as done in Notion).
     IN_PROGRESS = {"downloading", "batched", "zipped", "uploading"}
+    if date_filter:
+        IN_PROGRESS.add("downloaded")
     ready_videos = []
     skipped_inprogress = 0
     for v in new_videos:
