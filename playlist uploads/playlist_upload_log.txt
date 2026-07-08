@@ -1,719 +1,759 @@
-2026-06-28 01:28:12,209 | INFO    | ======================================================================
-2026-06-28 01:28:12,210 | INFO    |   BabyBillion Playlist CSV Uploader
-2026-06-28 01:28:12,210 | INFO    | ======================================================================
-2026-06-28 01:28:12,210 | INFO    |   CSV directory: D:\BabyBillion\upload_dashboard\playlist uploads\BabyBillion_Playlist_TopVideos
-2026-06-28 01:28:12,210 | INFO    |   Dashboard:     https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+2026-07-08 11:11:08,814 | INFO    | ======================================================================
+2026-07-08 11:11:08,817 | INFO    |   BabyBillion Playlist CSV Uploader
+2026-07-08 11:11:08,817 | INFO    | ======================================================================
+2026-07-08 11:11:08,817 | INFO    |   CSV directory: D:\BabyBillion\upload_dashboard\playlist uploads\BabyBillion_Playlist_TopVideos
+2026-07-08 11:11:08,817 | INFO    |   Dashboard:     https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
 
-2026-06-28 01:28:12,217 | INFO    |   SKIP Number_Ordering__3to6.csv (prefix in skip list)
-2026-06-28 01:28:12,217 | INFO    |   SKIP Number_Ordering__6plus.csv (prefix in skip list)
-2026-06-28 01:28:12,222 | INFO    |   [OK] 100-200                             <- 100_200__6plus.csv                            (10 rows) (picked from 2 age groups)
-2026-06-28 01:28:12,222 | INFO    |   [OK] 1-100                               <- 1_100__3to6.csv                               (10 rows) (picked from 2 age groups)
-2026-06-28 01:28:12,222 | INFO    |   [OK] 3D Shapes                           <- 3D_Shapes__6plus.csv                          (10 rows)
-2026-06-28 01:28:12,222 | INFO    |   [OK] About India                         <- About_India__3to6.csv                         (10 rows) (picked from 2 age groups)
-2026-06-28 01:28:12,222 | INFO    |   [OK] Add With Fun                        <- Addition__3to6.csv                            (10 rows) (picked from 2 age groups)
-2026-06-28 01:28:12,222 | INFO    |   [OK] Art & Craft                         <- Art___Craft__3to6.csv                         (10 rows) (picked from 2 age groups)
-2026-06-28 01:28:12,222 | INFO    |   [OK] Baby Animals                        <- Baby_Animals__3to6.csv                        (10 rows)
-2026-06-28 01:28:12,222 | INFO    |   [!!] Cities                              <- Cities__3to6.csv                              ( 1 rows)
-2026-06-28 01:28:12,222 | INFO    |   [!!] Count With Confidence               <- Count_With_Confidence__3to6.csv               ( 8 rows)
-2026-06-28 01:28:12,222 | INFO    |   [OK] Counting                            <- Counting__3to6.csv                            (10 rows) (picked from 2 age groups)
-2026-06-28 01:28:12,222 | INFO    |   [OK] Read Simple Words                   <- CVC_Words__3to6.csv                           (10 rows)
-2026-06-28 01:28:12,222 | INFO    |   [OK] Division                            <- Division__6plus.csv                           (10 rows)
-2026-06-28 01:28:12,222 | INFO    |   [OK] Speak With Confidence               <- English_Speaking__3to6.csv                    (10 rows) (picked from 2 age groups)
-2026-06-28 01:28:12,222 | INFO    |   [OK] English Stories                     <- English_Stories__6plus.csv                    (10 rows) (picked from 2 age groups)
-2026-06-28 01:28:12,222 | INFO    |   [OK] Explore Nature Around               <- Explore_Nature_Around__6plus.csv              (10 rows) (picked from 2 age groups)
-2026-06-28 01:28:12,222 | INFO    |   [!!] Find Favorite Toys                  <- Find_Favorite_Toys__3to6.csv                  ( 7 rows)
-2026-06-28 01:28:12,223 | INFO    |   [OK] Find Things Around                  <- Find_Things_Around__3to6.csv                  (10 rows)
-2026-06-28 01:28:12,223 | INFO    |   [OK] Choose Healthy Foods                <- Food__3to6.csv                                (10 rows) (picked from 2 age groups)
-2026-06-28 01:28:12,223 | INFO    |   [!!] Fractions                           <- Fractions__6plus.csv                          ( 9 rows)
-2026-06-28 01:28:12,223 | INFO    |   [!!] Hindi Stories                       <- Hindi_Stories__3to6.csv                       ( 5 rows)
-2026-06-28 01:28:12,223 | INFO    |   [OK] How Are You                         <- How_Are_You__3to6.csv                         (10 rows) (picked from 2 age groups)
-2026-06-28 01:28:12,223 | INFO    |   [OK] Jungle Animals                      <- Jungle_Animals__3to6.csv                      (10 rows)
-2026-06-28 01:28:12,223 | INFO    |   [OK] Know Body Parts                     <- Know_Body_Parts__3to6.csv                     (10 rows) (picked from 2 age groups)
-2026-06-28 01:28:12,223 | INFO    |   [OK] Knowledge                           <- Knowledge__3to6.csv                           (10 rows) (picked from 2 age groups)
-2026-06-28 01:28:12,223 | INFO    |   [OK] Learn Color names                   <- Learn_Color_names__3to6.csv                   (10 rows)
-2026-06-28 01:28:12,223 | INFO    |   [OK] Learn New Words                     <- Learn_New_Words__3to6.csv                     (10 rows) (picked from 2 age groups)
-2026-06-28 01:28:12,223 | INFO    |   [OK] Learn Your ABC                      <- Learn_Your_ABC__3to6.csv                      (10 rows) (picked from 2 age groups)
-2026-06-28 01:28:12,223 | INFO    |   [OK] Listen to Poems                     <- Listen_to_Poems__3to6.csv                     (10 rows)
-2026-06-28 01:28:12,223 | INFO    |   [OK] Meet Cute Animals                   <- Meet_Cute_Animals__3to6.csv                   (10 rows) (picked from 2 age groups)
-2026-06-28 01:28:12,223 | INFO    |   [OK] Meet Farm Animals                   <- Meet_Farm_Animals__3to6.csv                   (10 rows)
-2026-06-28 01:28:12,223 | INFO    |   [OK] Meet Ocean Animals                  <- Meet_Ocean_Animals__3to6.csv                  (10 rows)
-2026-06-28 01:28:12,223 | INFO    |   [!!] Meet Tiny Insects                   <- Meet_Tiny_Insects__3to6.csv                   ( 8 rows)
-2026-06-28 01:28:12,223 | INFO    |   [OK] Meet Your Family                    <- Meet_Your_Family__3to6.csv                    (10 rows) (picked from 2 age groups)
-2026-06-28 01:28:12,223 | INFO    |   [OK] Money                               <- Money__3to6.csv                               (10 rows) (picked from 2 age groups)
-2026-06-28 01:28:12,223 | INFO    |   [OK] Multiplication                      <- Multiplication__6plus.csv                     (10 rows)
-2026-06-28 01:28:12,223 | INFO    |   [OK] Name Your Fruits                    <- Name_Your_Fruits__3to6.csv                    (10 rows) (picked from 2 age groups)
-2026-06-28 01:28:12,223 | INFO    |   [OK] Name Your Veggies                   <- Name_Your_Veggies__3to6.csv                   (10 rows)
-2026-06-28 01:28:12,223 | INFO    |   [!!] Odd & Even                          <- Odd_and_Even__3to6.csv                        ( 5 rows)
-2026-06-28 01:28:12,223 | INFO    |   [OK] Learn Opposite Words                <- Opposites__3to6.csv                           (10 rows) (picked from 2 age groups)
-2026-06-28 01:28:12,224 | INFO    |   [!!] Paryayvachi Shabd                   <- Paryayvachi_Shabd__3to6.csv                   ( 3 rows)
-2026-06-28 01:28:12,224 | INFO    |   [OK] Play With Patterns                  <- Patterns__3to6.csv                            (10 rows)
-2026-06-28 01:28:12,224 | INFO    |   [OK] Sounds & Words                      <- Phonics__3to6.csv                             (10 rows) (picked from 2 age groups)
-2026-06-28 01:28:12,224 | INFO    |   [OK] Place Your Numbers                  <- Place_Your_Numbers__3to6.csv                  (10 rows) (picked from 2 age groups)
-2026-06-28 01:28:12,224 | INFO    |   [OK] Practice Good Habits                <- Practice_Good_Habits__3to6.csv                (10 rows) (picked from 2 age groups)
-2026-06-28 01:28:12,224 | INFO    |   [OK] Prepositions                        <- Prepositions__6plus.csv                       (10 rows)
-2026-06-28 01:28:12,224 | INFO    |   [OK] Science Made Fun                    <- Science_Made_Fun__3to6.csv                    (10 rows) (picked from 2 age groups)
-2026-06-28 01:28:12,224 | INFO    |   [OK] Why Seasons Change                  <- Seasons__3to6.csv                             (10 rows) (picked from 2 age groups)
-2026-06-28 01:28:12,224 | INFO    |   [OK] Start With Sentences                <- Simple_Sentences__3to6.csv                    (10 rows) (picked from 2 age groups)
-2026-06-28 01:28:12,224 | INFO    |   [!!] Sing Along Rhymes                   <- Sing_Along_Rhymes__3to6.csv                   ( 8 rows)
-2026-06-28 01:28:12,224 | INFO    |   [!!] Songs                               <- Songs__3to6.csv                               ( 1 rows)
-2026-06-28 01:28:12,224 | INFO    |   [OK] Speak It Right                      <- Speak_It_Right__3to6.csv                      (10 rows)
-2026-06-28 01:28:12,224 | INFO    |   [OK] Speak Simple Hindi                  <- Speak_Simple_Hindi__3to6.csv                  (10 rows)
-2026-06-28 01:28:12,224 | INFO    |   [OK] Explore Different Sports            <- Sports__6plus.csv                             (10 rows) (picked from 2 age groups)
-2026-06-28 01:28:12,224 | INFO    |   [OK] Spot Colorful Birds                 <- Spot_Colorful_Birds__3to6.csv                 (10 rows)
-2026-06-28 01:28:12,224 | INFO    |   [OK] Spot Different Shapes               <- Spot_Different_Shapes__3to6.csv               (10 rows)
-2026-06-28 01:28:12,224 | INFO    |   [OK] Spot Moving Vehicles                <- Spot_Moving_Vehicles__3to6.csv                (10 rows)
-2026-06-28 01:28:12,224 | INFO    |   [OK] Stay Safe Everyday                  <- Stay_Safe_Everyday__3to6.csv                  (10 rows) (picked from 2 age groups)
-2026-06-28 01:28:12,224 | INFO    |   [OK] Stories                             <- Stories__3to6.csv                             (10 rows)
-2026-06-28 01:28:12,224 | INFO    |   [OK] Subtract With Fun                   <- Subtraction__3to6.csv                         (10 rows) (picked from 2 age groups)
-2026-06-28 01:28:12,224 | INFO    |   [OK] Time                                <- Time__3to6.csv                                (10 rows) (picked from 2 age groups)
-2026-06-28 01:28:12,224 | INFO    |   [OK] Try These Actions                   <- Try_These_Actions__3to6.csv                   (10 rows)
-2026-06-28 01:28:12,224 | INFO    |   [OK] Varnmala                            <- Varnmala__3to6.csv                            (10 rows)
-2026-06-28 01:28:12,225 | INFO    |   [OK] Vilom Shabd                         <- Vilom_Shabd__3to6.csv                         (10 rows)
-2026-06-28 01:28:12,225 | INFO    |   [!!] Visit Outer Space                   <- Visit_Outer_Space__6plus.csv                  ( 9 rows)
-2026-06-28 01:28:12,225 | INFO    |   [!!] Watch Plants Grow                   <- Watch_Plants_Grow__3to6.csv                   ( 4 rows)
-2026-06-28 01:28:12,225 | INFO    |   [OK] What Do They Do                     <- What_Do_They_Do__3to6.csv                     (10 rows) (picked from 2 age groups)
-2026-06-28 01:28:12,225 | INFO    | 
+2026-07-08 11:11:08,818 | INFO    |   [OK] 100-200                             <- 100_200.csv                                   (10 rows)
+2026-07-08 11:11:08,818 | INFO    |   [OK] 1-100                               <- 1_100.csv                                     (10 rows)
+2026-07-08 11:11:08,818 | INFO    |   [OK] 3D Shapes                           <- 3D_Shapes.csv                                 (10 rows)
+2026-07-08 11:11:08,818 | INFO    |   [OK] About India                         <- About_India.csv                               (10 rows)
+2026-07-08 11:11:08,818 | INFO    |   [!!] Add With Fun                        <- Add_With_Fun.csv                              (15 rows)
+2026-07-08 11:11:08,819 | INFO    |   [OK] Art & Craft                         <- Art_Craft.csv                                 (10 rows)
+2026-07-08 11:11:08,819 | INFO    |   [OK] Baby Animals                        <- Baby_Animals.csv                              (10 rows)
+2026-07-08 11:11:08,820 | INFO    |   [OK] Celebrate With Everyone             <- Celebrate_With_Everyone.csv                   (10 rows)
+2026-07-08 11:11:08,820 | INFO    |   [!!] Choose Healthy Foods                <- Choose_Healthy_Foods.csv                      (20 rows)
+2026-07-08 11:11:08,820 | INFO    |   [!!] Cities                              <- Cities.csv                                    ( 1 rows)
+2026-07-08 11:11:08,820 | INFO    |   [!!] Count in Hindi                      <- Count_in_Hindi.csv                            ( 3 rows)
+2026-07-08 11:11:08,820 | INFO    |   [!!] Count With Confidence               <- Count_With_Confidence.csv                     (17 rows)
+2026-07-08 11:11:08,820 | INFO    |   [OK] Counting                            <- Counting.csv                                  (10 rows)
+2026-07-08 11:11:08,821 | INFO    |   [OK] Division                            <- Division.csv                                  (10 rows)
+2026-07-08 11:11:08,821 | INFO    |   [!!] English Stories                     <- English_Stories.csv                           ( 1 rows)
+2026-07-08 11:11:08,821 | INFO    |   [OK] Explore Different Sports            <- Explore_Different_Sports.csv                  (10 rows)
+2026-07-08 11:11:08,821 | INFO    |   [!!] Explore Nature Around               <- Explore_Nature_Around.csv                     (25 rows)
+2026-07-08 11:11:08,821 | INFO    |   [!!] Find Favorite Toys                  <- Find_Favorite_Toys.csv                        (17 rows)
+2026-07-08 11:11:08,822 | INFO    |   [!!] Find Things Around                  <- Find_Things_Around.csv                        (20 rows)
+2026-07-08 11:11:08,822 | INFO    |   [!!] Fractions                           <- Fractions.csv                                 ( 3 rows)
+2026-07-08 11:11:08,822 | INFO    |   [!!] Hindi Stories                       <- Hindi_Stories.csv                             ( 5 rows)
+2026-07-08 11:11:08,822 | INFO    |   [!!] How Are You                         <- How_Are_You.csv                               (12 rows)
+2026-07-08 11:11:08,822 | INFO    |   [OK] Jungle Animals                      <- Jungle_Animals.csv                            (10 rows)
+2026-07-08 11:11:08,822 | INFO    |   [!!] Know Body Parts                     <- Know_Body_Parts.csv                           (20 rows)
+2026-07-08 11:11:08,823 | INFO    |   [!!] Knowledge                           <- Knowledge.csv                                 (20 rows)
+2026-07-08 11:11:08,823 | INFO    |   [!!] Learn Color names                   <- Learn_Color_names.csv                         (20 rows)
+2026-07-08 11:11:08,823 | INFO    |   [!!] Learn New Words                     <- Learn_New_Words.csv                           ( 5 rows)
+2026-07-08 11:11:08,823 | INFO    |   [!!] Learn Opposite Words                <- Learn_Opposite_Words.csv                      ( 5 rows)
+2026-07-08 11:11:08,824 | INFO    |   [!!] Learn Your ABC                      <- Learn_Your_ABC.csv                            ( 9 rows)
+2026-07-08 11:11:08,824 | INFO    |   [OK] Let's Go Outside                    <- Let_s_Go_Outside.csv                          (10 rows)
+2026-07-08 11:11:08,824 | INFO    |   [OK] Listen to Poems                     <- Listen_to_Poems.csv                           (10 rows)
+2026-07-08 11:11:08,824 | INFO    |   [!!] Meet Cute Animals                   <- Meet_Cute_Animals.csv                         (30 rows)
+2026-07-08 11:11:08,826 | INFO    |   [!!] Meet Farm Animals                   <- Meet_Farm_Animals.csv                         (15 rows)
+2026-07-08 11:11:08,826 | INFO    |   [!!] Meet Ocean Animals                  <- Meet_Ocean_Animals.csv                        (20 rows)
+2026-07-08 11:11:08,826 | INFO    |   [!!] Meet Tiny Insects                   <- Meet_Tiny_Insects.csv                         (16 rows)
+2026-07-08 11:11:08,826 | INFO    |   [OK] Meet Your Family                    <- Meet_Your_Family.csv                          (10 rows)
+2026-07-08 11:11:08,827 | INFO    |   [OK] Money                               <- Money.csv                                     (10 rows)
+2026-07-08 11:11:08,827 | INFO    |   [OK] Multiplication                      <- Multiplication.csv                            (10 rows)
+2026-07-08 11:11:08,827 | INFO    |   [!!] Name Your Fruits                    <- Name_Your_Fruits.csv                          (20 rows)
+2026-07-08 11:11:08,827 | INFO    |   [!!] Name Your Veggies                   <- Name_Your_Veggies.csv                         (20 rows)
+2026-07-08 11:11:08,827 | INFO    |   [!!] Odd & Even                          <- Odd_Even.csv                                  ( 5 rows)
+2026-07-08 11:11:08,827 | INFO    |   [!!] Paryayvachi Shabd                   <- Paryayvachi_Shabd.csv                         ( 3 rows)
+2026-07-08 11:11:08,828 | INFO    |   [!!] Place Your Numbers                  <- Place_Your_Numbers.csv                        (20 rows)
+2026-07-08 11:11:08,828 | INFO    |   SKIP Place_Your_Numbers_98263b2e.csv (duplicate for 'Place Your Numbers')
+2026-07-08 11:11:08,828 | INFO    |   [OK] Play With Patterns                  <- Play_With_Patterns.csv                        (10 rows)
+2026-07-08 11:11:08,829 | INFO    |   [!!] Practice Good Habits                <- Practice_Good_Habits.csv                      (30 rows)
+2026-07-08 11:11:08,829 | INFO    |   [!!] Prepositions                        <- Prepositions.csv                              ( 2 rows)
+2026-07-08 11:11:08,829 | INFO    |   [!!] Read Simple Words                   <- Read_Simple_Words.csv                         ( 1 rows)
+2026-07-08 11:11:08,829 | INFO    |   [!!] Science Made Fun                    <- Science_Made_Fun.csv                          (20 rows)
+2026-07-08 11:11:08,829 | INFO    |   [OK] Sing Along Rhymes                   <- Sing_Along_Rhymes.csv                         (10 rows)
+2026-07-08 11:11:08,829 | INFO    |   [!!] Songs                               <- Songs.csv                                     ( 1 rows)
+2026-07-08 11:11:08,830 | INFO    |   [!!] Sounds & Words                      <- Sounds_Words.csv                              (11 rows)
+2026-07-08 11:11:08,830 | INFO    |   [OK] Speak It Right                      <- Speak_It_Right.csv                            (10 rows)
+2026-07-08 11:11:08,830 | INFO    |   [OK] Speak Simple Hindi                  <- Speak_Simple_Hindi.csv                        (10 rows)
+2026-07-08 11:11:08,830 | INFO    |   [!!] Speak With Confidence               <- Speak_With_Confidence.csv                     (14 rows)
+2026-07-08 11:11:08,830 | INFO    |   [!!] Spot Colorful Birds                 <- Spot_Colorful_Birds.csv                       (20 rows)
+2026-07-08 11:11:08,831 | INFO    |   [!!] Spot Different Shapes               <- Spot_Different_Shapes.csv                     (20 rows)
+2026-07-08 11:11:08,831 | INFO    |   [!!] Spot Moving Vehicles                <- Spot_Moving_Vehicles.csv                      (20 rows)
+2026-07-08 11:11:08,831 | INFO    |   [!!] Start With Sentences                <- Start_With_Sentences.csv                      ( 2 rows)
+2026-07-08 11:11:08,831 | INFO    |   [OK] Stay Safe Everyday                  <- Stay_Safe_Everyday.csv                        (10 rows)
+2026-07-08 11:11:08,831 | INFO    |   [OK] Stories                             <- Stories.csv                                   (10 rows)
+2026-07-08 11:11:08,831 | INFO    |   [!!] Subtract With Fun                   <- Subtract_With_Fun.csv                         (20 rows)
+2026-07-08 11:11:08,832 | INFO    |   [OK] Time                                <- Time.csv                                      (10 rows)
+2026-07-08 11:11:08,832 | INFO    |   [!!] Try These Actions                   <- Try_These_Actions.csv                         (20 rows)
+2026-07-08 11:11:08,832 | INFO    |   [OK] Varnmala                            <- Varnmala.csv                                  (10 rows)
+2026-07-08 11:11:08,832 | INFO    |   [OK] Vilom Shabd                         <- Vilom_Shabd.csv                               (10 rows)
+2026-07-08 11:11:08,832 | INFO    |   [!!] Visit Outer Space                   <- Visit_Outer_Space.csv                         ( 5 rows)
+2026-07-08 11:11:08,833 | INFO    |   [!!] Watch Plants Grow                   <- Watch_Plants_Grow.csv                         (12 rows)
+2026-07-08 11:11:08,833 | INFO    |   [OK] What Do They Do                     <- What_Do_They_Do.csv                           (10 rows)
+2026-07-08 11:11:08,833 | INFO    |   SKIP What_Do_They_Do_3dc35861.csv (duplicate for 'What Do They Do')
+2026-07-08 11:11:08,833 | INFO    |   [!!] Why Seasons Change                  <- Why_Seasons_Change.csv                        (20 rows)
+2026-07-08 11:11:08,833 | INFO    | 
 ======================================================================
-2026-06-28 01:28:12,225 | INFO    |   Total categories to process: 66
-2026-06-28 01:28:12,225 | INFO    | ======================================================================
+2026-07-08 11:11:08,833 | INFO    |   Total categories to process: 69
+2026-07-08 11:11:08,833 | INFO    | ======================================================================
 
-2026-06-28 01:28:12,225 | INFO    | ====== WebDriver manager ======
-2026-06-28 01:28:13,188 | INFO    | Get LATEST chromedriver version for google-chrome
-2026-06-28 01:28:13,583 | INFO    | Get LATEST chromedriver version for google-chrome
-2026-06-28 01:28:13,998 | INFO    | Driver [C:\Users\BabyBillion\.wdm\drivers\chromedriver\win64\149.0.7827.155\chromedriver-win32/chromedriver.exe] found in cache
-2026-06-28 01:28:14,670 | INFO    | Navigating to login page...
-2026-06-28 01:28:18,252 | INFO    | Login button clicked -- waiting for redirect...
-2026-06-28 01:28:19,259 | INFO    | Login successful!
-2026-06-28 01:28:23,318 | INFO    | Categories page loaded.
-2026-06-28 01:28:23,318 | INFO    | 
-======================================================================
-2026-06-28 01:28:23,318 | INFO    |   [1/66]  100-200
-2026-06-28 01:28:23,318 | INFO    |   CSV: 100_200__6plus.csv  (10 rows)
-2026-06-28 01:28:23,318 | INFO    | ======================================================================
-2026-06-28 01:28:25,345 | INFO    |     -> Set status to Active
-2026-06-28 01:28:28,874 | INFO    |     -> CSV uploaded: 100_200__6plus.csv
-2026-06-28 01:28:32,543 | INFO    |     -> Save Changes clicked
-2026-06-28 01:28:33,549 | INFO    |     DONE: 100-200
-2026-06-28 01:28:35,550 | INFO    | 
-======================================================================
-2026-06-28 01:28:35,550 | INFO    |   [2/66]  1-100
-2026-06-28 01:28:35,550 | INFO    |   CSV: 1_100__3to6.csv  (10 rows)
-2026-06-28 01:28:35,550 | INFO    | ======================================================================
-2026-06-28 01:28:37,571 | INFO    |     -> Set status to Active
-2026-06-28 01:28:41,092 | INFO    |     -> CSV uploaded: 1_100__3to6.csv
-2026-06-28 01:28:44,720 | INFO    |     -> Save Changes clicked
-2026-06-28 01:28:45,726 | INFO    |     DONE: 1-100
-2026-06-28 01:28:47,727 | INFO    | 
-======================================================================
-2026-06-28 01:28:47,727 | INFO    |   [3/66]  3D Shapes
-2026-06-28 01:28:47,727 | INFO    |   CSV: 3D_Shapes__6plus.csv  (10 rows)
-2026-06-28 01:28:47,727 | INFO    | ======================================================================
-2026-06-28 01:28:49,748 | INFO    |     -> Set status to Active
-2026-06-28 01:28:53,268 | INFO    |     -> CSV uploaded: 3D_Shapes__6plus.csv
-2026-06-28 01:28:56,932 | INFO    |     -> Save Changes clicked
-2026-06-28 01:28:57,939 | INFO    |     DONE: 3D Shapes
-2026-06-28 01:28:59,939 | INFO    | 
-======================================================================
-2026-06-28 01:28:59,939 | INFO    |   [4/66]  About India
-2026-06-28 01:28:59,939 | INFO    |   CSV: About_India__3to6.csv  (10 rows)
-2026-06-28 01:28:59,939 | INFO    | ======================================================================
-2026-06-28 01:29:01,977 | INFO    |     -> Set status to Active
-2026-06-28 01:29:05,495 | INFO    |     -> CSV uploaded: About_India__3to6.csv
-2026-06-28 01:29:09,146 | INFO    |     -> Save Changes clicked
-2026-06-28 01:29:19,425 | WARNING |     Modal didn't close in time -- continuing
-2026-06-28 01:29:19,426 | INFO    |     DONE: About India
-2026-06-28 01:29:21,426 | INFO    | 
-======================================================================
-2026-06-28 01:29:21,426 | INFO    |   [5/66]  Add With Fun
-2026-06-28 01:29:21,427 | INFO    |   CSV: Addition__3to6.csv  (10 rows)
-2026-06-28 01:29:21,427 | INFO    | ======================================================================
-2026-06-28 01:29:23,471 | INFO    |     -> Set status to Active
-2026-06-28 01:29:26,994 | INFO    |     -> CSV uploaded: Addition__3to6.csv
-2026-06-28 01:29:30,644 | INFO    |     -> Save Changes clicked
-2026-06-28 01:29:40,907 | WARNING |     Modal didn't close in time -- continuing
-2026-06-28 01:29:40,907 | INFO    |     DONE: Add With Fun
-2026-06-28 01:29:42,907 | INFO    | 
-======================================================================
-2026-06-28 01:29:42,907 | INFO    |   [6/66]  Art & Craft
-2026-06-28 01:29:42,907 | INFO    |   CSV: Art___Craft__3to6.csv  (10 rows)
-2026-06-28 01:29:42,908 | INFO    | ======================================================================
-2026-06-28 01:29:44,927 | INFO    |     -> Set status to Active
-2026-06-28 01:29:48,447 | INFO    |     -> CSV uploaded: Art___Craft__3to6.csv
-2026-06-28 01:29:52,049 | INFO    |     -> Save Changes clicked
-2026-06-28 01:29:53,055 | INFO    |     DONE: Art & Craft
-2026-06-28 01:29:55,056 | INFO    | 
-======================================================================
-2026-06-28 01:29:55,056 | INFO    |   [7/66]  Baby Animals
-2026-06-28 01:29:55,057 | INFO    |   CSV: Baby_Animals__3to6.csv  (10 rows)
-2026-06-28 01:29:55,057 | INFO    | ======================================================================
-2026-06-28 01:29:57,093 | INFO    |     -> Set status to Active
-2026-06-28 01:30:00,639 | INFO    |     -> CSV uploaded: Baby_Animals__3to6.csv
-2026-06-28 01:30:04,246 | INFO    |     -> Save Changes clicked
-2026-06-28 01:30:14,546 | WARNING |     Modal didn't close in time -- continuing
-2026-06-28 01:30:14,547 | INFO    |     DONE: Baby Animals
-2026-06-28 01:30:16,548 | INFO    | 
-======================================================================
-2026-06-28 01:30:16,548 | INFO    |   [8/66]  Cities
-2026-06-28 01:30:16,548 | INFO    |   CSV: Cities__3to6.csv  (1 rows)
-2026-06-28 01:30:16,548 | INFO    | ======================================================================
-2026-06-28 01:30:18,595 | INFO    |     -> Set status to Active
-2026-06-28 01:30:22,114 | INFO    |     -> CSV uploaded: Cities__3to6.csv
-2026-06-28 01:30:25,708 | INFO    |     -> Save Changes clicked
-2026-06-28 01:30:26,725 | INFO    |     DONE: Cities
-2026-06-28 01:30:28,726 | INFO    | 
-======================================================================
-2026-06-28 01:30:28,726 | INFO    |   [9/66]  Count With Confidence
-2026-06-28 01:30:28,727 | INFO    |   CSV: Count_With_Confidence__3to6.csv  (8 rows)
-2026-06-28 01:30:28,727 | INFO    | ======================================================================
-2026-06-28 01:30:30,765 | INFO    |     -> Set status to Active
-2026-06-28 01:30:34,290 | INFO    |     -> CSV uploaded: Count_With_Confidence__3to6.csv
-2026-06-28 01:30:37,883 | INFO    |     -> Save Changes clicked
-2026-06-28 01:30:38,896 | INFO    |     DONE: Count With Confidence
-2026-06-28 01:30:40,898 | INFO    | 
-======================================================================
-2026-06-28 01:30:40,899 | INFO    |   [10/66]  Counting
-2026-06-28 01:30:40,899 | INFO    |   CSV: Counting__3to6.csv  (10 rows)
-2026-06-28 01:30:40,899 | INFO    | ======================================================================
-2026-06-28 01:30:42,937 | INFO    |     -> Set status to Active
-2026-06-28 01:30:46,459 | INFO    |     -> CSV uploaded: Counting__3to6.csv
-2026-06-28 01:30:50,059 | INFO    |     -> Save Changes clicked
-2026-06-28 01:31:00,384 | WARNING |     Modal didn't close in time -- continuing
-2026-06-28 01:31:00,384 | INFO    |     DONE: Counting
-2026-06-28 01:31:02,385 | INFO    | 
-======================================================================
-2026-06-28 01:31:02,385 | INFO    |   [11/66]  Read Simple Words
-2026-06-28 01:31:02,386 | INFO    |   CSV: CVC_Words__3to6.csv  (10 rows)
-2026-06-28 01:31:02,386 | INFO    | ======================================================================
-2026-06-28 01:31:04,408 | INFO    |     -> Set status to Active
-2026-06-28 01:31:07,927 | INFO    |     -> CSV uploaded: CVC_Words__3to6.csv
-2026-06-28 01:31:11,511 | INFO    |     -> Save Changes clicked
-2026-06-28 01:31:12,518 | INFO    |     DONE: Read Simple Words
-2026-06-28 01:31:14,519 | INFO    | 
-======================================================================
-2026-06-28 01:31:14,519 | INFO    |   [12/66]  Division
-2026-06-28 01:31:14,519 | INFO    |   CSV: Division__6plus.csv  (10 rows)
-2026-06-28 01:31:14,519 | INFO    | ======================================================================
-2026-06-28 01:31:16,549 | INFO    |     -> Set status to Active
-2026-06-28 01:31:20,075 | INFO    |     -> CSV uploaded: Division__6plus.csv
-2026-06-28 01:31:23,665 | INFO    |     -> Save Changes clicked
-2026-06-28 01:31:24,680 | INFO    |     DONE: Division
-2026-06-28 01:31:26,681 | INFO    | 
-======================================================================
-2026-06-28 01:31:26,682 | INFO    |   [13/66]  Speak With Confidence
-2026-06-28 01:31:26,682 | INFO    |   CSV: English_Speaking__3to6.csv  (10 rows)
-2026-06-28 01:31:26,682 | INFO    | ======================================================================
-2026-06-28 01:31:28,755 | INFO    |     -> Set status to Active
-2026-06-28 01:31:32,277 | INFO    |     -> CSV uploaded: English_Speaking__3to6.csv
-2026-06-28 01:31:35,860 | INFO    |     -> Save Changes clicked
-2026-06-28 01:31:36,892 | INFO    |     DONE: Speak With Confidence
-2026-06-28 01:31:38,892 | INFO    | 
-======================================================================
-2026-06-28 01:31:38,893 | INFO    |   [14/66]  English Stories
-2026-06-28 01:31:38,893 | INFO    |   CSV: English_Stories__6plus.csv  (10 rows)
-2026-06-28 01:31:38,893 | INFO    | ======================================================================
-2026-06-28 01:31:40,941 | INFO    |     -> Set status to Active
-2026-06-28 01:31:44,461 | INFO    |     -> CSV uploaded: English_Stories__6plus.csv
-2026-06-28 01:31:48,034 | INFO    |     -> Save Changes clicked
-2026-06-28 01:31:49,046 | INFO    |     DONE: English Stories
-2026-06-28 01:31:51,048 | INFO    | 
-======================================================================
-2026-06-28 01:31:51,048 | INFO    |   [15/66]  Explore Nature Around
-2026-06-28 01:31:51,048 | INFO    |   CSV: Explore_Nature_Around__6plus.csv  (10 rows)
-2026-06-28 01:31:51,048 | INFO    | ======================================================================
-2026-06-28 01:31:53,094 | INFO    |     -> Set status to Active
-2026-06-28 01:31:56,620 | INFO    |     -> CSV uploaded: Explore_Nature_Around__6plus.csv
-2026-06-28 01:32:00,244 | INFO    |     -> Save Changes clicked
-2026-06-28 01:32:01,251 | INFO    |     DONE: Explore Nature Around
-2026-06-28 01:32:03,251 | INFO    | 
-======================================================================
-2026-06-28 01:32:03,251 | INFO    |   [16/66]  Find Favorite Toys
-2026-06-28 01:32:03,251 | INFO    |   CSV: Find_Favorite_Toys__3to6.csv  (7 rows)
-2026-06-28 01:32:03,251 | INFO    | ======================================================================
-2026-06-28 01:32:05,277 | INFO    |     -> Set status to Active
-2026-06-28 01:32:08,819 | INFO    |     -> CSV uploaded: Find_Favorite_Toys__3to6.csv
-2026-06-28 01:32:12,409 | INFO    |     -> Save Changes clicked
-2026-06-28 01:32:13,417 | INFO    |     DONE: Find Favorite Toys
-2026-06-28 01:32:15,418 | INFO    | 
-======================================================================
-2026-06-28 01:32:15,418 | INFO    |   [17/66]  Find Things Around
-2026-06-28 01:32:15,418 | INFO    |   CSV: Find_Things_Around__3to6.csv  (10 rows)
-2026-06-28 01:32:15,418 | INFO    | ======================================================================
-2026-06-28 01:32:17,443 | INFO    |     -> Set status to Active
-2026-06-28 01:32:20,967 | INFO    |     -> CSV uploaded: Find_Things_Around__3to6.csv
-2026-06-28 01:32:24,543 | INFO    |     -> Save Changes clicked
-2026-06-28 01:32:34,901 | WARNING |     Modal didn't close in time -- continuing
-2026-06-28 01:32:34,902 | INFO    |     DONE: Find Things Around
-2026-06-28 01:32:36,902 | INFO    | 
-======================================================================
-2026-06-28 01:32:36,902 | INFO    |   [18/66]  Choose Healthy Foods
-2026-06-28 01:32:36,902 | INFO    |   CSV: Food__3to6.csv  (10 rows)
-2026-06-28 01:32:36,903 | INFO    | ======================================================================
-2026-06-28 01:32:38,920 | INFO    |     -> Set status to Active
-2026-06-28 01:32:42,441 | INFO    |     -> CSV uploaded: Food__3to6.csv
-2026-06-28 01:32:46,033 | INFO    |     -> Save Changes clicked
-2026-06-28 01:32:47,051 | INFO    |     DONE: Choose Healthy Foods
-2026-06-28 01:32:49,052 | INFO    | 
-======================================================================
-2026-06-28 01:32:49,052 | INFO    |   [19/66]  Fractions
-2026-06-28 01:32:49,052 | INFO    |   CSV: Fractions__6plus.csv  (9 rows)
-2026-06-28 01:32:49,052 | INFO    | ======================================================================
-2026-06-28 01:32:51,086 | INFO    |     -> Set status to Active
-2026-06-28 01:32:54,609 | INFO    |     -> CSV uploaded: Fractions__6plus.csv
-2026-06-28 01:32:58,169 | INFO    |     -> Save Changes clicked
-2026-06-28 01:33:08,554 | WARNING |     Modal didn't close in time -- continuing
-2026-06-28 01:33:08,555 | INFO    |     DONE: Fractions
-2026-06-28 01:33:10,555 | INFO    | 
-======================================================================
-2026-06-28 01:33:10,555 | INFO    |   [20/66]  Hindi Stories
-2026-06-28 01:33:10,556 | INFO    |   CSV: Hindi_Stories__3to6.csv  (5 rows)
-2026-06-28 01:33:10,556 | INFO    | ======================================================================
-2026-06-28 01:33:12,586 | INFO    |     -> Set status to Active
-2026-06-28 01:33:16,106 | INFO    |     -> CSV uploaded: Hindi_Stories__3to6.csv
-2026-06-28 01:33:19,673 | INFO    |     -> Save Changes clicked
-2026-06-28 01:33:20,686 | INFO    |     DONE: Hindi Stories
-2026-06-28 01:33:22,686 | INFO    | 
-======================================================================
-2026-06-28 01:33:22,686 | INFO    |   [21/66]  How Are You
-2026-06-28 01:33:22,686 | INFO    |   CSV: How_Are_You__3to6.csv  (10 rows)
-2026-06-28 01:33:22,686 | INFO    | ======================================================================
-2026-06-28 01:33:24,726 | INFO    |     -> Set status to Active
-2026-06-28 01:33:28,247 | INFO    |     -> CSV uploaded: How_Are_You__3to6.csv
-2026-06-28 01:33:31,835 | INFO    |     -> Save Changes clicked
-2026-06-28 01:33:42,143 | WARNING |     Modal didn't close in time -- continuing
-2026-06-28 01:33:42,143 | INFO    |     DONE: How Are You
-2026-06-28 01:33:44,144 | INFO    | 
-======================================================================
-2026-06-28 01:33:44,144 | INFO    |   [22/66]  Jungle Animals
-2026-06-28 01:33:44,144 | INFO    |   CSV: Jungle_Animals__3to6.csv  (10 rows)
-2026-06-28 01:33:44,144 | INFO    | ======================================================================
-2026-06-28 01:33:46,172 | INFO    |     -> Set status to Active
-2026-06-28 01:33:49,697 | INFO    |     -> CSV uploaded: Jungle_Animals__3to6.csv
-2026-06-28 01:33:53,273 | INFO    |     -> Save Changes clicked
-2026-06-28 01:34:03,592 | WARNING |     Modal didn't close in time -- continuing
-2026-06-28 01:34:03,592 | INFO    |     DONE: Jungle Animals
-2026-06-28 01:34:05,593 | INFO    | 
-======================================================================
-2026-06-28 01:34:05,593 | INFO    |   [23/66]  Know Body Parts
-2026-06-28 01:34:05,593 | INFO    |   CSV: Know_Body_Parts__3to6.csv  (10 rows)
-2026-06-28 01:34:05,594 | INFO    | ======================================================================
-2026-06-28 01:34:07,621 | INFO    |     -> Set status to Active
-2026-06-28 01:34:11,163 | INFO    |     -> CSV uploaded: Know_Body_Parts__3to6.csv
-2026-06-28 01:34:14,731 | INFO    |     -> Save Changes clicked
-2026-06-28 01:34:25,122 | WARNING |     Modal didn't close in time -- continuing
-2026-06-28 01:34:25,122 | INFO    |     DONE: Know Body Parts
-2026-06-28 01:34:27,123 | INFO    | 
-======================================================================
-2026-06-28 01:34:27,123 | INFO    |   [24/66]  Knowledge
-2026-06-28 01:34:27,124 | INFO    |   CSV: Knowledge__3to6.csv  (10 rows)
-2026-06-28 01:34:27,124 | INFO    | ======================================================================
-2026-06-28 01:34:29,162 | INFO    |     -> Set status to Active
-2026-06-28 01:34:32,698 | INFO    |     -> CSV uploaded: Knowledge__3to6.csv
-2026-06-28 01:34:36,263 | INFO    |     -> Save Changes clicked
-2026-06-28 01:34:37,275 | INFO    |     DONE: Knowledge
-2026-06-28 01:34:39,277 | INFO    | 
-======================================================================
-2026-06-28 01:34:39,277 | INFO    |   [25/66]  Learn Color names
-2026-06-28 01:34:39,277 | INFO    |   CSV: Learn_Color_names__3to6.csv  (10 rows)
-2026-06-28 01:34:39,277 | INFO    | ======================================================================
-2026-06-28 01:34:41,302 | INFO    |     -> Set status to Active
-2026-06-28 01:34:44,827 | INFO    |     -> CSV uploaded: Learn_Color_names__3to6.csv
-2026-06-28 01:34:48,401 | INFO    |     -> Save Changes clicked
-2026-06-28 01:34:58,745 | WARNING |     Modal didn't close in time -- continuing
-2026-06-28 01:34:58,746 | INFO    |     DONE: Learn Color names
-2026-06-28 01:35:00,746 | INFO    | 
-======================================================================
-2026-06-28 01:35:00,747 | INFO    |   [26/66]  Learn New Words
-2026-06-28 01:35:00,747 | INFO    |   CSV: Learn_New_Words__3to6.csv  (10 rows)
-2026-06-28 01:35:00,747 | INFO    | ======================================================================
-2026-06-28 01:35:02,793 | INFO    |     -> Set status to Active
-2026-06-28 01:35:06,318 | INFO    |     -> CSV uploaded: Learn_New_Words__3to6.csv
-2026-06-28 01:35:09,886 | INFO    |     -> Save Changes clicked
-2026-06-28 01:35:20,237 | WARNING |     Modal didn't close in time -- continuing
-2026-06-28 01:35:20,237 | INFO    |     DONE: Learn New Words
-2026-06-28 01:35:22,239 | INFO    | 
-======================================================================
-2026-06-28 01:35:22,239 | INFO    |   [27/66]  Learn Your ABC
-2026-06-28 01:35:22,239 | INFO    |   CSV: Learn_Your_ABC__3to6.csv  (10 rows)
-2026-06-28 01:35:22,240 | INFO    | ======================================================================
-2026-06-28 01:35:24,303 | INFO    |     -> Set status to Active
-2026-06-28 01:35:27,823 | INFO    |     -> CSV uploaded: Learn_Your_ABC__3to6.csv
-2026-06-28 01:35:31,395 | INFO    |     -> Save Changes clicked
-2026-06-28 01:35:32,403 | INFO    |     DONE: Learn Your ABC
-2026-06-28 01:35:34,404 | INFO    | 
-======================================================================
-2026-06-28 01:35:34,404 | INFO    |   [28/66]  Listen to Poems
-2026-06-28 01:35:34,404 | INFO    |   CSV: Listen_to_Poems__3to6.csv  (10 rows)
-2026-06-28 01:35:34,404 | INFO    | ======================================================================
-2026-06-28 01:35:36,432 | INFO    |     -> Set status to Active
-2026-06-28 01:35:39,953 | INFO    |     -> CSV uploaded: Listen_to_Poems__3to6.csv
-2026-06-28 01:35:43,530 | INFO    |     -> Save Changes clicked
-2026-06-28 01:35:44,538 | INFO    |     DONE: Listen to Poems
-2026-06-28 01:35:46,539 | INFO    | 
-======================================================================
-2026-06-28 01:35:46,539 | INFO    |   [29/66]  Meet Cute Animals
-2026-06-28 01:35:46,539 | INFO    |   CSV: Meet_Cute_Animals__3to6.csv  (10 rows)
-2026-06-28 01:35:46,539 | INFO    | ======================================================================
-2026-06-28 01:35:48,566 | INFO    |     -> Set status to Active
-2026-06-28 01:35:52,100 | INFO    |     -> CSV uploaded: Meet_Cute_Animals__3to6.csv
-2026-06-28 01:35:55,678 | INFO    |     -> Save Changes clicked
-2026-06-28 01:36:06,062 | WARNING |     Modal didn't close in time -- continuing
-2026-06-28 01:36:06,062 | INFO    |     DONE: Meet Cute Animals
-2026-06-28 01:36:08,062 | INFO    | 
-======================================================================
-2026-06-28 01:36:08,062 | INFO    |   [30/66]  Meet Farm Animals
-2026-06-28 01:36:08,063 | INFO    |   CSV: Meet_Farm_Animals__3to6.csv  (10 rows)
-2026-06-28 01:36:08,063 | INFO    | ======================================================================
-2026-06-28 01:36:10,115 | INFO    |     -> Set status to Active
-2026-06-28 01:36:13,638 | INFO    |     -> CSV uploaded: Meet_Farm_Animals__3to6.csv
-2026-06-28 01:36:17,207 | INFO    |     -> Save Changes clicked
-2026-06-28 01:36:27,635 | WARNING |     Modal didn't close in time -- continuing
-2026-06-28 01:36:27,636 | INFO    |     DONE: Meet Farm Animals
-2026-06-28 01:36:29,637 | INFO    | 
-======================================================================
-2026-06-28 01:36:29,637 | INFO    |   [31/66]  Meet Ocean Animals
-2026-06-28 01:36:29,638 | INFO    |   CSV: Meet_Ocean_Animals__3to6.csv  (10 rows)
-2026-06-28 01:36:29,638 | INFO    | ======================================================================
-2026-06-28 01:36:31,686 | INFO    |     -> Set status to Active
-2026-06-28 01:36:35,209 | INFO    |     -> CSV uploaded: Meet_Ocean_Animals__3to6.csv
-2026-06-28 01:36:38,810 | INFO    |     -> Save Changes clicked
-2026-06-28 01:36:49,144 | WARNING |     Modal didn't close in time -- continuing
-2026-06-28 01:36:49,144 | INFO    |     DONE: Meet Ocean Animals
-2026-06-28 01:36:51,145 | INFO    | 
-======================================================================
-2026-06-28 01:36:51,145 | INFO    |   [32/66]  Meet Tiny Insects
-2026-06-28 01:36:51,146 | INFO    |   CSV: Meet_Tiny_Insects__3to6.csv  (8 rows)
-2026-06-28 01:36:51,146 | INFO    | ======================================================================
-2026-06-28 01:36:53,174 | INFO    |     -> Set status to Active
-2026-06-28 01:36:56,700 | INFO    |     -> CSV uploaded: Meet_Tiny_Insects__3to6.csv
-2026-06-28 01:37:00,270 | INFO    |     -> Save Changes clicked
-2026-06-28 01:37:10,665 | WARNING |     Modal didn't close in time -- continuing
-2026-06-28 01:37:10,665 | INFO    |     DONE: Meet Tiny Insects
-2026-06-28 01:37:12,665 | INFO    | 
-======================================================================
-2026-06-28 01:37:12,666 | INFO    |   [33/66]  Meet Your Family
-2026-06-28 01:37:12,666 | INFO    |   CSV: Meet_Your_Family__3to6.csv  (10 rows)
-2026-06-28 01:37:12,666 | INFO    | ======================================================================
-2026-06-28 01:37:14,708 | INFO    |     -> Set status to Active
-2026-06-28 01:37:18,242 | INFO    |     -> CSV uploaded: Meet_Your_Family__3to6.csv
-2026-06-28 01:37:21,812 | INFO    |     -> Save Changes clicked
-2026-06-28 01:37:22,830 | INFO    |     DONE: Meet Your Family
-2026-06-28 01:37:24,831 | INFO    | 
-======================================================================
-2026-06-28 01:37:24,831 | INFO    |   [34/66]  Money
-2026-06-28 01:37:24,831 | INFO    |   CSV: Money__3to6.csv  (10 rows)
-2026-06-28 01:37:24,831 | INFO    | ======================================================================
-2026-06-28 01:37:26,864 | INFO    |     -> Set status to Active
-2026-06-28 01:37:30,386 | INFO    |     -> CSV uploaded: Money__3to6.csv
-2026-06-28 01:37:33,962 | INFO    |     -> Save Changes clicked
-2026-06-28 01:37:34,974 | INFO    |     DONE: Money
-2026-06-28 01:37:36,976 | INFO    | 
-======================================================================
-2026-06-28 01:37:36,976 | INFO    |   [35/66]  Multiplication
-2026-06-28 01:37:36,976 | INFO    |   CSV: Multiplication__6plus.csv  (10 rows)
-2026-06-28 01:37:36,976 | INFO    | ======================================================================
-2026-06-28 01:37:39,002 | INFO    |     -> Set status to Active
-2026-06-28 01:37:42,529 | INFO    |     -> CSV uploaded: Multiplication__6plus.csv
-2026-06-28 01:37:46,115 | INFO    |     -> Save Changes clicked
-2026-06-28 01:37:56,523 | WARNING |     Modal didn't close in time -- continuing
-2026-06-28 01:37:56,523 | INFO    |     DONE: Multiplication
-2026-06-28 01:37:58,525 | INFO    | 
-======================================================================
-2026-06-28 01:37:58,525 | INFO    |   [36/66]  Name Your Fruits
-2026-06-28 01:37:58,526 | INFO    |   CSV: Name_Your_Fruits__3to6.csv  (10 rows)
-2026-06-28 01:37:58,526 | INFO    | ======================================================================
-2026-06-28 01:38:00,555 | INFO    |     -> Set status to Active
-2026-06-28 01:38:04,076 | INFO    |     -> CSV uploaded: Name_Your_Fruits__3to6.csv
-2026-06-28 01:38:07,652 | INFO    |     -> Save Changes clicked
-2026-06-28 01:38:08,660 | INFO    |     DONE: Name Your Fruits
-2026-06-28 01:38:10,661 | INFO    | 
-======================================================================
-2026-06-28 01:38:10,661 | INFO    |   [37/66]  Name Your Veggies
-2026-06-28 01:38:10,661 | INFO    |   CSV: Name_Your_Veggies__3to6.csv  (10 rows)
-2026-06-28 01:38:10,661 | INFO    | ======================================================================
-2026-06-28 01:38:12,685 | INFO    |     -> Set status to Active
-2026-06-28 01:38:16,222 | INFO    |     -> CSV uploaded: Name_Your_Veggies__3to6.csv
-2026-06-28 01:38:19,788 | INFO    |     -> Save Changes clicked
-2026-06-28 01:38:20,794 | INFO    |     DONE: Name Your Veggies
-2026-06-28 01:38:22,794 | INFO    | 
-======================================================================
-2026-06-28 01:38:22,794 | INFO    |   [38/66]  Odd & Even
-2026-06-28 01:38:22,795 | INFO    |   CSV: Odd_and_Even__3to6.csv  (5 rows)
-2026-06-28 01:38:22,796 | INFO    | ======================================================================
-2026-06-28 01:38:24,824 | INFO    |     -> Set status to Active
-2026-06-28 01:38:28,353 | INFO    |     -> CSV uploaded: Odd_and_Even__3to6.csv
-2026-06-28 01:38:31,956 | INFO    |     -> Save Changes clicked
-2026-06-28 01:38:32,963 | INFO    |     DONE: Odd & Even
-2026-06-28 01:38:34,964 | INFO    | 
-======================================================================
-2026-06-28 01:38:34,964 | INFO    |   [39/66]  Learn Opposite Words
-2026-06-28 01:38:34,964 | INFO    |   CSV: Opposites__3to6.csv  (10 rows)
-2026-06-28 01:38:34,964 | INFO    | ======================================================================
-2026-06-28 01:38:36,987 | INFO    |     -> Set status to Active
-2026-06-28 01:38:40,507 | INFO    |     -> CSV uploaded: Opposites__3to6.csv
-2026-06-28 01:38:44,105 | INFO    |     -> Save Changes clicked
-2026-06-28 01:38:45,117 | INFO    |     DONE: Learn Opposite Words
-2026-06-28 01:38:47,119 | INFO    | 
-======================================================================
-2026-06-28 01:38:47,119 | INFO    |   [40/66]  Paryayvachi Shabd
-2026-06-28 01:38:47,119 | INFO    |   CSV: Paryayvachi_Shabd__3to6.csv  (3 rows)
-2026-06-28 01:38:47,120 | INFO    | ======================================================================
-2026-06-28 01:38:49,145 | INFO    |     -> Set status to Active
-2026-06-28 01:38:52,668 | INFO    |     -> CSV uploaded: Paryayvachi_Shabd__3to6.csv
-2026-06-28 01:38:56,277 | INFO    |     -> Save Changes clicked
-2026-06-28 01:38:57,283 | INFO    |     DONE: Paryayvachi Shabd
-2026-06-28 01:38:59,284 | INFO    | 
-======================================================================
-2026-06-28 01:38:59,284 | INFO    |   [41/66]  Play With Patterns
-2026-06-28 01:38:59,284 | INFO    |   CSV: Patterns__3to6.csv  (10 rows)
-2026-06-28 01:38:59,284 | INFO    | ======================================================================
-2026-06-28 01:39:01,305 | INFO    |     -> Set status to Active
-2026-06-28 01:39:04,826 | INFO    |     -> CSV uploaded: Patterns__3to6.csv
-2026-06-28 01:39:08,434 | INFO    |     -> Save Changes clicked
-2026-06-28 01:39:18,811 | WARNING |     Modal didn't close in time -- continuing
-2026-06-28 01:39:18,811 | INFO    |     DONE: Play With Patterns
-2026-06-28 01:39:20,813 | INFO    | 
-======================================================================
-2026-06-28 01:39:20,813 | INFO    |   [42/66]  Sounds & Words
-2026-06-28 01:39:20,813 | INFO    |   CSV: Phonics__3to6.csv  (10 rows)
-2026-06-28 01:39:20,813 | INFO    | ======================================================================
-2026-06-28 01:39:22,855 | INFO    |     -> Set status to Active
-2026-06-28 01:39:26,392 | INFO    |     -> CSV uploaded: Phonics__3to6.csv
-2026-06-28 01:39:30,013 | INFO    |     -> Save Changes clicked
-2026-06-28 01:39:31,025 | INFO    |     DONE: Sounds & Words
-2026-06-28 01:39:33,026 | INFO    | 
-======================================================================
-2026-06-28 01:39:33,026 | INFO    |   [43/66]  Place Your Numbers
-2026-06-28 01:39:33,026 | INFO    |   CSV: Place_Your_Numbers__3to6.csv  (10 rows)
-2026-06-28 01:39:33,026 | INFO    | ======================================================================
-2026-06-28 01:39:35,080 | INFO    |     -> Set status to Active
-2026-06-28 01:39:38,605 | INFO    |     -> CSV uploaded: Place_Your_Numbers__3to6.csv
-2026-06-28 01:39:42,203 | INFO    |     -> Save Changes clicked
-2026-06-28 01:39:43,210 | INFO    |     DONE: Place Your Numbers
-2026-06-28 01:39:45,211 | INFO    | 
-======================================================================
-2026-06-28 01:39:45,211 | INFO    |   [44/66]  Practice Good Habits
-2026-06-28 01:39:45,212 | INFO    |   CSV: Practice_Good_Habits__3to6.csv  (10 rows)
-2026-06-28 01:39:45,212 | INFO    | ======================================================================
-2026-06-28 01:39:47,238 | INFO    |     -> Set status to Active
-2026-06-28 01:39:50,773 | INFO    |     -> CSV uploaded: Practice_Good_Habits__3to6.csv
-2026-06-28 01:39:54,377 | INFO    |     -> Save Changes clicked
-2026-06-28 01:40:04,717 | WARNING |     Modal didn't close in time -- continuing
-2026-06-28 01:40:04,717 | INFO    |     DONE: Practice Good Habits
-2026-06-28 01:40:06,718 | INFO    | 
-======================================================================
-2026-06-28 01:40:06,718 | INFO    |   [45/66]  Prepositions
-2026-06-28 01:40:06,718 | INFO    |   CSV: Prepositions__6plus.csv  (10 rows)
-2026-06-28 01:40:06,718 | INFO    | ======================================================================
-2026-06-28 01:40:08,743 | INFO    |     -> Set status to Active
-2026-06-28 01:40:12,264 | INFO    |     -> CSV uploaded: Prepositions__6plus.csv
-2026-06-28 01:40:15,835 | INFO    |     -> Save Changes clicked
-2026-06-28 01:40:16,843 | INFO    |     DONE: Prepositions
-2026-06-28 01:40:18,843 | INFO    | 
-======================================================================
-2026-06-28 01:40:18,843 | INFO    |   [46/66]  Science Made Fun
-2026-06-28 01:40:18,844 | INFO    |   CSV: Science_Made_Fun__3to6.csv  (10 rows)
-2026-06-28 01:40:18,844 | INFO    | ======================================================================
-2026-06-28 01:40:20,902 | INFO    |     -> Set status to Active
-2026-06-28 01:40:24,423 | INFO    |     -> CSV uploaded: Science_Made_Fun__3to6.csv
-2026-06-28 01:40:27,997 | INFO    |     -> Save Changes clicked
-2026-06-28 01:40:38,357 | WARNING |     Modal didn't close in time -- continuing
-2026-06-28 01:40:38,357 | INFO    |     DONE: Science Made Fun
-2026-06-28 01:40:40,357 | INFO    | 
-======================================================================
-2026-06-28 01:40:40,357 | INFO    |   [47/66]  Why Seasons Change
-2026-06-28 01:40:40,357 | INFO    |   CSV: Seasons__3to6.csv  (10 rows)
-2026-06-28 01:40:40,358 | INFO    | ======================================================================
-2026-06-28 01:40:42,392 | INFO    |     -> Set status to Active
-2026-06-28 01:40:45,924 | INFO    |     -> CSV uploaded: Seasons__3to6.csv
-2026-06-28 01:40:49,493 | INFO    |     -> Save Changes clicked
-2026-06-28 01:40:50,503 | INFO    |     DONE: Why Seasons Change
-2026-06-28 01:40:52,504 | INFO    | 
-======================================================================
-2026-06-28 01:40:52,504 | INFO    |   [48/66]  Start With Sentences
-2026-06-28 01:40:52,505 | INFO    |   CSV: Simple_Sentences__3to6.csv  (10 rows)
-2026-06-28 01:40:52,505 | INFO    | ======================================================================
-2026-06-28 01:40:54,554 | INFO    |     -> Set status to Active
-2026-06-28 01:40:58,094 | INFO    |     -> CSV uploaded: Simple_Sentences__3to6.csv
-2026-06-28 01:41:01,656 | INFO    |     -> Save Changes clicked
-2026-06-28 01:41:12,001 | WARNING |     Modal didn't close in time -- continuing
-2026-06-28 01:41:12,002 | INFO    |     DONE: Start With Sentences
-2026-06-28 01:41:14,002 | INFO    | 
-======================================================================
-2026-06-28 01:41:14,003 | INFO    |   [49/66]  Sing Along Rhymes
-2026-06-28 01:41:14,003 | INFO    |   CSV: Sing_Along_Rhymes__3to6.csv  (8 rows)
-2026-06-28 01:41:14,003 | INFO    | ======================================================================
-2026-06-28 01:41:16,067 | INFO    |     -> Set status to Active
-2026-06-28 01:41:19,597 | INFO    |     -> CSV uploaded: Sing_Along_Rhymes__3to6.csv
-2026-06-28 01:41:23,169 | INFO    |     -> Save Changes clicked
-2026-06-28 01:41:24,179 | INFO    |     DONE: Sing Along Rhymes
-2026-06-28 01:41:26,180 | INFO    | 
-======================================================================
-2026-06-28 01:41:26,180 | INFO    |   [50/66]  Songs
-2026-06-28 01:41:26,181 | INFO    |   CSV: Songs__3to6.csv  (1 rows)
-2026-06-28 01:41:26,181 | INFO    | ======================================================================
-2026-06-28 01:41:28,227 | INFO    |     -> Set status to Active
-2026-06-28 01:41:31,746 | INFO    |     -> CSV uploaded: Songs__3to6.csv
-2026-06-28 01:41:35,317 | INFO    |     -> Save Changes clicked
-2026-06-28 01:41:36,332 | INFO    |     DONE: Songs
-2026-06-28 01:41:38,333 | INFO    | 
-======================================================================
-2026-06-28 01:41:38,333 | INFO    |   [51/66]  Speak It Right
-2026-06-28 01:41:38,333 | INFO    |   CSV: Speak_It_Right__3to6.csv  (10 rows)
-2026-06-28 01:41:38,334 | INFO    | ======================================================================
-2026-06-28 01:41:40,391 | INFO    |     -> Set status to Active
-2026-06-28 01:41:43,922 | INFO    |     -> CSV uploaded: Speak_It_Right__3to6.csv
-2026-06-28 01:41:47,498 | INFO    |     -> Save Changes clicked
-2026-06-28 01:41:48,511 | INFO    |     DONE: Speak It Right
-2026-06-28 01:41:50,511 | INFO    | 
-======================================================================
-2026-06-28 01:41:50,511 | INFO    |   [52/66]  Speak Simple Hindi
-2026-06-28 01:41:50,512 | INFO    |   CSV: Speak_Simple_Hindi__3to6.csv  (10 rows)
-2026-06-28 01:41:50,513 | INFO    | ======================================================================
-2026-06-28 01:41:52,559 | INFO    |     -> Set status to Active
-2026-06-28 01:41:56,087 | INFO    |     -> CSV uploaded: Speak_Simple_Hindi__3to6.csv
-2026-06-28 01:41:59,651 | INFO    |     -> Save Changes clicked
-2026-06-28 01:42:00,664 | INFO    |     DONE: Speak Simple Hindi
-2026-06-28 01:42:02,664 | INFO    | 
-======================================================================
-2026-06-28 01:42:02,664 | INFO    |   [53/66]  Explore Different Sports
-2026-06-28 01:42:02,664 | INFO    |   CSV: Sports__6plus.csv  (10 rows)
-2026-06-28 01:42:02,664 | INFO    | ======================================================================
-2026-06-28 01:42:04,697 | INFO    |     -> Set status to Active
-2026-06-28 01:42:08,221 | INFO    |     -> CSV uploaded: Sports__6plus.csv
-2026-06-28 01:42:11,803 | INFO    |     -> Save Changes clicked
-2026-06-28 01:42:12,816 | INFO    |     DONE: Explore Different Sports
-2026-06-28 01:42:14,817 | INFO    | 
-======================================================================
-2026-06-28 01:42:14,817 | INFO    |   [54/66]  Spot Colorful Birds
-2026-06-28 01:42:14,817 | INFO    |   CSV: Spot_Colorful_Birds__3to6.csv  (10 rows)
-2026-06-28 01:42:14,817 | INFO    | ======================================================================
-2026-06-28 01:42:16,862 | INFO    |     -> Set status to Active
-2026-06-28 01:42:20,403 | INFO    |     -> CSV uploaded: Spot_Colorful_Birds__3to6.csv
-2026-06-28 01:42:23,972 | INFO    |     -> Save Changes clicked
-2026-06-28 01:42:24,987 | INFO    |     DONE: Spot Colorful Birds
-2026-06-28 01:42:26,988 | INFO    | 
-======================================================================
-2026-06-28 01:42:26,988 | INFO    |   [55/66]  Spot Different Shapes
-2026-06-28 01:42:26,988 | INFO    |   CSV: Spot_Different_Shapes__3to6.csv  (10 rows)
-2026-06-28 01:42:26,988 | INFO    | ======================================================================
-2026-06-28 01:42:29,037 | INFO    |     -> Set status to Active
-2026-06-28 01:42:32,562 | INFO    |     -> CSV uploaded: Spot_Different_Shapes__3to6.csv
-2026-06-28 01:42:36,127 | INFO    |     -> Save Changes clicked
-2026-06-28 01:42:46,577 | WARNING |     Modal didn't close in time -- continuing
-2026-06-28 01:42:46,577 | INFO    |     DONE: Spot Different Shapes
-2026-06-28 01:42:48,578 | INFO    | 
-======================================================================
-2026-06-28 01:42:48,578 | INFO    |   [56/66]  Spot Moving Vehicles
-2026-06-28 01:42:48,578 | INFO    |   CSV: Spot_Moving_Vehicles__3to6.csv  (10 rows)
-2026-06-28 01:42:48,578 | INFO    | ======================================================================
-2026-06-28 01:42:50,616 | INFO    |     -> Set status to Active
-2026-06-28 01:42:54,136 | INFO    |     -> CSV uploaded: Spot_Moving_Vehicles__3to6.csv
-2026-06-28 01:42:57,707 | INFO    |     -> Save Changes clicked
-2026-06-28 01:43:08,209 | WARNING |     Modal didn't close in time -- continuing
-2026-06-28 01:43:08,209 | INFO    |     DONE: Spot Moving Vehicles
-2026-06-28 01:43:10,210 | INFO    | 
-======================================================================
-2026-06-28 01:43:10,210 | INFO    |   [57/66]  Stay Safe Everyday
-2026-06-28 01:43:10,211 | INFO    |   CSV: Stay_Safe_Everyday__3to6.csv  (10 rows)
-2026-06-28 01:43:10,211 | INFO    | ======================================================================
-2026-06-28 01:43:12,251 | INFO    |     -> Set status to Active
-2026-06-28 01:43:15,793 | INFO    |     -> CSV uploaded: Stay_Safe_Everyday__3to6.csv
-2026-06-28 01:43:19,367 | INFO    |     -> Save Changes clicked
-2026-06-28 01:43:20,389 | INFO    |     DONE: Stay Safe Everyday
-2026-06-28 01:43:22,389 | INFO    | 
-======================================================================
-2026-06-28 01:43:22,389 | INFO    |   [58/66]  Stories
-2026-06-28 01:43:22,390 | INFO    |   CSV: Stories__3to6.csv  (10 rows)
-2026-06-28 01:43:22,390 | INFO    | ======================================================================
-2026-06-28 01:43:24,440 | INFO    |     -> Set status to Active
-2026-06-28 01:43:27,986 | INFO    |     -> CSV uploaded: Stories__3to6.csv
-2026-06-28 01:43:31,565 | INFO    |     -> Save Changes clicked
-2026-06-28 01:43:41,984 | WARNING |     Modal didn't close in time -- continuing
-2026-06-28 01:43:41,984 | INFO    |     DONE: Stories
-2026-06-28 01:43:43,985 | INFO    | 
-======================================================================
-2026-06-28 01:43:43,985 | INFO    |   [59/66]  Subtract With Fun
-2026-06-28 01:43:43,985 | INFO    |   CSV: Subtraction__3to6.csv  (10 rows)
-2026-06-28 01:43:43,985 | INFO    | ======================================================================
-2026-06-28 01:43:46,026 | INFO    |     -> Set status to Active
-2026-06-28 01:43:49,563 | INFO    |     -> CSV uploaded: Subtraction__3to6.csv
-2026-06-28 01:43:53,150 | INFO    |     -> Save Changes clicked
-2026-06-28 01:43:54,157 | INFO    |     DONE: Subtract With Fun
-2026-06-28 01:43:56,157 | INFO    | 
-======================================================================
-2026-06-28 01:43:56,157 | INFO    |   [60/66]  Time
-2026-06-28 01:43:56,158 | INFO    |   CSV: Time__3to6.csv  (10 rows)
-2026-06-28 01:43:56,159 | INFO    | ======================================================================
-2026-06-28 01:43:58,202 | INFO    |     -> Set status to Active
-2026-06-28 01:44:01,745 | INFO    |     -> CSV uploaded: Time__3to6.csv
-2026-06-28 01:44:05,353 | INFO    |     -> Save Changes clicked
-2026-06-28 01:44:06,359 | INFO    |     DONE: Time
-2026-06-28 01:44:08,360 | INFO    | 
-======================================================================
-2026-06-28 01:44:08,361 | INFO    |   [61/66]  Try These Actions
-2026-06-28 01:44:08,361 | INFO    |   CSV: Try_These_Actions__3to6.csv  (10 rows)
-2026-06-28 01:44:08,362 | INFO    | ======================================================================
-2026-06-28 01:44:10,393 | INFO    |     -> Set status to Active
-2026-06-28 01:44:13,930 | INFO    |     -> CSV uploaded: Try_These_Actions__3to6.csv
-2026-06-28 01:44:17,534 | INFO    |     -> Save Changes clicked
-2026-06-28 01:44:28,003 | WARNING |     Modal didn't close in time -- continuing
-2026-06-28 01:44:28,003 | INFO    |     DONE: Try These Actions
-2026-06-28 01:44:30,003 | INFO    | 
-======================================================================
-2026-06-28 01:44:30,003 | INFO    |   [62/66]  Varnmala
-2026-06-28 01:44:30,004 | INFO    |   CSV: Varnmala__3to6.csv  (10 rows)
-2026-06-28 01:44:30,004 | INFO    | ======================================================================
-2026-06-28 01:44:32,032 | INFO    |     -> Set status to Active
-2026-06-28 01:44:35,554 | INFO    |     -> CSV uploaded: Varnmala__3to6.csv
-2026-06-28 01:44:39,121 | INFO    |     -> Save Changes clicked
-2026-06-28 01:44:40,145 | INFO    |     DONE: Varnmala
-2026-06-28 01:44:42,146 | INFO    | 
-======================================================================
-2026-06-28 01:44:42,146 | INFO    |   [63/66]  Vilom Shabd
-2026-06-28 01:44:42,146 | INFO    |   CSV: Vilom_Shabd__3to6.csv  (10 rows)
-2026-06-28 01:44:42,147 | INFO    | ======================================================================
-2026-06-28 01:44:44,180 | INFO    |     -> Set status to Active
-2026-06-28 01:44:47,702 | INFO    |     -> CSV uploaded: Vilom_Shabd__3to6.csv
-2026-06-28 01:44:51,265 | INFO    |     -> Save Changes clicked
-2026-06-28 01:45:01,655 | WARNING |     Modal didn't close in time -- continuing
-2026-06-28 01:45:01,656 | INFO    |     DONE: Vilom Shabd
-2026-06-28 01:45:03,656 | INFO    | 
-======================================================================
-2026-06-28 01:45:03,656 | INFO    |   [64/66]  Visit Outer Space
-2026-06-28 01:45:03,657 | INFO    |   CSV: Visit_Outer_Space__6plus.csv  (9 rows)
-2026-06-28 01:45:03,657 | INFO    | ======================================================================
-2026-06-28 01:45:05,687 | INFO    |     -> Set status to Active
-2026-06-28 01:45:09,224 | INFO    |     -> CSV uploaded: Visit_Outer_Space__6plus.csv
-2026-06-28 01:45:12,806 | INFO    |     -> Save Changes clicked
-2026-06-28 01:45:23,256 | WARNING |     Modal didn't close in time -- continuing
-2026-06-28 01:45:23,257 | INFO    |     DONE: Visit Outer Space
-2026-06-28 01:45:25,258 | INFO    | 
-======================================================================
-2026-06-28 01:45:25,258 | INFO    |   [65/66]  Watch Plants Grow
-2026-06-28 01:45:25,258 | INFO    |   CSV: Watch_Plants_Grow__3to6.csv  (4 rows)
-2026-06-28 01:45:25,258 | INFO    | ======================================================================
-2026-06-28 01:45:27,294 | INFO    |     -> Set status to Active
-2026-06-28 01:45:30,816 | INFO    |     -> CSV uploaded: Watch_Plants_Grow__3to6.csv
-2026-06-28 01:45:34,425 | INFO    |     -> Save Changes clicked
-2026-06-28 01:45:44,892 | WARNING |     Modal didn't close in time -- continuing
-2026-06-28 01:45:44,892 | INFO    |     DONE: Watch Plants Grow
-2026-06-28 01:45:46,892 | INFO    | 
-======================================================================
-2026-06-28 01:45:46,893 | INFO    |   [66/66]  What Do They Do
-2026-06-28 01:45:46,893 | INFO    |   CSV: What_Do_They_Do__3to6.csv  (10 rows)
-2026-06-28 01:45:46,893 | INFO    | ======================================================================
-2026-06-28 01:45:48,955 | INFO    |     -> Set status to Active
-2026-06-28 01:45:52,489 | INFO    |     -> CSV uploaded: What_Do_They_Do__3to6.csv
-2026-06-28 01:45:56,076 | INFO    |     -> Save Changes clicked
-2026-06-28 01:45:57,089 | INFO    |     DONE: What Do They Do
-2026-06-28 01:45:59,089 | INFO    | 
+2026-07-08 11:11:08,833 | INFO    | ====== WebDriver manager ======
+2026-07-08 11:11:09,894 | INFO    | Get LATEST chromedriver version for google-chrome
+2026-07-08 11:11:10,561 | INFO    | Get LATEST chromedriver version for google-chrome
+2026-07-08 11:11:11,066 | INFO    | Get LATEST chromedriver version for google-chrome
+2026-07-08 11:11:12,404 | INFO    | WebDriver version 149.0.7827.155 selected
+2026-07-08 11:11:12,410 | INFO    | Modern chrome version https://storage.googleapis.com/chrome-for-testing-public/149.0.7827.155/win32/chromedriver-win32.zip
+2026-07-08 11:11:12,411 | INFO    | About to download new driver from https://storage.googleapis.com/chrome-for-testing-public/149.0.7827.155/win32/chromedriver-win32.zip
+2026-07-08 11:11:12,807 | INFO    | Driver downloading response is 200
+2026-07-08 11:11:15,394 | INFO    | Get LATEST chromedriver version for google-chrome
+2026-07-08 11:11:16,073 | INFO    | Driver has been saved in cache [C:\Users\BabyBillion\.wdm\drivers\chromedriver\win64\149.0.7827.155]
+2026-07-08 11:11:17,397 | INFO    | Navigating to login page...
+2026-07-08 11:11:20,929 | INFO    | Login button clicked -- waiting for redirect...
+2026-07-08 11:11:21,932 | INFO    | Login successful!
+2026-07-08 11:11:26,029 | INFO    | Categories page loaded.
+2026-07-08 11:11:26,029 | INFO    | 
+======================================================================
+2026-07-08 11:11:26,029 | INFO    |   [1/69]  100-200
+2026-07-08 11:11:26,029 | INFO    |   CSV: 100_200.csv  (10 rows)
+2026-07-08 11:11:26,029 | INFO    | ======================================================================
+2026-07-08 11:11:28,070 | INFO    |     -> Already Active
+2026-07-08 11:11:31,099 | INFO    |     -> CSV uploaded: 100_200.csv
+2026-07-08 11:11:34,878 | INFO    |     -> Save Changes clicked
+2026-07-08 11:11:35,886 | INFO    |     DONE: 100-200
+2026-07-08 11:11:37,886 | INFO    | 
+======================================================================
+2026-07-08 11:11:37,886 | INFO    |   [2/69]  1-100
+2026-07-08 11:11:37,886 | INFO    |   CSV: 1_100.csv  (10 rows)
+2026-07-08 11:11:37,886 | INFO    | ======================================================================
+2026-07-08 11:11:39,935 | INFO    |     -> Already Active
+2026-07-08 11:11:42,977 | INFO    |     -> CSV uploaded: 1_100.csv
+2026-07-08 11:11:46,674 | INFO    |     -> Save Changes clicked
+2026-07-08 11:11:47,685 | INFO    |     DONE: 1-100
+2026-07-08 11:11:49,685 | INFO    | 
+======================================================================
+2026-07-08 11:11:49,685 | INFO    |   [3/69]  3D Shapes
+2026-07-08 11:11:49,687 | INFO    |   CSV: 3D_Shapes.csv  (10 rows)
+2026-07-08 11:11:49,687 | INFO    | ======================================================================
+2026-07-08 11:11:51,728 | INFO    |     -> Already Active
+2026-07-08 11:11:54,754 | INFO    |     -> CSV uploaded: 3D_Shapes.csv
+2026-07-08 11:11:58,442 | INFO    |     -> Save Changes clicked
+2026-07-08 11:11:59,449 | INFO    |     DONE: 3D Shapes
+2026-07-08 11:12:01,450 | INFO    | 
+======================================================================
+2026-07-08 11:12:01,450 | INFO    |   [4/69]  About India
+2026-07-08 11:12:01,450 | INFO    |   CSV: About_India.csv  (10 rows)
+2026-07-08 11:12:01,450 | INFO    | ======================================================================
+2026-07-08 11:12:03,476 | INFO    |     -> Already Active
+2026-07-08 11:12:06,500 | INFO    |     -> CSV uploaded: About_India.csv
+2026-07-08 11:12:10,185 | INFO    |     -> Save Changes clicked
+2026-07-08 11:12:11,207 | INFO    |     DONE: About India
+2026-07-08 11:12:13,207 | INFO    | 
+======================================================================
+2026-07-08 11:12:13,207 | INFO    |   [5/69]  Add With Fun
+2026-07-08 11:12:13,208 | INFO    |   CSV: Add_With_Fun.csv  (15 rows)
+2026-07-08 11:12:13,208 | INFO    | ======================================================================
+2026-07-08 11:12:15,237 | INFO    |     -> Already Active
+2026-07-08 11:12:18,261 | INFO    |     -> CSV uploaded: Add_With_Fun.csv
+2026-07-08 11:12:18,265 | ERROR   |     [REJECTED] Rejected: CSV has 15 rows. Please upload no more than 10 rows.
+2026-07-08 11:12:18,265 | ERROR   |     FAIL: CSV rejected for 'Add With Fun'
+2026-07-08 11:12:21,036 | INFO    | 
+======================================================================
+2026-07-08 11:12:21,036 | INFO    |   [6/69]  Art & Craft
+2026-07-08 11:12:21,036 | INFO    |   CSV: Art_Craft.csv  (10 rows)
+2026-07-08 11:12:21,036 | INFO    | ======================================================================
+2026-07-08 11:12:23,064 | INFO    |     -> Already Active
+2026-07-08 11:12:26,087 | INFO    |     -> CSV uploaded: Art_Craft.csv
+2026-07-08 11:12:29,764 | INFO    |     -> Save Changes clicked
+2026-07-08 11:12:30,772 | INFO    |     DONE: Art & Craft
+2026-07-08 11:12:32,773 | INFO    | 
+======================================================================
+2026-07-08 11:12:32,773 | INFO    |   [7/69]  Baby Animals
+2026-07-08 11:12:32,773 | INFO    |   CSV: Baby_Animals.csv  (10 rows)
+2026-07-08 11:12:32,773 | INFO    | ======================================================================
+2026-07-08 11:12:34,796 | INFO    |     -> Already Active
+2026-07-08 11:12:37,826 | INFO    |     -> CSV uploaded: Baby_Animals.csv
+2026-07-08 11:12:41,522 | INFO    |     -> Save Changes clicked
+2026-07-08 11:12:42,531 | INFO    |     DONE: Baby Animals
+2026-07-08 11:12:44,531 | INFO    | 
+======================================================================
+2026-07-08 11:12:44,532 | INFO    |   [8/69]  Celebrate With Everyone
+2026-07-08 11:12:44,532 | INFO    |   CSV: Celebrate_With_Everyone.csv  (10 rows)
+2026-07-08 11:12:44,532 | INFO    | ======================================================================
+2026-07-08 11:12:46,557 | INFO    |     -> Already Active
+2026-07-08 11:12:49,580 | INFO    |     -> CSV uploaded: Celebrate_With_Everyone.csv
+2026-07-08 11:12:53,266 | INFO    |     -> Save Changes clicked
+2026-07-08 11:12:54,281 | INFO    |     DONE: Celebrate With Everyone
+2026-07-08 11:12:56,281 | INFO    | 
+======================================================================
+2026-07-08 11:12:56,282 | INFO    |   [9/69]  Choose Healthy Foods
+2026-07-08 11:12:56,282 | INFO    |   CSV: Choose_Healthy_Foods.csv  (20 rows)
+2026-07-08 11:12:56,282 | INFO    | ======================================================================
+2026-07-08 11:12:58,303 | INFO    |     -> Already Active
+2026-07-08 11:13:01,327 | INFO    |     -> CSV uploaded: Choose_Healthy_Foods.csv
+2026-07-08 11:13:01,331 | ERROR   |     [REJECTED] Rejected: CSV has 20 rows. Please upload no more than 10 rows.
+2026-07-08 11:13:01,331 | ERROR   |     FAIL: CSV rejected for 'Choose Healthy Foods'
+2026-07-08 11:13:04,035 | INFO    | 
+======================================================================
+2026-07-08 11:13:04,035 | INFO    |   [10/69]  Cities
+2026-07-08 11:13:04,035 | INFO    |   CSV: Cities.csv  (1 rows)
+2026-07-08 11:13:04,035 | INFO    | ======================================================================
+2026-07-08 11:13:06,083 | INFO    |     -> Set status to Active
+2026-07-08 11:13:09,607 | INFO    |     -> CSV uploaded: Cities.csv
+2026-07-08 11:13:13,283 | INFO    |     -> Save Changes clicked
+2026-07-08 11:13:14,290 | INFO    |     DONE: Cities
+2026-07-08 11:13:16,291 | INFO    | 
+======================================================================
+2026-07-08 11:13:16,291 | INFO    |   [11/69]  Count in Hindi
+2026-07-08 11:13:16,292 | INFO    |   CSV: Count_in_Hindi.csv  (3 rows)
+2026-07-08 11:13:16,292 | INFO    | ======================================================================
+2026-07-08 11:13:18,321 | INFO    |     -> Already Active
+2026-07-08 11:13:21,344 | INFO    |     -> CSV uploaded: Count_in_Hindi.csv
+2026-07-08 11:13:25,045 | INFO    |     -> Save Changes clicked
+2026-07-08 11:13:26,052 | INFO    |     DONE: Count in Hindi
+2026-07-08 11:13:28,053 | INFO    | 
+======================================================================
+2026-07-08 11:13:28,053 | INFO    |   [12/69]  Count With Confidence
+2026-07-08 11:13:28,053 | INFO    |   CSV: Count_With_Confidence.csv  (17 rows)
+2026-07-08 11:13:28,053 | INFO    | ======================================================================
+2026-07-08 11:13:30,089 | INFO    |     -> Already Active
+2026-07-08 11:13:33,113 | INFO    |     -> CSV uploaded: Count_With_Confidence.csv
+2026-07-08 11:13:33,119 | ERROR   |     [REJECTED] Rejected: CSV has 17 rows. Please upload no more than 10 rows.
+2026-07-08 11:13:33,119 | ERROR   |     FAIL: CSV rejected for 'Count With Confidence'
+2026-07-08 11:13:35,835 | INFO    | 
+======================================================================
+2026-07-08 11:13:35,835 | INFO    |   [13/69]  Counting
+2026-07-08 11:13:35,836 | INFO    |   CSV: Counting.csv  (10 rows)
+2026-07-08 11:13:35,836 | INFO    | ======================================================================
+2026-07-08 11:13:37,869 | INFO    |     -> Already Active
+2026-07-08 11:13:40,893 | INFO    |     -> CSV uploaded: Counting.csv
+2026-07-08 11:13:44,589 | INFO    |     -> Save Changes clicked
+2026-07-08 11:13:45,598 | INFO    |     DONE: Counting
+2026-07-08 11:13:47,599 | INFO    | 
+======================================================================
+2026-07-08 11:13:47,599 | INFO    |   [14/69]  Division
+2026-07-08 11:13:47,599 | INFO    |   CSV: Division.csv  (10 rows)
+2026-07-08 11:13:47,599 | INFO    | ======================================================================
+2026-07-08 11:13:49,640 | INFO    |     -> Already Active
+2026-07-08 11:13:52,663 | INFO    |     -> CSV uploaded: Division.csv
+2026-07-08 11:13:56,358 | INFO    |     -> Save Changes clicked
+2026-07-08 11:13:57,375 | INFO    |     DONE: Division
+2026-07-08 11:13:59,376 | INFO    | 
+======================================================================
+2026-07-08 11:13:59,376 | INFO    |   [15/69]  English Stories
+2026-07-08 11:13:59,376 | INFO    |   CSV: English_Stories.csv  (1 rows)
+2026-07-08 11:13:59,376 | INFO    | ======================================================================
+2026-07-08 11:14:01,425 | INFO    |     -> Set status to Active
+2026-07-08 11:14:04,964 | INFO    |     -> CSV uploaded: English_Stories.csv
+2026-07-08 11:14:08,669 | INFO    |     -> Save Changes clicked
+2026-07-08 11:14:09,677 | INFO    |     DONE: English Stories
+2026-07-08 11:14:11,678 | INFO    | 
+======================================================================
+2026-07-08 11:14:11,678 | INFO    |   [16/69]  Explore Different Sports
+2026-07-08 11:14:11,678 | INFO    |   CSV: Explore_Different_Sports.csv  (10 rows)
+2026-07-08 11:14:11,678 | INFO    | ======================================================================
+2026-07-08 11:14:13,707 | INFO    |     -> Already Active
+2026-07-08 11:14:16,730 | INFO    |     -> CSV uploaded: Explore_Different_Sports.csv
+2026-07-08 11:14:20,439 | INFO    |     -> Save Changes clicked
+2026-07-08 11:14:21,445 | INFO    |     DONE: Explore Different Sports
+2026-07-08 11:14:23,445 | INFO    | 
+======================================================================
+2026-07-08 11:14:23,446 | INFO    |   [17/69]  Explore Nature Around
+2026-07-08 11:14:23,446 | INFO    |   CSV: Explore_Nature_Around.csv  (25 rows)
+2026-07-08 11:14:23,447 | INFO    | ======================================================================
+2026-07-08 11:14:25,494 | INFO    |     -> Already Active
+2026-07-08 11:14:28,518 | INFO    |     -> CSV uploaded: Explore_Nature_Around.csv
+2026-07-08 11:14:28,524 | ERROR   |     [REJECTED] Rejected: CSV has 25 rows. Please upload no more than 10 rows.
+2026-07-08 11:14:28,524 | ERROR   |     FAIL: CSV rejected for 'Explore Nature Around'
+2026-07-08 11:14:31,237 | INFO    | 
+======================================================================
+2026-07-08 11:14:31,237 | INFO    |   [18/69]  Find Favorite Toys
+2026-07-08 11:14:31,237 | INFO    |   CSV: Find_Favorite_Toys.csv  (17 rows)
+2026-07-08 11:14:31,238 | INFO    | ======================================================================
+2026-07-08 11:14:33,280 | INFO    |     -> Already Active
+2026-07-08 11:14:36,311 | INFO    |     -> CSV uploaded: Find_Favorite_Toys.csv
+2026-07-08 11:14:36,315 | ERROR   |     [REJECTED] Rejected: CSV has 17 rows. Please upload no more than 10 rows.
+2026-07-08 11:14:36,315 | ERROR   |     FAIL: CSV rejected for 'Find Favorite Toys'
+2026-07-08 11:14:39,039 | INFO    | 
+======================================================================
+2026-07-08 11:14:39,040 | INFO    |   [19/69]  Find Things Around
+2026-07-08 11:14:39,040 | INFO    |   CSV: Find_Things_Around.csv  (20 rows)
+2026-07-08 11:14:39,041 | INFO    | ======================================================================
+2026-07-08 11:14:41,100 | INFO    |     -> Already Active
+2026-07-08 11:14:44,130 | INFO    |     -> CSV uploaded: Find_Things_Around.csv
+2026-07-08 11:14:44,139 | ERROR   |     [REJECTED] Rejected: CSV has 20 rows. Please upload no more than 10 rows.
+2026-07-08 11:14:44,139 | ERROR   |     FAIL: CSV rejected for 'Find Things Around'
+2026-07-08 11:14:46,925 | INFO    | 
+======================================================================
+2026-07-08 11:14:46,925 | INFO    |   [20/69]  Fractions
+2026-07-08 11:14:46,926 | INFO    |   CSV: Fractions.csv  (3 rows)
+2026-07-08 11:14:46,926 | INFO    | ======================================================================
+2026-07-08 11:14:48,951 | INFO    |     -> Already Active
+2026-07-08 11:14:51,974 | INFO    |     -> CSV uploaded: Fractions.csv
+2026-07-08 11:14:55,685 | INFO    |     -> Save Changes clicked
+2026-07-08 11:14:56,693 | INFO    |     DONE: Fractions
+2026-07-08 11:14:58,693 | INFO    | 
+======================================================================
+2026-07-08 11:14:58,693 | INFO    |   [21/69]  Hindi Stories
+2026-07-08 11:14:58,693 | INFO    |   CSV: Hindi_Stories.csv  (5 rows)
+2026-07-08 11:14:58,693 | INFO    | ======================================================================
+2026-07-08 11:15:00,720 | INFO    |     -> Set status to Active
+2026-07-08 11:15:04,250 | INFO    |     -> CSV uploaded: Hindi_Stories.csv
+2026-07-08 11:15:07,942 | INFO    |     -> Save Changes clicked
+2026-07-08 11:15:08,960 | INFO    |     DONE: Hindi Stories
+2026-07-08 11:15:10,961 | INFO    | 
+======================================================================
+2026-07-08 11:15:10,961 | INFO    |   [22/69]  How Are You
+2026-07-08 11:15:10,961 | INFO    |   CSV: How_Are_You.csv  (12 rows)
+2026-07-08 11:15:10,962 | INFO    | ======================================================================
+2026-07-08 11:15:13,009 | INFO    |     -> Already Active
+2026-07-08 11:15:16,032 | INFO    |     -> CSV uploaded: How_Are_You.csv
+2026-07-08 11:15:16,039 | ERROR   |     [REJECTED] Rejected: CSV has 12 rows. Please upload no more than 10 rows.
+2026-07-08 11:15:16,039 | ERROR   |     FAIL: CSV rejected for 'How Are You'
+2026-07-08 11:15:18,750 | INFO    | 
+======================================================================
+2026-07-08 11:15:18,750 | INFO    |   [23/69]  Jungle Animals
+2026-07-08 11:15:18,751 | INFO    |   CSV: Jungle_Animals.csv  (10 rows)
+2026-07-08 11:15:18,751 | INFO    | ======================================================================
+2026-07-08 11:15:20,786 | INFO    |     -> Already Active
+2026-07-08 11:15:23,811 | INFO    |     -> CSV uploaded: Jungle_Animals.csv
+2026-07-08 11:15:27,496 | INFO    |     -> Save Changes clicked
+2026-07-08 11:15:28,503 | INFO    |     DONE: Jungle Animals
+2026-07-08 11:15:30,504 | INFO    | 
+======================================================================
+2026-07-08 11:15:30,504 | INFO    |   [24/69]  Know Body Parts
+2026-07-08 11:15:30,504 | INFO    |   CSV: Know_Body_Parts.csv  (20 rows)
+2026-07-08 11:15:30,504 | INFO    | ======================================================================
+2026-07-08 11:15:32,531 | INFO    |     -> Already Active
+2026-07-08 11:15:35,556 | INFO    |     -> CSV uploaded: Know_Body_Parts.csv
+2026-07-08 11:15:35,561 | ERROR   |     [REJECTED] Rejected: CSV has 20 rows. Please upload no more than 10 rows.
+2026-07-08 11:15:35,561 | ERROR   |     FAIL: CSV rejected for 'Know Body Parts'
+2026-07-08 11:15:38,292 | INFO    | 
+======================================================================
+2026-07-08 11:15:38,292 | INFO    |   [25/69]  Knowledge
+2026-07-08 11:15:38,292 | INFO    |   CSV: Knowledge.csv  (20 rows)
+2026-07-08 11:15:38,292 | INFO    | ======================================================================
+2026-07-08 11:15:40,337 | INFO    |     -> Already Active
+2026-07-08 11:15:43,363 | INFO    |     -> CSV uploaded: Knowledge.csv
+2026-07-08 11:15:43,373 | ERROR   |     [REJECTED] Rejected: CSV has 20 rows. Please upload no more than 10 rows.
+2026-07-08 11:15:43,373 | ERROR   |     FAIL: CSV rejected for 'Knowledge'
+2026-07-08 11:15:46,098 | INFO    | 
+======================================================================
+2026-07-08 11:15:46,098 | INFO    |   [26/69]  Learn Color names
+2026-07-08 11:15:46,098 | INFO    |   CSV: Learn_Color_names.csv  (20 rows)
+2026-07-08 11:15:46,098 | INFO    | ======================================================================
+2026-07-08 11:15:48,130 | INFO    |     -> Already Active
+2026-07-08 11:15:51,151 | INFO    |     -> CSV uploaded: Learn_Color_names.csv
+2026-07-08 11:15:51,156 | ERROR   |     [REJECTED] Rejected: CSV has 20 rows. Please upload no more than 10 rows.
+2026-07-08 11:15:51,156 | ERROR   |     FAIL: CSV rejected for 'Learn Color names'
+2026-07-08 11:15:53,856 | INFO    | 
+======================================================================
+2026-07-08 11:15:53,856 | INFO    |   [27/69]  Learn New Words
+2026-07-08 11:15:53,856 | INFO    |   CSV: Learn_New_Words.csv  (5 rows)
+2026-07-08 11:15:53,856 | INFO    | ======================================================================
+2026-07-08 11:15:55,881 | INFO    |     -> Already Active
+2026-07-08 11:15:58,904 | INFO    |     -> CSV uploaded: Learn_New_Words.csv
+2026-07-08 11:16:02,599 | INFO    |     -> Save Changes clicked
+2026-07-08 11:16:03,621 | INFO    |     DONE: Learn New Words
+2026-07-08 11:16:05,622 | INFO    | 
+======================================================================
+2026-07-08 11:16:05,622 | INFO    |   [28/69]  Learn Opposite Words
+2026-07-08 11:16:05,622 | INFO    |   CSV: Learn_Opposite_Words.csv  (5 rows)
+2026-07-08 11:16:05,622 | INFO    | ======================================================================
+2026-07-08 11:16:07,663 | INFO    |     -> Already Active
+2026-07-08 11:16:10,689 | INFO    |     -> CSV uploaded: Learn_Opposite_Words.csv
+2026-07-08 11:16:14,366 | INFO    |     -> Save Changes clicked
+2026-07-08 11:16:24,383 | WARNING |     Modal didn't close in time -- continuing
+2026-07-08 11:16:24,383 | INFO    |     DONE: Learn Opposite Words
+2026-07-08 11:16:26,384 | INFO    | 
+======================================================================
+2026-07-08 11:16:26,384 | INFO    |   [29/69]  Learn Your ABC
+2026-07-08 11:16:26,384 | INFO    |   CSV: Learn_Your_ABC.csv  (9 rows)
+2026-07-08 11:16:26,384 | INFO    | ======================================================================
+2026-07-08 11:16:28,421 | INFO    |     -> Already Active
+2026-07-08 11:16:31,449 | INFO    |     -> CSV uploaded: Learn_Your_ABC.csv
+2026-07-08 11:16:35,137 | INFO    |     -> Save Changes clicked
+2026-07-08 11:16:36,161 | INFO    |     DONE: Learn Your ABC
+2026-07-08 11:16:38,162 | INFO    | 
+======================================================================
+2026-07-08 11:16:38,162 | INFO    |   [30/69]  Let's Go Outside
+2026-07-08 11:16:38,162 | INFO    |   CSV: Let_s_Go_Outside.csv  (10 rows)
+2026-07-08 11:16:38,162 | INFO    | ======================================================================
+2026-07-08 11:16:40,213 | INFO    |     -> Already Active
+2026-07-08 11:16:43,245 | INFO    |     -> CSV uploaded: Let_s_Go_Outside.csv
+2026-07-08 11:16:46,946 | INFO    |     -> Save Changes clicked
+2026-07-08 11:16:47,967 | INFO    |     DONE: Let's Go Outside
+2026-07-08 11:16:49,968 | INFO    | 
+======================================================================
+2026-07-08 11:16:49,968 | INFO    |   [31/69]  Listen to Poems
+2026-07-08 11:16:49,968 | INFO    |   CSV: Listen_to_Poems.csv  (10 rows)
+2026-07-08 11:16:49,968 | INFO    | ======================================================================
+2026-07-08 11:16:52,018 | INFO    |     -> Already Active
+2026-07-08 11:16:55,042 | INFO    |     -> CSV uploaded: Listen_to_Poems.csv
+2026-07-08 11:16:58,707 | INFO    |     -> Save Changes clicked
+2026-07-08 11:16:59,715 | INFO    |     DONE: Listen to Poems
+2026-07-08 11:17:01,716 | INFO    | 
+======================================================================
+2026-07-08 11:17:01,716 | INFO    |   [32/69]  Meet Cute Animals
+2026-07-08 11:17:01,717 | INFO    |   CSV: Meet_Cute_Animals.csv  (30 rows)
+2026-07-08 11:17:01,717 | INFO    | ======================================================================
+2026-07-08 11:17:03,746 | INFO    |     -> Already Active
+2026-07-08 11:17:06,771 | INFO    |     -> CSV uploaded: Meet_Cute_Animals.csv
+2026-07-08 11:17:06,780 | ERROR   |     [REJECTED] Rejected: CSV has 30 rows. Please upload no more than 10 rows.
+2026-07-08 11:17:06,780 | ERROR   |     FAIL: CSV rejected for 'Meet Cute Animals'
+2026-07-08 11:17:09,499 | INFO    | 
+======================================================================
+2026-07-08 11:17:09,499 | INFO    |   [33/69]  Meet Farm Animals
+2026-07-08 11:17:09,500 | INFO    |   CSV: Meet_Farm_Animals.csv  (15 rows)
+2026-07-08 11:17:09,500 | INFO    | ======================================================================
+2026-07-08 11:17:11,539 | INFO    |     -> Already Active
+2026-07-08 11:17:14,562 | INFO    |     -> CSV uploaded: Meet_Farm_Animals.csv
+2026-07-08 11:17:14,571 | ERROR   |     [REJECTED] Rejected: CSV has 15 rows. Please upload no more than 10 rows.
+2026-07-08 11:17:14,571 | ERROR   |     FAIL: CSV rejected for 'Meet Farm Animals'
+2026-07-08 11:17:17,338 | INFO    | 
+======================================================================
+2026-07-08 11:17:17,338 | INFO    |   [34/69]  Meet Ocean Animals
+2026-07-08 11:17:17,339 | INFO    |   CSV: Meet_Ocean_Animals.csv  (20 rows)
+2026-07-08 11:17:17,339 | INFO    | ======================================================================
+2026-07-08 11:17:19,374 | INFO    |     -> Already Active
+2026-07-08 11:17:22,397 | INFO    |     -> CSV uploaded: Meet_Ocean_Animals.csv
+2026-07-08 11:17:22,401 | ERROR   |     [REJECTED] Rejected: CSV has 20 rows. Please upload no more than 10 rows.
+2026-07-08 11:17:22,401 | ERROR   |     FAIL: CSV rejected for 'Meet Ocean Animals'
+2026-07-08 11:17:25,094 | INFO    | 
+======================================================================
+2026-07-08 11:17:25,094 | INFO    |   [35/69]  Meet Tiny Insects
+2026-07-08 11:17:25,095 | INFO    |   CSV: Meet_Tiny_Insects.csv  (16 rows)
+2026-07-08 11:17:25,095 | INFO    | ======================================================================
+2026-07-08 11:17:27,139 | INFO    |     -> Already Active
+2026-07-08 11:17:30,165 | INFO    |     -> CSV uploaded: Meet_Tiny_Insects.csv
+2026-07-08 11:17:30,178 | ERROR   |     [REJECTED] Rejected: CSV has 16 rows. Please upload no more than 10 rows.
+2026-07-08 11:17:30,179 | ERROR   |     FAIL: CSV rejected for 'Meet Tiny Insects'
+2026-07-08 11:17:32,886 | INFO    | 
+======================================================================
+2026-07-08 11:17:32,886 | INFO    |   [36/69]  Meet Your Family
+2026-07-08 11:17:32,887 | INFO    |   CSV: Meet_Your_Family.csv  (10 rows)
+2026-07-08 11:17:32,887 | INFO    | ======================================================================
+2026-07-08 11:17:34,941 | INFO    |     -> Already Active
+2026-07-08 11:17:37,972 | INFO    |     -> CSV uploaded: Meet_Your_Family.csv
+2026-07-08 11:17:41,675 | INFO    |     -> Save Changes clicked
+2026-07-08 11:17:42,685 | INFO    |     DONE: Meet Your Family
+2026-07-08 11:17:44,686 | INFO    | 
+======================================================================
+2026-07-08 11:17:44,687 | INFO    |   [37/69]  Money
+2026-07-08 11:17:44,687 | INFO    |   CSV: Money.csv  (10 rows)
+2026-07-08 11:17:44,687 | INFO    | ======================================================================
+2026-07-08 11:17:46,745 | INFO    |     -> Already Active
+2026-07-08 11:17:49,771 | INFO    |     -> CSV uploaded: Money.csv
+2026-07-08 11:17:53,454 | INFO    |     -> Save Changes clicked
+2026-07-08 11:17:54,464 | INFO    |     DONE: Money
+2026-07-08 11:17:56,465 | INFO    | 
+======================================================================
+2026-07-08 11:17:56,466 | INFO    |   [38/69]  Multiplication
+2026-07-08 11:17:56,466 | INFO    |   CSV: Multiplication.csv  (10 rows)
+2026-07-08 11:17:56,466 | INFO    | ======================================================================
+2026-07-08 11:17:58,502 | INFO    |     -> Already Active
+2026-07-08 11:18:01,527 | INFO    |     -> CSV uploaded: Multiplication.csv
+2026-07-08 11:18:05,271 | INFO    |     -> Save Changes clicked
+2026-07-08 11:18:06,278 | INFO    |     DONE: Multiplication
+2026-07-08 11:18:08,279 | INFO    | 
+======================================================================
+2026-07-08 11:18:08,279 | INFO    |   [39/69]  Name Your Fruits
+2026-07-08 11:18:08,279 | INFO    |   CSV: Name_Your_Fruits.csv  (20 rows)
+2026-07-08 11:18:08,279 | INFO    | ======================================================================
+2026-07-08 11:18:10,325 | INFO    |     -> Already Active
+2026-07-08 11:18:13,365 | INFO    |     -> CSV uploaded: Name_Your_Fruits.csv
+2026-07-08 11:18:13,378 | ERROR   |     [REJECTED] Rejected: CSV has 20 rows. Please upload no more than 10 rows.
+2026-07-08 11:18:13,379 | ERROR   |     FAIL: CSV rejected for 'Name Your Fruits'
+2026-07-08 11:18:16,123 | INFO    | 
+======================================================================
+2026-07-08 11:18:16,123 | INFO    |   [40/69]  Name Your Veggies
+2026-07-08 11:18:16,123 | INFO    |   CSV: Name_Your_Veggies.csv  (20 rows)
+2026-07-08 11:18:16,123 | INFO    | ======================================================================
+2026-07-08 11:18:18,174 | INFO    |     -> Already Active
+2026-07-08 11:18:21,197 | INFO    |     -> CSV uploaded: Name_Your_Veggies.csv
+2026-07-08 11:18:21,205 | ERROR   |     [REJECTED] Rejected: CSV has 20 rows. Please upload no more than 10 rows.
+2026-07-08 11:18:21,205 | ERROR   |     FAIL: CSV rejected for 'Name Your Veggies'
+2026-07-08 11:18:23,906 | INFO    | 
+======================================================================
+2026-07-08 11:18:23,906 | INFO    |   [41/69]  Odd & Even
+2026-07-08 11:18:23,906 | INFO    |   CSV: Odd_Even.csv  (5 rows)
+2026-07-08 11:18:23,906 | INFO    | ======================================================================
+2026-07-08 11:18:25,953 | INFO    |     -> Already Active
+2026-07-08 11:18:28,976 | INFO    |     -> CSV uploaded: Odd_Even.csv
+2026-07-08 11:18:32,683 | INFO    |     -> Save Changes clicked
+2026-07-08 11:18:33,692 | INFO    |     DONE: Odd & Even
+2026-07-08 11:18:35,693 | INFO    | 
+======================================================================
+2026-07-08 11:18:35,695 | INFO    |   [42/69]  Paryayvachi Shabd
+2026-07-08 11:18:35,695 | INFO    |   CSV: Paryayvachi_Shabd.csv  (3 rows)
+2026-07-08 11:18:35,695 | INFO    | ======================================================================
+2026-07-08 11:18:37,735 | INFO    |     -> Already Active
+2026-07-08 11:18:40,772 | INFO    |     -> CSV uploaded: Paryayvachi_Shabd.csv
+2026-07-08 11:18:44,456 | INFO    |     -> Save Changes clicked
+2026-07-08 11:18:45,462 | INFO    |     DONE: Paryayvachi Shabd
+2026-07-08 11:18:47,462 | INFO    | 
+======================================================================
+2026-07-08 11:18:47,462 | INFO    |   [43/69]  Place Your Numbers
+2026-07-08 11:18:47,462 | INFO    |   CSV: Place_Your_Numbers.csv  (20 rows)
+2026-07-08 11:18:47,463 | INFO    | ======================================================================
+2026-07-08 11:18:49,488 | INFO    |     -> Already Active
+2026-07-08 11:18:52,511 | INFO    |     -> CSV uploaded: Place_Your_Numbers.csv
+2026-07-08 11:18:52,517 | ERROR   |     [REJECTED] Rejected: CSV has 20 rows. Please upload no more than 10 rows.
+2026-07-08 11:18:52,517 | ERROR   |     FAIL: CSV rejected for 'Place Your Numbers'
+2026-07-08 11:18:55,208 | INFO    | 
+======================================================================
+2026-07-08 11:18:55,208 | INFO    |   [44/69]  Play With Patterns
+2026-07-08 11:18:55,208 | INFO    |   CSV: Play_With_Patterns.csv  (10 rows)
+2026-07-08 11:18:55,208 | INFO    | ======================================================================
+2026-07-08 11:18:57,241 | INFO    |     -> Already Active
+2026-07-08 11:19:00,262 | INFO    |     -> CSV uploaded: Play_With_Patterns.csv
+2026-07-08 11:19:03,945 | INFO    |     -> Save Changes clicked
+2026-07-08 11:19:04,966 | INFO    |     DONE: Play With Patterns
+2026-07-08 11:19:06,967 | INFO    | 
+======================================================================
+2026-07-08 11:19:06,967 | INFO    |   [45/69]  Practice Good Habits
+2026-07-08 11:19:06,968 | INFO    |   CSV: Practice_Good_Habits.csv  (30 rows)
+2026-07-08 11:19:06,968 | INFO    | ======================================================================
+2026-07-08 11:19:09,009 | INFO    |     -> Already Active
+2026-07-08 11:19:12,040 | INFO    |     -> CSV uploaded: Practice_Good_Habits.csv
+2026-07-08 11:19:12,055 | ERROR   |     [REJECTED] Rejected: CSV has 30 rows. Please upload no more than 10 rows.
+2026-07-08 11:19:12,055 | ERROR   |     FAIL: CSV rejected for 'Practice Good Habits'
+2026-07-08 11:19:14,789 | INFO    | 
+======================================================================
+2026-07-08 11:19:14,789 | INFO    |   [46/69]  Prepositions
+2026-07-08 11:19:14,789 | INFO    |   CSV: Prepositions.csv  (2 rows)
+2026-07-08 11:19:14,789 | INFO    | ======================================================================
+2026-07-08 11:19:16,813 | INFO    |     -> Already Active
+2026-07-08 11:19:19,839 | INFO    |     -> CSV uploaded: Prepositions.csv
+2026-07-08 11:19:23,510 | INFO    |     -> Save Changes clicked
+2026-07-08 11:19:24,527 | INFO    |     DONE: Prepositions
+2026-07-08 11:19:26,528 | INFO    | 
+======================================================================
+2026-07-08 11:19:26,528 | INFO    |   [47/69]  Read Simple Words
+2026-07-08 11:19:26,529 | INFO    |   CSV: Read_Simple_Words.csv  (1 rows)
+2026-07-08 11:19:26,529 | INFO    | ======================================================================
+2026-07-08 11:19:28,557 | INFO    |     -> Already Active
+2026-07-08 11:19:31,580 | INFO    |     -> CSV uploaded: Read_Simple_Words.csv
+2026-07-08 11:19:35,287 | INFO    |     -> Save Changes clicked
+2026-07-08 11:19:36,294 | INFO    |     DONE: Read Simple Words
+2026-07-08 11:19:38,295 | INFO    | 
+======================================================================
+2026-07-08 11:19:38,295 | INFO    |   [48/69]  Science Made Fun
+2026-07-08 11:19:38,296 | INFO    |   CSV: Science_Made_Fun.csv  (20 rows)
+2026-07-08 11:19:38,296 | INFO    | ======================================================================
+2026-07-08 11:19:40,334 | INFO    |     -> Already Active
+2026-07-08 11:19:43,365 | INFO    |     -> CSV uploaded: Science_Made_Fun.csv
+2026-07-08 11:19:43,369 | ERROR   |     [REJECTED] Rejected: CSV has 20 rows. Please upload no more than 10 rows.
+2026-07-08 11:19:43,369 | ERROR   |     FAIL: CSV rejected for 'Science Made Fun'
+2026-07-08 11:19:46,087 | INFO    | 
+======================================================================
+2026-07-08 11:19:46,087 | INFO    |   [49/69]  Sing Along Rhymes
+2026-07-08 11:19:46,087 | INFO    |   CSV: Sing_Along_Rhymes.csv  (10 rows)
+2026-07-08 11:19:46,087 | INFO    | ======================================================================
+2026-07-08 11:19:48,126 | INFO    |     -> Already Active
+2026-07-08 11:19:51,167 | INFO    |     -> CSV uploaded: Sing_Along_Rhymes.csv
+2026-07-08 11:19:54,861 | INFO    |     -> Save Changes clicked
+2026-07-08 11:19:55,870 | INFO    |     DONE: Sing Along Rhymes
+2026-07-08 11:19:57,870 | INFO    | 
+======================================================================
+2026-07-08 11:19:57,871 | INFO    |   [50/69]  Songs
+2026-07-08 11:19:57,871 | INFO    |   CSV: Songs.csv  (1 rows)
+2026-07-08 11:19:57,872 | INFO    | ======================================================================
+2026-07-08 11:19:59,936 | INFO    |     -> Already Active
+2026-07-08 11:20:02,977 | INFO    |     -> CSV uploaded: Songs.csv
+2026-07-08 11:20:06,667 | INFO    |     -> Save Changes clicked
+2026-07-08 11:20:07,675 | INFO    |     DONE: Songs
+2026-07-08 11:20:09,675 | INFO    | 
+======================================================================
+2026-07-08 11:20:09,675 | INFO    |   [51/69]  Sounds & Words
+2026-07-08 11:20:09,675 | INFO    |   CSV: Sounds_Words.csv  (11 rows)
+2026-07-08 11:20:09,675 | INFO    | ======================================================================
+2026-07-08 11:20:11,702 | INFO    |     -> Already Active
+2026-07-08 11:20:14,726 | INFO    |     -> CSV uploaded: Sounds_Words.csv
+2026-07-08 11:20:14,733 | ERROR   |     [REJECTED] Rejected: CSV has 11 rows. Please upload no more than 10 rows.
+2026-07-08 11:20:14,733 | ERROR   |     FAIL: CSV rejected for 'Sounds & Words'
+2026-07-08 11:20:17,450 | INFO    | 
+======================================================================
+2026-07-08 11:20:17,450 | INFO    |   [52/69]  Speak It Right
+2026-07-08 11:20:17,451 | INFO    |   CSV: Speak_It_Right.csv  (10 rows)
+2026-07-08 11:20:17,451 | INFO    | ======================================================================
+2026-07-08 11:20:19,490 | INFO    |     -> Already Active
+2026-07-08 11:20:22,528 | INFO    |     -> CSV uploaded: Speak_It_Right.csv
+2026-07-08 11:20:26,248 | INFO    |     -> Save Changes clicked
+2026-07-08 11:20:27,256 | INFO    |     DONE: Speak It Right
+2026-07-08 11:20:29,257 | INFO    | 
+======================================================================
+2026-07-08 11:20:29,257 | INFO    |   [53/69]  Speak Simple Hindi
+2026-07-08 11:20:29,257 | INFO    |   CSV: Speak_Simple_Hindi.csv  (10 rows)
+2026-07-08 11:20:29,257 | INFO    | ======================================================================
+2026-07-08 11:20:31,287 | INFO    |     -> Already Active
+2026-07-08 11:20:34,310 | INFO    |     -> CSV uploaded: Speak_Simple_Hindi.csv
+2026-07-08 11:20:38,006 | INFO    |     -> Save Changes clicked
+2026-07-08 11:20:39,016 | INFO    |     DONE: Speak Simple Hindi
+2026-07-08 11:20:41,017 | INFO    | 
+======================================================================
+2026-07-08 11:20:41,033 | INFO    |   [54/69]  Speak With Confidence
+2026-07-08 11:20:41,034 | INFO    |   CSV: Speak_With_Confidence.csv  (14 rows)
+2026-07-08 11:20:41,034 | INFO    | ======================================================================
+2026-07-08 11:20:43,075 | INFO    |     -> Already Active
+2026-07-08 11:20:46,116 | INFO    |     -> CSV uploaded: Speak_With_Confidence.csv
+2026-07-08 11:20:46,128 | ERROR   |     [REJECTED] Rejected: CSV has 14 rows. Please upload no more than 10 rows.
+2026-07-08 11:20:46,129 | ERROR   |     FAIL: CSV rejected for 'Speak With Confidence'
+2026-07-08 11:20:48,838 | INFO    | 
+======================================================================
+2026-07-08 11:20:48,838 | INFO    |   [55/69]  Spot Colorful Birds
+2026-07-08 11:20:48,839 | INFO    |   CSV: Spot_Colorful_Birds.csv  (20 rows)
+2026-07-08 11:20:48,839 | INFO    | ======================================================================
+2026-07-08 11:20:50,895 | INFO    |     -> Already Active
+2026-07-08 11:20:53,936 | INFO    |     -> CSV uploaded: Spot_Colorful_Birds.csv
+2026-07-08 11:20:53,949 | ERROR   |     [REJECTED] Rejected: CSV has 20 rows. Please upload no more than 10 rows.
+2026-07-08 11:20:53,949 | ERROR   |     FAIL: CSV rejected for 'Spot Colorful Birds'
+2026-07-08 11:20:56,663 | INFO    | 
+======================================================================
+2026-07-08 11:20:56,663 | INFO    |   [56/69]  Spot Different Shapes
+2026-07-08 11:20:56,663 | INFO    |   CSV: Spot_Different_Shapes.csv  (20 rows)
+2026-07-08 11:20:56,663 | INFO    | ======================================================================
+2026-07-08 11:20:58,720 | INFO    |     -> Already Active
+2026-07-08 11:21:01,753 | INFO    |     -> CSV uploaded: Spot_Different_Shapes.csv
+2026-07-08 11:21:01,765 | ERROR   |     [REJECTED] Rejected: CSV has 20 rows. Please upload no more than 10 rows.
+2026-07-08 11:21:01,765 | ERROR   |     FAIL: CSV rejected for 'Spot Different Shapes'
+2026-07-08 11:21:04,512 | INFO    | 
+======================================================================
+2026-07-08 11:21:04,512 | INFO    |   [57/69]  Spot Moving Vehicles
+2026-07-08 11:21:04,512 | INFO    |   CSV: Spot_Moving_Vehicles.csv  (20 rows)
+2026-07-08 11:21:04,512 | INFO    | ======================================================================
+2026-07-08 11:21:06,540 | INFO    |     -> Already Active
+2026-07-08 11:21:09,567 | INFO    |     -> CSV uploaded: Spot_Moving_Vehicles.csv
+2026-07-08 11:21:09,572 | ERROR   |     [REJECTED] Rejected: CSV has 20 rows. Please upload no more than 10 rows.
+2026-07-08 11:21:09,572 | ERROR   |     FAIL: CSV rejected for 'Spot Moving Vehicles'
+2026-07-08 11:21:12,275 | INFO    | 
+======================================================================
+2026-07-08 11:21:12,275 | INFO    |   [58/69]  Start With Sentences
+2026-07-08 11:21:12,275 | INFO    |   CSV: Start_With_Sentences.csv  (2 rows)
+2026-07-08 11:21:12,276 | INFO    | ======================================================================
+2026-07-08 11:21:14,320 | INFO    |     -> Already Active
+2026-07-08 11:21:17,344 | INFO    |     -> CSV uploaded: Start_With_Sentences.csv
+2026-07-08 11:21:21,016 | INFO    |     -> Save Changes clicked
+2026-07-08 11:21:22,037 | INFO    |     DONE: Start With Sentences
+2026-07-08 11:21:24,037 | INFO    | 
+======================================================================
+2026-07-08 11:21:24,037 | INFO    |   [59/69]  Stay Safe Everyday
+2026-07-08 11:21:24,038 | INFO    |   CSV: Stay_Safe_Everyday.csv  (10 rows)
+2026-07-08 11:21:24,038 | INFO    | ======================================================================
+2026-07-08 11:21:26,081 | INFO    |     -> Already Active
+2026-07-08 11:21:29,108 | INFO    |     -> CSV uploaded: Stay_Safe_Everyday.csv
+2026-07-08 11:21:32,810 | INFO    |     -> Save Changes clicked
+2026-07-08 11:21:33,833 | INFO    |     DONE: Stay Safe Everyday
+2026-07-08 11:21:35,834 | INFO    | 
+======================================================================
+2026-07-08 11:21:35,834 | INFO    |   [60/69]  Stories
+2026-07-08 11:21:35,835 | INFO    |   CSV: Stories.csv  (10 rows)
+2026-07-08 11:21:35,835 | INFO    | ======================================================================
+2026-07-08 11:21:37,880 | INFO    |     -> Set status to Active
+2026-07-08 11:21:41,417 | INFO    |     -> CSV uploaded: Stories.csv
+2026-07-08 11:21:45,098 | INFO    |     -> Save Changes clicked
+2026-07-08 11:21:46,106 | INFO    |     DONE: Stories
+2026-07-08 11:21:48,106 | INFO    | 
+======================================================================
+2026-07-08 11:21:48,106 | INFO    |   [61/69]  Subtract With Fun
+2026-07-08 11:21:48,107 | INFO    |   CSV: Subtract_With_Fun.csv  (20 rows)
+2026-07-08 11:21:48,107 | INFO    | ======================================================================
+2026-07-08 11:21:50,137 | INFO    |     -> Already Active
+2026-07-08 11:21:53,164 | INFO    |     -> CSV uploaded: Subtract_With_Fun.csv
+2026-07-08 11:21:53,172 | ERROR   |     [REJECTED] Rejected: CSV has 20 rows. Please upload no more than 10 rows.
+2026-07-08 11:21:53,172 | ERROR   |     FAIL: CSV rejected for 'Subtract With Fun'
+2026-07-08 11:21:55,882 | INFO    | 
+======================================================================
+2026-07-08 11:21:55,883 | INFO    |   [62/69]  Time
+2026-07-08 11:21:55,883 | INFO    |   CSV: Time.csv  (10 rows)
+2026-07-08 11:21:55,884 | INFO    | ======================================================================
+2026-07-08 11:21:57,949 | INFO    |     -> Already Active
+2026-07-08 11:22:00,985 | INFO    |     -> CSV uploaded: Time.csv
+2026-07-08 11:22:05,052 | INFO    |     -> Save Changes clicked
+2026-07-08 11:22:06,059 | INFO    |     DONE: Time
+2026-07-08 11:22:08,059 | INFO    | 
+======================================================================
+2026-07-08 11:22:08,060 | INFO    |   [63/69]  Try These Actions
+2026-07-08 11:22:08,060 | INFO    |   CSV: Try_These_Actions.csv  (20 rows)
+2026-07-08 11:22:08,060 | INFO    | ======================================================================
+2026-07-08 11:22:10,096 | INFO    |     -> Already Active
+2026-07-08 11:22:13,136 | INFO    |     -> CSV uploaded: Try_These_Actions.csv
+2026-07-08 11:22:13,140 | ERROR   |     [REJECTED] Rejected: CSV has 20 rows. Please upload no more than 10 rows.
+2026-07-08 11:22:13,140 | ERROR   |     FAIL: CSV rejected for 'Try These Actions'
+2026-07-08 11:22:15,943 | INFO    | 
+======================================================================
+2026-07-08 11:22:15,943 | INFO    |   [64/69]  Varnmala
+2026-07-08 11:22:15,943 | INFO    |   CSV: Varnmala.csv  (10 rows)
+2026-07-08 11:22:15,943 | INFO    | ======================================================================
+2026-07-08 11:22:17,969 | INFO    |     -> Already Active
+2026-07-08 11:22:20,991 | INFO    |     -> CSV uploaded: Varnmala.csv
+2026-07-08 11:22:24,694 | INFO    |     -> Save Changes clicked
+2026-07-08 11:22:25,700 | INFO    |     DONE: Varnmala
+2026-07-08 11:22:27,701 | INFO    | 
+======================================================================
+2026-07-08 11:22:27,701 | INFO    |   [65/69]  Vilom Shabd
+2026-07-08 11:22:27,701 | INFO    |   CSV: Vilom_Shabd.csv  (10 rows)
+2026-07-08 11:22:27,701 | INFO    | ======================================================================
+2026-07-08 11:22:29,721 | INFO    |     -> Already Active
+2026-07-08 11:22:32,743 | INFO    |     -> CSV uploaded: Vilom_Shabd.csv
+2026-07-08 11:22:36,459 | INFO    |     -> Save Changes clicked
+2026-07-08 11:22:37,468 | INFO    |     DONE: Vilom Shabd
+2026-07-08 11:22:39,469 | INFO    | 
+======================================================================
+2026-07-08 11:22:39,469 | INFO    |   [66/69]  Visit Outer Space
+2026-07-08 11:22:39,469 | INFO    |   CSV: Visit_Outer_Space.csv  (5 rows)
+2026-07-08 11:22:39,469 | INFO    | ======================================================================
+2026-07-08 11:22:41,510 | INFO    |     -> Already Active
+2026-07-08 11:22:44,537 | INFO    |     -> CSV uploaded: Visit_Outer_Space.csv
+2026-07-08 11:22:48,270 | INFO    |     -> Save Changes clicked
+2026-07-08 11:22:49,277 | INFO    |     DONE: Visit Outer Space
+2026-07-08 11:22:51,278 | INFO    | 
+======================================================================
+2026-07-08 11:22:51,278 | INFO    |   [67/69]  Watch Plants Grow
+2026-07-08 11:22:51,278 | INFO    |   CSV: Watch_Plants_Grow.csv  (12 rows)
+2026-07-08 11:22:51,278 | INFO    | ======================================================================
+2026-07-08 11:22:53,302 | INFO    |     -> Already Active
+2026-07-08 11:22:56,330 | INFO    |     -> CSV uploaded: Watch_Plants_Grow.csv
+2026-07-08 11:22:56,333 | ERROR   |     [REJECTED] Rejected: CSV has 12 rows. Please upload no more than 10 rows.
+2026-07-08 11:22:56,334 | ERROR   |     FAIL: CSV rejected for 'Watch Plants Grow'
+2026-07-08 11:22:59,055 | INFO    | 
+======================================================================
+2026-07-08 11:22:59,055 | INFO    |   [68/69]  What Do They Do
+2026-07-08 11:22:59,055 | INFO    |   CSV: What_Do_They_Do.csv  (10 rows)
+2026-07-08 11:22:59,055 | INFO    | ======================================================================
+2026-07-08 11:23:01,081 | INFO    |     -> Already Active
+2026-07-08 11:23:04,107 | INFO    |     -> CSV uploaded: What_Do_They_Do.csv
+2026-07-08 11:23:07,828 | INFO    |     -> Save Changes clicked
+2026-07-08 11:23:08,835 | INFO    |     DONE: What Do They Do
+2026-07-08 11:23:10,835 | INFO    | 
+======================================================================
+2026-07-08 11:23:10,835 | INFO    |   [69/69]  Why Seasons Change
+2026-07-08 11:23:10,835 | INFO    |   CSV: Why_Seasons_Change.csv  (20 rows)
+2026-07-08 11:23:10,835 | INFO    | ======================================================================
+2026-07-08 11:23:12,856 | INFO    |     -> Already Active
+2026-07-08 11:23:15,882 | INFO    |     -> CSV uploaded: Why_Seasons_Change.csv
+2026-07-08 11:23:15,886 | ERROR   |     [REJECTED] Rejected: CSV has 20 rows. Please upload no more than 10 rows.
+2026-07-08 11:23:15,887 | ERROR   |     FAIL: CSV rejected for 'Why Seasons Change'
+2026-07-08 11:23:18,597 | INFO    | 
 
 ======================================================================
-2026-06-28 01:45:59,089 | INFO    |   RESULTS SUMMARY
-2026-06-28 01:45:59,090 | INFO    | ======================================================================
-2026-06-28 01:45:59,090 | INFO    |   Success:   66
-2026-06-28 01:45:59,091 | INFO    |   Failed:     0
-2026-06-28 01:45:59,091 | INFO    |   Skipped:    0
-2026-06-28 01:45:59,096 | INFO    | 
+2026-07-08 11:23:18,597 | INFO    |   RESULTS SUMMARY
+2026-07-08 11:23:18,597 | INFO    | ======================================================================
+2026-07-08 11:23:18,597 | INFO    |   Success:   41
+2026-07-08 11:23:18,597 | INFO    |   Failed:    28
+2026-07-08 11:23:18,597 | INFO    |   Skipped:    0
+2026-07-08 11:23:18,597 | INFO    | 
+  Failed categories:
+2026-07-08 11:23:18,597 | INFO    |     - Add With Fun (Add_With_Fun.csv)
+2026-07-08 11:23:18,597 | INFO    |     - Choose Healthy Foods (Choose_Healthy_Foods.csv)
+2026-07-08 11:23:18,597 | INFO    |     - Count With Confidence (Count_With_Confidence.csv)
+2026-07-08 11:23:18,597 | INFO    |     - Explore Nature Around (Explore_Nature_Around.csv)
+2026-07-08 11:23:18,597 | INFO    |     - Find Favorite Toys (Find_Favorite_Toys.csv)
+2026-07-08 11:23:18,598 | INFO    |     - Find Things Around (Find_Things_Around.csv)
+2026-07-08 11:23:18,598 | INFO    |     - How Are You (How_Are_You.csv)
+2026-07-08 11:23:18,598 | INFO    |     - Know Body Parts (Know_Body_Parts.csv)
+2026-07-08 11:23:18,598 | INFO    |     - Knowledge (Knowledge.csv)
+2026-07-08 11:23:18,598 | INFO    |     - Learn Color names (Learn_Color_names.csv)
+2026-07-08 11:23:18,598 | INFO    |     - Meet Cute Animals (Meet_Cute_Animals.csv)
+2026-07-08 11:23:18,598 | INFO    |     - Meet Farm Animals (Meet_Farm_Animals.csv)
+2026-07-08 11:23:18,598 | INFO    |     - Meet Ocean Animals (Meet_Ocean_Animals.csv)
+2026-07-08 11:23:18,598 | INFO    |     - Meet Tiny Insects (Meet_Tiny_Insects.csv)
+2026-07-08 11:23:18,598 | INFO    |     - Name Your Fruits (Name_Your_Fruits.csv)
+2026-07-08 11:23:18,598 | INFO    |     - Name Your Veggies (Name_Your_Veggies.csv)
+2026-07-08 11:23:18,598 | INFO    |     - Place Your Numbers (Place_Your_Numbers.csv)
+2026-07-08 11:23:18,598 | INFO    |     - Practice Good Habits (Practice_Good_Habits.csv)
+2026-07-08 11:23:18,598 | INFO    |     - Science Made Fun (Science_Made_Fun.csv)
+2026-07-08 11:23:18,598 | INFO    |     - Sounds & Words (Sounds_Words.csv)
+2026-07-08 11:23:18,598 | INFO    |     - Speak With Confidence (Speak_With_Confidence.csv)
+2026-07-08 11:23:18,598 | INFO    |     - Spot Colorful Birds (Spot_Colorful_Birds.csv)
+2026-07-08 11:23:18,598 | INFO    |     - Spot Different Shapes (Spot_Different_Shapes.csv)
+2026-07-08 11:23:18,598 | INFO    |     - Spot Moving Vehicles (Spot_Moving_Vehicles.csv)
+2026-07-08 11:23:18,598 | INFO    |     - Subtract With Fun (Subtract_With_Fun.csv)
+2026-07-08 11:23:18,598 | INFO    |     - Try These Actions (Try_These_Actions.csv)
+2026-07-08 11:23:18,599 | INFO    |     - Watch Plants Grow (Watch_Plants_Grow.csv)
+2026-07-08 11:23:18,599 | INFO    |     - Why Seasons Change (Why_Seasons_Change.csv)
+2026-07-08 11:23:18,600 | INFO    | 
   Results: D:\BabyBillion\upload_dashboard\playlist uploads\playlist_upload_results.json
-2026-06-28 01:45:59,096 | INFO    |   Log:     D:\BabyBillion\upload_dashboard\playlist uploads\playlist_upload_log.txt
+2026-07-08 11:23:18,600 | INFO    |   Log:     D:\BabyBillion\upload_dashboard\playlist uploads\playlist_upload_log.txt

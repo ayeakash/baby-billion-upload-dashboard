@@ -22,8 +22,8 @@ import time
 import json
 import logging
 import argparse
+import re
 from pathlib import Path
-from collections import defaultdict
 
 # ── Add pipeline dir to path so we can reuse their Selenium setup ─────────
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -55,29 +55,22 @@ CATEGORIES_URL = f"{BASE_URL}/dashboard/cms/categories"
 USERNAME = "ms.bubbles1b@gmail.com"
 PASSWORD = "zYs9PjPdAdSsMjp"
 
-# CSV filename prefix -> exact dashboard category name
+# CSV filename stem -> exact dashboard category name
 # (only for names that DON'T match after simple underscore->space conversion)
 NAME_MAP = {
-    "Addition":         "Add With Fun",
-    "Subtraction":      "Subtract With Fun",
-    "CVC_Words":        "Read Simple Words",
-    "English_Speaking": "Speak With Confidence",
-    "Food":             "Choose Healthy Foods",
-    "Odd_and_Even":     "Odd & Even",
-    "Opposites":        "Learn Opposite Words",
-    "Patterns":         "Play With Patterns",
-    "Phonics":          "Sounds & Words",
-    "Seasons":          "Why Seasons Change",
-    "Simple_Sentences": "Start With Sentences",
-    "Sports":           "Explore Different Sports",
+    "Odd_Even":         "Odd & Even",
+    "Sounds_Words":     "Sounds & Words",
+    "Art_Craft":        "Art & Craft",
+    "Let_s_Go_Outside": "Let's Go Outside",
     "100_200":          "100-200",
     "1_100":            "1-100",
 }
 
-# Prefixes to skip (no dashboard match or duplicate)
-SKIP_PREFIXES = {
-    "Number_Ordering",   # Duplicate of Place_Your_Numbers
-}
+# Stems to skip (no dashboard match or known duplicates)
+SKIP_PREFIXES = set()
+
+# Detect hex-hash suffixed duplicates, e.g. Place_Your_Numbers_98263b2e
+HEX_SUFFIX_RE = re.compile(r"_[0-9a-f]{8}$")
 
 # ===== Logging =====
 
@@ -117,40 +110,37 @@ def count_data_rows(filepath):
 
 
 def build_upload_plan():
-    groups = defaultdict(list)
+    plan = []
+    seen_cats = set()  # avoid uploading to the same category twice
 
     for f in sorted(CSV_DIR.iterdir()):
         if f.suffix != ".csv":
             continue
-        parts = f.stem.rsplit("__", 1)
-        if len(parts) != 2:
-            continue
-        prefix, age = parts
-        if prefix in SKIP_PREFIXES:
-            log.info(f"  SKIP {f.name} (prefix in skip list)")
-            continue
-        rows = count_data_rows(f)
-        groups[prefix].append({
-            "file": f, "name": f.name, "age": age,
-            "rows": rows, "cat": prefix_to_category_name(prefix),
-        })
 
-    plan = []
-    for prefix, items in sorted(groups.items(), key=lambda x: x[0].lower()):
-        if len(items) == 1:
-            chosen = items[0]
-        else:
-            ten_row = [i for i in items if i["rows"] == 10]
-            if ten_row:
-                ten_row.sort(key=lambda x: x["age"])
-                chosen = ten_row[0]
-            else:
-                items.sort(key=lambda x: -x["rows"])
-                chosen = items[0]
-        plan.append(chosen)
-        marker = "[OK]" if chosen["rows"] == 10 else "[!!]"
-        extra = f" (picked from {len(items)} age groups)" if len(items) > 1 else ""
-        log.info(f"  {marker} {chosen['cat']:35s} <- {chosen['name']:45s} ({chosen['rows']:2d} rows){extra}")
+        stem = f.stem
+
+        # Strip hex-hash suffix from duplicates (e.g. _98263b2e)
+        base = HEX_SUFFIX_RE.sub("", stem)
+
+        if base in SKIP_PREFIXES:
+            log.info(f"  SKIP {f.name} (in skip list)")
+            continue
+
+        cat = prefix_to_category_name(base)
+
+        if cat in seen_cats:
+            log.info(f"  SKIP {f.name} (duplicate for '{cat}')")
+            continue
+
+        rows = count_data_rows(f)
+        plan.append({
+            "file": f, "name": f.name,
+            "rows": rows, "cat": cat,
+        })
+        seen_cats.add(cat)
+
+        marker = "[OK]" if rows == 10 else "[!!]"
+        log.info(f"  {marker} {cat:35s} <- {f.name:45s} ({rows:2d} rows)")
 
     log.info(f"\n{'=' * 70}")
     log.info(f"  Total categories to process: {len(plan)}")
