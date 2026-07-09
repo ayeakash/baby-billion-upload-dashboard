@@ -50,6 +50,7 @@ def _normalize_cat(cat: str) -> str:
 # Global aliases apply to all age groups (where the mapping is the same everywhere)
 _GLOBAL_ALIASES: dict[str, str] = {
     "varnamala": "varnmala",    # Notion says "Varnamala", dashboard says "Varnmala"
+    "alladin": "aladdin",      # Fix common typo in Notion
 }
 
 # Age-specific aliases: (age, notion_name_normalized) → csv_name_normalized
@@ -57,6 +58,8 @@ _GLOBAL_ALIASES: dict[str, str] = {
 # Generated from "Playlists new names - Sheet1.csv".
 _AGE_ALIASES: dict[tuple[str, str], str] = {
     # ── 6+ ────────────────────────────────────────────────────────────────────
+    ("6+", "opposites"):          "learn opposite words",
+    ("6+", "learn opposites"):    "learn opposite words",
     ("6+", "nature"):             "explore nature around",
     ("6+", "seasons"):            "why seasons change",
     ("6+", "about india"):        "know your india",
@@ -77,6 +80,8 @@ _AGE_ALIASES: dict[tuple[str, str], str] = {
     ("6+", "knowledge"):          "amazing facts inside",
 
     # ── 3-6 ───────────────────────────────────────────────────────────────────
+    ("3-6", "opposites"):         "learn opposite words",
+    ("3-6", "learn opposites"):   "learn opposite words",
     ("3-6", "fruits"):            "name tasty fruits",
     ("3-6", "vegetables"):        "know your vegetables",
     ("3-6", "food items"):        "what's on plate",
@@ -146,6 +151,7 @@ _AGE_ALIASES: dict[tuple[str, str], str] = {
     ("0-3", "clothes"):           "what's everyone wearing",
     ("0-3", "cloths"):            "what's everyone wearing",
     ("0-3", "opposites"):         "learn opposite words",
+    ("0-3", "learn opposites"):   "learn opposite words",
     ("0-3", "places we go"):      "let's go outside",
     ("0-3", "professions"):       "what do they do",
 

@@ -22,6 +22,7 @@ Age,Notion Name,Resolved Playlist,Resolved Category
 0-3,my body,Me & My Family,Know Body Parts
 0-3,my family,Me & My Family,Meet Your Family
 0-3,nature,Our World,Explore Nature Around
+0-3,learn opposites,English Fluency,Learn Opposite Words
 0-3,opposites,English Fluency,Learn Opposite Words
 0-3,physical movement,English Basics,Try These Actions
 0-3,places we go,Around Us,Let's Go Outside
@@ -37,6 +38,9 @@ Age,Notion Name,Resolved Playlist,Resolved Category
 0-3,words,English Basics,Learn New Words
 3-6,123,Maths,Count With Confidence
 3-6,abc,English Basics,Know Your Alphabets
+3-6,alladin,Stories,Aladdin
+3-6,learn opposites,English Fluency,Learn Opposite Words
+3-6,opposites,English Fluency,Learn Opposite Words
 3-6,addition,Maths,Add With Fun
 3-6,baby animals,Animals,Baby Animals
 3-6,colors,Learn & Explore,Learn Color Names
@@ -55,7 +59,8 @@ Age,Notion Name,Resolved Playlist,Resolved Category
 3-6,number ordering,Ready for School,Place Your Numbers
 3-6,patterns,Ready for School,Play With Patterns
 3-6,phonics,Ready for School,Sounds & Words
-3-6,physical movement,,Action Words
+3-6,action words,English Fluency,Try These Actions
+3-6,physical movement,English Fluency,Try These Actions
 3-6,plants,Future Scientist,Watch Plants Grow
 3-6,relationships,Me & My Family,My Family
 3-6,safety,Good Habits,Stay Safe Everyday
