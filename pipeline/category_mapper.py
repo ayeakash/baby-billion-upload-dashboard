@@ -51,6 +51,8 @@ def _normalize_cat(cat: str) -> str:
 _GLOBAL_ALIASES: dict[str, str] = {
     "varnamala": "varnmala",    # Notion says "Varnamala", dashboard says "Varnmala"
     "alladin": "aladdin",      # Fix common typo in Notion
+    "tracingabc": "write your alphabets",   # Notion sends "TracingABC" as one word
+    "tracing123": "write your numbers",     # Notion sends "Tracing123" as one word
 }
 
 # Age-specific aliases: (age, notion_name_normalized) → csv_name_normalized
@@ -83,7 +85,7 @@ _AGE_ALIASES: dict[tuple[str, str], str] = {
     ("3-6", "opposites"):         "learn opposite words",
     ("3-6", "learn opposites"):   "learn opposite words",
     ("3-6", "fruits"):            "name tasty fruits",
-    ("3-6", "vegetables"):        "know your vegetables",
+    ("3-6", "vegetables"):        "name your veggies",
     ("3-6", "food items"):        "what's on plate",
     ("3-6", "food"):              "what's on plate",
     ("3-6", "plants"):            "watch plants grow",
@@ -91,14 +93,14 @@ _AGE_ALIASES: dict[tuple[str, str], str] = {
     ("3-6", "space"):             "visit outer space",
     ("3-6", "science"):           "science made fun",
     ("3-6", "good habits"):       "build good habits",
-    ("3-6", "emotions"):          "what's that feeling",
+    ("3-6", "emotions"):          "understand your feelings",
     ("3-6", "safety"):            "stay safe everyday",
     ("3-6", "community helpers"): "meet helpful people",
     ("3-6", "vehicles"):          "spot cool vehicles",
     ("3-6", "colors"):            "learn color names",
     ("3-6", "my body"):           "know body parts",
     ("3-6", "toys"):              "discover fun toys",
-    ("3-6", "abc"):               "know your alphabets",
+    ("3-6", "abc"):               "learn your abc",
     ("3-6", "cvc"):               "read simple words",
     ("3-6", "cvc words"):         "read simple words",
     ("3-6", "phonics"):           "sounds & words",
@@ -117,6 +119,12 @@ _AGE_ALIASES: dict[tuple[str, str], str] = {
     ("3-6", "wild animals"):      "jungle animals",
     ("3-6", "sea animals"):       "water animals",
     ("3-6", "baby animals"):      "baby animals",
+    ("3-6", "birds"):             "spot colorful birds",
+    ("3-6", "insects"):           "meet tiny insects",
+    ("3-6", "paryayvachi shabd"): "paryayvachi shabd",
+    ("3-6", "paryayavachi shabd"):"paryayvachi shabd",
+    ("3-6", "home items"):        "find things around",
+    ("3-6", "festivals"):         "celebrate with everyone",
 
     # ── 0-3 ───────────────────────────────────────────────────────────────────
     ("0-3", "abc"):               "learn your abc",
@@ -145,7 +153,7 @@ _AGE_ALIASES: dict[tuple[str, str], str] = {
     ("0-3", "my family"):         "meet your family",
     ("0-3", "my body"):           "know body parts",
     ("0-3", "good habits"):       "practice good habits",
-    ("0-3", "emotions"):          "how are you",
+    ("0-3", "emotions"):          "understand your feelings",
     ("0-3", "home items"):        "find things around",
     ("0-3", "festivals"):         "celebrate with everyone",
     ("0-3", "clothes"):           "what's everyone wearing",
@@ -165,6 +173,14 @@ _AGE_ALIASES: dict[tuple[str, str], str] = {
     ("6+", "action words"):       "try these actions",
     ("6+", "phonics"):            "sounds & words",
     ("0-3", "physical movement"): "try these actions",
+    ("6+", "festivals"):          "celebrate with everyone",
+    ("6+", "birds"):              "spot colorful birds",
+    ("6+", "insects"):            "meet tiny insects",
+    ("6+", "home items"):         "find things around",
+    # Krishna stories
+    ("0-3", "krishna"):           "krishna",
+    ("3-6", "krishna"):           "krishna",
+    ("6+", "krishna"):            "krishna",
 }
 
 
@@ -233,6 +249,22 @@ def get_category_fields(age_group: str, notion_category: str) -> tuple[str, str]
     _load()
 
     age = _normalize_age(age_group)
+
+    # Handle comma-separated multi-categories from Notion (e.g., "Stories, Krishna")
+    # Try the full string first, then each part individually
+    if "," in notion_category:
+        parts = [p.strip() for p in notion_category.split(",")]
+        # Try each part as a standalone category (prefer non-generic ones)
+        for part in reversed(parts):  # reversed: more specific names tend to be last
+            cat = _resolve_alias(age, _normalize_cat(part))
+            key = (age, cat)
+            if key in _LOOKUP:
+                parent, exact = _LOOKUP[key]
+                log.info(f"  Multi-cat resolved [{age}] '{notion_category}' -> '{exact}' (matched '{part}')")
+                return parent, exact
+        # Fall through to normal logic with first part
+        notion_category = parts[0]
+
     cat = _resolve_alias(age, _normalize_cat(notion_category))
 
     # ── Exact match ────────────────────────────────────────────────────────────

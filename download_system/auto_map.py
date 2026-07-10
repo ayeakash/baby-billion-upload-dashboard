@@ -86,6 +86,7 @@ KEYWORD_MAP = {
     "about india": ["About India"],
     "clothes": ["Cloths"],
     "emotions": ["Emotions"],
+    "understand your feelings": ["Emotions"],
     "how are you": ["Emotions", "English speaking"],
     "counting": ["Counting"],
     "count with confidence": ["Counting"],
