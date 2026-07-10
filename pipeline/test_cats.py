@@ -17,7 +17,7 @@ tests = [
     ('3-6', 'Animals',           'Animals',           'Animals'),
     ('3-6', 'Good habits',       'Good Habits',       'Build Good Habits'),
     ('3-6', 'My Body',           'Good Habits',       'Know Body Parts'),
-    ('3-6', 'Vehicles',          "Kids' Favorites",   'Spot Cool Vehicles'),
+    ('3-6', 'Vehicles',          "Kids' Favorites",   'Spot Moving Vehicles'),
     ('3-6', 'shapes',            'Ready for School',  'Learn Your Shapes'),
     # 0-3
     ('0-3', 'ABC',               'English Basics',    'Learn Your ABC'),
@@ -27,7 +27,7 @@ tests = [
     ('0-3', 'Good Habits',       "Kids' Favorites",   'Practice Good Habits'),
     # 6+
     ('6+', 'Nature',             'Geography',         'Explore Nature Around'),
-    ('6+', 'Science',            'Science',           'Discover Science Secrets'),
+    ('6+', 'Science',            'Science',           'Science Made Fun'),
     ('6+', 'Animals',            'Animals',           'Meet Amazing Animals'),
     ('6+', 'Good Habits',        'Good Habits',       'Build Good Habits'),
     ('6+', 'Knowledge',          'Space Adventures',  'Amazing Facts Inside'),
