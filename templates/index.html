@@ -240,6 +240,16 @@
             color: var(--md-custom-color-success);
             box-shadow: 0 0 12px rgba(126,219,165,0.1);
         }
+
+        .batch-status-badge.status-error {
+            background: rgba(147, 0, 10, 0.2);
+            color: var(--md-sys-color-error);
+        }
+
+        .summary-card:hover {
+            border-color: var(--md-sys-color-outline) !important;
+            box-shadow: var(--md-sys-elevation-1);
+        }
         .status-pill.batching {
             background: rgba(168, 184, 255, 0.1);
             color: var(--md-sys-color-primary);
@@ -1091,10 +1101,10 @@
                 <select id="batch-size-select" class="batch-size-select" onchange="setBatchSize(this.value)">
                     <option value="10">10 MB</option>
                     <option value="20">20 MB</option>
-                    <option value="30" selected>30 MB</option>
+                    <option value="30">30 MB</option>
                     <option value="50">50 MB</option>
                     <option value="75">75 MB</option>
-                    <option value="100">100 MB</option>
+                    <option value="100" selected>100 MB</option>
                 </select>
             </div>
             <div class="batch-size-group">
@@ -1129,6 +1139,10 @@
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
                 Fetch &amp; Batch
             </button>
+            <button id="upload-all-btn" class="btn" onclick="uploadAllAndSubmit(this)" style="background: linear-gradient(135deg, #059669, #10b981); border: none; color: white; font-weight: 600;" title="Upload all pending batches one by one via Selenium">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                Upload All
+            </button>
             <button id="stop-btn" class="btn btn-danger" onclick="stopActiveOperation()" style="display: none;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg>
                 Stop
@@ -1146,6 +1160,42 @@
 
     <div class="main-container">
         <div class="dashboard-content">
+            <!-- Summary Cards -->
+            <div id="summary-cards" style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.6rem;margin-bottom:0.6rem">
+                <div class="summary-card" onclick="switchTab('pending')" style="cursor:pointer;background:var(--md-sys-color-surface-container);border-radius:var(--md-sys-shape-md);padding:0.65rem 0.85rem;border:1px solid var(--md-sys-color-outline-variant);transition:all 0.2s">
+                    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--md-sys-color-primary)" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        <span style="font-size:0.68rem;color:var(--md-sys-color-outline);font-weight:500">Pending</span>
+                    </div>
+                    <span id="summary-pending" style="font-size:1.4rem;font-weight:700;color:var(--md-sys-color-primary)">0</span>
+                    <span style="font-size:0.62rem;color:var(--md-sys-color-outline);margin-left:4px">batches</span>
+                </div>
+                <div class="summary-card" onclick="switchTab('uploaded')" style="cursor:pointer;background:var(--md-sys-color-surface-container);border-radius:var(--md-sys-shape-md);padding:0.65rem 0.85rem;border:1px solid var(--md-sys-color-outline-variant);transition:all 0.2s">
+                    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--md-custom-color-warning)" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                        <span style="font-size:0.68rem;color:var(--md-sys-color-outline);font-weight:500">Uploaded</span>
+                    </div>
+                    <span id="summary-uploaded" style="font-size:1.4rem;font-weight:700;color:var(--md-custom-color-warning)">0</span>
+                    <span style="font-size:0.62rem;color:var(--md-sys-color-outline);margin-left:4px">batches</span>
+                </div>
+                <div class="summary-card" onclick="switchTab('failed')" style="cursor:pointer;background:var(--md-sys-color-surface-container);border-radius:var(--md-sys-shape-md);padding:0.65rem 0.85rem;border:1px solid var(--md-sys-color-outline-variant);transition:all 0.2s">
+                    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--md-sys-color-error)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                        <span style="font-size:0.68rem;color:var(--md-sys-color-outline);font-weight:500">Failed</span>
+                    </div>
+                    <span id="summary-failed" style="font-size:1.4rem;font-weight:700;color:var(--md-sys-color-error)">0</span>
+                    <span style="font-size:0.62rem;color:var(--md-sys-color-outline);margin-left:4px">batches</span>
+                </div>
+                <div class="summary-card" onclick="switchTab('finalized')" style="cursor:pointer;background:var(--md-sys-color-surface-container);border-radius:var(--md-sys-shape-md);padding:0.65rem 0.85rem;border:1px solid var(--md-sys-color-outline-variant);transition:all 0.2s">
+                    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--md-custom-color-success)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                        <span style="font-size:0.68rem;color:var(--md-sys-color-outline);font-weight:500">Finalized</span>
+                    </div>
+                    <span id="summary-finalized" style="font-size:1.4rem;font-weight:700;color:var(--md-custom-color-success)">0</span>
+                    <span style="font-size:0.62rem;color:var(--md-sys-color-outline);margin-left:4px">batches</span>
+                </div>
+            </div>
+
             <div id="upload-lock-banner" class="warning-banner hidden">
                 <span style="display: flex; align-items: center; gap: 8px;">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
@@ -1157,6 +1207,7 @@
                 <div class="tabs-header">
                     <button class="tab-btn active" onclick="switchTab('pending')">Pending Review <span id="badge-pending" class="tab-badge">0</span></button>
                     <button class="tab-btn" onclick="switchTab('uploaded')">Uploaded <span id="badge-uploaded" class="tab-badge">0</span></button>
+                    <button class="tab-btn" onclick="switchTab('failed')">Failed <span id="badge-failed" class="tab-badge" style="background:rgba(255,180,171,0.15);color:var(--md-sys-color-error)">0</span></button>
                     <button class="tab-btn" onclick="switchTab('finalized')">Finalized <span id="badge-finalized" class="tab-badge">0</span></button>
                 </div>
                 <div class="search-wrapper">
@@ -1213,6 +1264,16 @@
         let isPipelinePaused = false;
         let isUploadRunning = false;
         let isUploadPaused = false;
+
+        function copyToClipboard(text, el, event) {
+            if (event) event.stopPropagation();
+            navigator.clipboard.writeText(text).then(() => {
+                const orig = el.innerHTML;
+                el.innerHTML = '<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Copied!';
+                el.style.color = '#4ade80';
+                setTimeout(() => { el.innerHTML = orig; el.style.color = ''; }, 1500);
+            });
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             fetchBatches();
@@ -1729,7 +1790,15 @@
 
                 document.getElementById('badge-pending').innerText = data.pending.length;
                 document.getElementById('badge-uploaded').innerText = data.uploaded.length;
+                document.getElementById('badge-failed').innerText = (data.failed || []).length;
                 document.getElementById('badge-finalized').innerText = data.finalized.length;
+
+                // Update summary cards
+                const s = data.summary || {};
+                document.getElementById('summary-pending').innerText = s.pending_batches || 0;
+                document.getElementById('summary-uploaded').innerText = s.uploaded_batches || 0;
+                document.getElementById('summary-failed').innerText = s.failed_batches || 0;
+                document.getElementById('summary-finalized').innerText = s.finalized_batches || 0;
 
                 const si = document.getElementById('pipeline-status-indicator');
                 const st = document.getElementById('pipeline-status-text');
@@ -1823,8 +1892,12 @@
             let html = '';
             batches.forEach((b, idx) => {
                 const isExp = expanded.includes(b.batch_name) || (currentTab === 'pending' && idx === 0 && expanded.length === 0) || (searchQuery.trim() !== '');
-                let sc = 'status-review', sl = 'Pending', jb = '';
-                if (b.status === 'pending_second_review') {
+                let sc = 'status-review', sl = 'Pending', jb = '', failBanner = '';
+                if (b.upload_failed) {
+                    sc = 'status-error'; sl = 'Failed';
+                    if (b.upload_job_id) jb = `<span style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;background:rgba(255,100,100,0.1);padding:2px 6px;border-radius:var(--md-sys-shape-sm);color:var(--md-sys-color-error);cursor:pointer;display:inline-flex;align-items:center;gap:3px" onclick="copyToClipboard('${b.upload_job_id}',this,event)" title="Copy CMS ID: ${b.upload_job_id}"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>${b.upload_job_id.substring(0,8)}…</span>`;
+                    if (b.fail_reason) failBanner = `<div style="margin:0.5rem 0;padding:0.5rem 0.75rem;background:rgba(147,0,10,0.15);border:1px solid rgba(255,180,171,0.2);border-radius:var(--md-sys-shape-sm);font-size:0.72rem;color:var(--md-sys-color-error);display:flex;align-items:center;gap:6px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>${b.fail_reason}</span></div>`;
+                } else if (b.status === 'pending_second_review') {
                     sc = 'status-uploaded'; sl = 'Uploaded';
                     if (b.upload_job_id) jb = `<span style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;background:rgba(180,197,255,0.1);padding:2px 6px;border-radius:var(--md-sys-shape-sm);color:var(--md-sys-color-primary);cursor:pointer;display:inline-flex;align-items:center;gap:3px" onclick="copyToClipboard('${b.upload_job_id}',this,event)" title="Copy CMS ID: ${b.upload_job_id}"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>${b.upload_job_id.substring(0,8)}…</span>`;
                 } else if (b.status === 'finalized') { sc = 'status-finalized'; sl = 'Finalized'; }
@@ -1846,6 +1919,7 @@
                         </div>
                     </div>
                     <div class="batch-details"><div class="batch-details-inner">
+                        ${failBanner}
                         ${renderActionPanel(b)}
                         <div class="video-grid-header"><div>video_name</div><div>categories_name</div><div>age_groups</div><div>channel_name</div><div>tags</div><div>playlist_name</div><div>content_formats</div><div>content_types</div><div style="text-align:right;padding-right:0.4rem">Status</div></div>
                         <div class="video-grid-rows">${b.videos.map(v => {
@@ -1893,12 +1967,45 @@
             }).catch(e => { console.error('Toggle bad failed:', e); appendTerminalText(`\n[ERROR] Failed to toggle bad status.\n`); });
         }
 
+        function retryBatch(batchName, btn) {
+            btn.disabled = true;
+            const orig = btn.innerHTML;
+            btn.innerHTML = `<span class="spinner"></span> Retrying...`;
+            fetch(`/api/batches/${batchName}/retry`, { method: 'POST' })
+                .then(r => r.json())
+                .then(d => {
+                    if (d.error) {
+                        appendTerminalText(`\n[ERROR] ${d.error}\n`);
+                        btn.disabled = false;
+                        btn.innerHTML = orig;
+                    } else {
+                        appendTerminalText(`\n[SYSTEM] ${d.message}\n`);
+                        fetchBatches();
+                    }
+                })
+                .catch(e => {
+                    appendTerminalText(`\n[ERROR] Retry request failed.\n`);
+                    btn.disabled = false;
+                    btn.innerHTML = orig;
+                });
+        }
+
         function renderActionPanel(batch) {
             const ur = cacheData.upload_running;
             const ul = (activeUploadedBatch !== null && activeUploadedBatch !== batch.batch_name) || ur;
             const sb = isPipelineRunning || ur;
 
-            if (batch.status === 'pending_first_review') {
+            if (batch.upload_failed) {
+                return `<div class="batch-action-panel" style="border-color:rgba(255,180,171,0.2)">
+                    <div class="panel-info"><span class="panel-info-title" style="color:var(--md-sys-color-error)">Upload Failed</span><span class="panel-info-value">${batch.fail_reason || 'Upload did not complete successfully.'}</span></div>
+                    <div class="panel-actions">
+                        ${batch.local_folder_exists ? `<button class="btn btn-secondary" onclick="openBatchFolder('${batch.batch_name}')">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> Open</button>` : ''}
+                        <button class="btn btn-primary" onclick="retryBatch('${batch.batch_name}', this)">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg> Retry Upload</button>
+                        <button class="btn" onclick="clearLocalBatch('${batch.batch_name}', this)" style="font-size:0.65rem;padding:0.3rem 0.6rem;background:#2a2a3a;border:1px solid #555;color:#ccc"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg> Clear Local</button>
+                    </div></div>`;
+            } else if (batch.status === 'pending_first_review') {
                 return `<div class="batch-action-panel">
                     <div class="panel-info"><span class="panel-info-title">Stage 1 — Local Review</span><span class="panel-info-value">Review files, then upload or mark as uploaded.</span></div>
                     <div class="panel-actions">

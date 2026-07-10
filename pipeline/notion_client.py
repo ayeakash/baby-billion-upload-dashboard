@@ -30,6 +30,7 @@ from config import (
     STATUS_READY, STATUS_FAILED_UPLOAD, STATUS_UPLOADED,
     UPLOAD_NO, UPLOAD_YES,
     UPLOAD_PROGRESS_PROCESSING, UPLOAD_PROGRESS_DRAFT, UPLOAD_PROGRESS_REVIEWED,
+    UPLOAD_PROGRESS_FAILED,
     NOTION_READ_ONLY,
 )
 
@@ -1018,6 +1019,43 @@ def mark_pending_review_in_notion(
     log.error(f"[FAIL] Could not set pending review for {page_id} after {retries} attempts.")
     return False
 
+
+def mark_upload_failed_in_notion(
+    page_id: str,
+    fail_reason: str = "",
+    retries: int = 3,
+) -> bool:
+    """Set Upload Progress = 'Failed' on a Notion page after an upload failure."""
+    if _notion_write_blocked("mark_upload_failed_in_notion"): return True
+    _check_config()
+    url = f"{BASE}/pages/{page_id}"
+
+    props: dict = {
+        PROP_UPLOAD_PROGRESS: {"select": {"name": UPLOAD_PROGRESS_FAILED}},
+    }
+
+    for attempt in range(1, retries + 1):
+        try:
+            resp = requests.patch(
+                url, headers=_headers(),
+                json={"properties": props}, timeout=30,
+            )
+            if resp.status_code == 200:
+                log.info(
+                    f"[OK] Notion upload failed: {page_id} "
+                    f"(Upload Progress='{UPLOAD_PROGRESS_FAILED}')"
+                )
+                return True
+            else:
+                log.warning(
+                    f"Notion upload-failed PATCH attempt {attempt}: "
+                    f"{resp.status_code} {resp.text[:200]}"
+                )
+        except Exception as e:
+            log.warning(f"Notion upload-failed PATCH attempt {attempt} error: {e}")
+
+    log.error(f"[FAIL] Could not set upload failed for {page_id} after {retries} attempts.")
+    return False
 
 def query_pending_review() -> list[dict]:
     """

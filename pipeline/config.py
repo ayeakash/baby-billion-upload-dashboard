@@ -53,6 +53,7 @@ UPLOAD_YES     = "Yes"
 UPLOAD_PROGRESS_PROCESSING = "Processing"    # claimed by a PC — other PCs skip it
 UPLOAD_PROGRESS_DRAFT      = "Draft Upload"  # uploaded to admin, pending review
 UPLOAD_PROGRESS_REVIEWED   = "Uploaded"      # reviewer finalized
+UPLOAD_PROGRESS_FAILED     = "Failed"        # upload or submission failed
 
 # ── Notion Read-Only Mode ─────────────────────────────────────────────────────
 # When True, ALL Notion write operations (mark uploaded, clear progress, etc.)
@@ -69,7 +70,7 @@ STATE_FILE    = os.path.join(PROJECT_ROOT, "state.json")
 LOG_DIR       = os.path.join(PROJECT_ROOT, "logs")
 
 # ── Batching ───────────────────────────────────────────────────────────────────
-MAX_BATCH_BYTES = 30 * 1024 * 1024   # 30 MB - balanced for reliability + speed
+MAX_BATCH_BYTES = 100 * 1024 * 1024   # 100 MB
 
 # ── Admin site ────────────────────────────────────────────────────────────────
 ADMIN_BASE_URL   = "https://cms-v1.d148rwrq639wa8.amplifyapp.com"

@@ -209,35 +209,44 @@ def run(videos: list[dict]) -> list[str]:
     # Sort groups by first video name for deterministic ordering
     sorted_groups = sorted(page_groups.values(), key=lambda g: g[0]["video_name"])
 
-    # ── Greedy bin-packing (page groups are atomic) ───────────────────────
+    # ── Group by category so each batch has only one category ─────────────
+    #    This keeps CMS uploads clean — one category per batch.
+    category_buckets: dict[str, list[list[dict]]] = {}
+    for group in sorted_groups:
+        cat = group[0].get("categories_name", "") or group[0].get("category", "") or "Unknown"
+        category_buckets.setdefault(cat, []).append(group)
+
+    # ── Greedy bin-packing per category (page groups are atomic) ──────────
     batches: list[list[dict]] = []
-    current_batch: list[dict] = []
-    current_size = 0
     max_mb = MAX_BATCH_BYTES / (1024 * 1024)
 
-    for group in sorted_groups:
-        group_size = sum(os.path.getsize(v["local_file"]) for v in group)
-        group_mb   = group_size / (1024 * 1024)
+    for cat, cat_groups in sorted(category_buckets.items()):
+        current_batch: list[dict] = []
+        current_size = 0
 
-        # Warn if a single page group already exceeds the limit
-        if group_size > MAX_BATCH_BYTES:
-            names = [v['video_name'] for v in group]
-            log.warning(
-                f"  [WARN] Page group {group[0]['page_id'][:12]}… ({group_mb:.1f} MB, "
-                f"{len(group)} variant(s): {names}) exceeds batch limit ({max_mb:.0f} MB). "
-                f"It will be placed in its own batch."
-            )
+        for group in cat_groups:
+            group_size = sum(os.path.getsize(v["local_file"]) for v in group)
+            group_mb   = group_size / (1024 * 1024)
 
-        # If adding this page group would exceed the limit, flush current batch
-        if current_batch and (current_size + group_size) > MAX_BATCH_BYTES:
+            # Warn if a single page group already exceeds the limit
+            if group_size > MAX_BATCH_BYTES:
+                names = [v['video_name'] for v in group]
+                log.warning(
+                    f"  [WARN] Page group {group[0]['page_id'][:12]}… ({group_mb:.1f} MB, "
+                    f"{len(group)} variant(s): {names}) exceeds batch limit ({max_mb:.0f} MB). "
+                    f"It will be placed in its own batch."
+                )
+
+            # If adding this page group would exceed the limit, flush current batch
+            if current_batch and (current_size + group_size) > MAX_BATCH_BYTES:
+                batches.append(current_batch)
+                current_batch = []
+                current_size  = 0
+            current_batch.extend(group)
+            current_size += group_size
+
+        if current_batch:
             batches.append(current_batch)
-            current_batch = []
-            current_size  = 0
-        current_batch.extend(group)
-        current_size += group_size
-
-    if current_batch:
-        batches.append(current_batch)
 
     # ── Reserve unique batch numbers via persistent counter ─────────────────
     start_n = sm.next_batch_number(count=len(batches))

@@ -514,6 +514,22 @@ def click_submit_for_approval(driver) -> bool:
     """
     _, _, _, By, WebDriverWait, EC, TimeoutException, _, _ = _get_selenium()
 
+    # First, check if the page already shows a FAILED status (CMS rejected the batch)
+    try:
+        body = driver.execute_script(
+            "return document.body ? (document.body.innerText || '') : ''"
+        ) or ""
+        body_lower = body.lower()
+
+        # CMS shows "FAILED" status or "Total: 0" when batch is rejected
+        for fail_indicator in ("status\nfailed", "status: failed", "total\n0",
+                               "total: 0", "0 total", "no videos processed"):
+            if fail_indicator in body_lower:
+                log.error(f"  [APPROVAL] CMS shows FAILED status before submit — batch was rejected")
+                return False
+    except Exception:
+        pass
+
     # Find the 'Submit Batch for Approval' button
     btns = driver.find_elements(By.CSS_SELECTOR, "button")
     approval_btn = None
@@ -549,6 +565,7 @@ def click_submit_for_approval(driver) -> bool:
                 "failed to fetch", "network error", "error occurred",
                 "something went wrong", "request failed", "server error",
                 "internal server error", "502", "503", "504",
+                "status\nfailed", "status: failed",
             ):
                 if fail_pattern in body_lower:
                     log.error(f"  [APPROVAL FAIL] Detected '{fail_pattern}' on page (poll #{poll+1})")
@@ -558,18 +575,23 @@ def click_submit_for_approval(driver) -> bool:
             for success_pattern in (
                 "successfully submitted", "batch submitted",
                 "approved", "submission complete",
+                "status\ncompleted", "status: completed",
             ):
                 if success_pattern in body_lower:
                     log.info(f"  [APPROVAL OK] Batch submitted for approval (poll #{poll+1})")
                     return True
 
-            # If the approval button is gone and no error, likely success
+            # If the approval button is gone, check page for FAILED/COMPLETED
             btns_now = driver.find_elements(By.CSS_SELECTOR, "button")
             still_there = any(
                 "submit" in b.text.strip().lower() and "approval" in b.text.strip().lower()
                 for b in btns_now
             )
             if not still_there:
+                # Button is gone — but is it FAILED or COMPLETED?
+                if "failed" in body_lower and "completed" not in body_lower:
+                    log.error(f"  [APPROVAL FAIL] Button gone but page shows 'failed' (poll #{poll+1})")
+                    return False
                 log.info(f"  [APPROVAL OK] Approval button disappeared — assuming success (poll #{poll+1})")
                 return True
 
@@ -582,9 +604,14 @@ def click_submit_for_approval(driver) -> bool:
     return False
 
 
-def run_all_and_submit(batch_names: list[str], headless: bool = False) -> dict[str, dict]:
+def run_all_and_submit(batch_names: list[str], headless: bool = False,
+                       on_result: callable = None) -> dict[str, dict]:
     """
     Upload ALL batches, clicking 'Submit for Approval' after each.
+
+    Args:
+        on_result: Optional callback(batch_name, result_dict) called after each
+                   batch finishes. Allows live processing of results.
 
     Returns {batch_name: {job_id, status}} where status is:
       - 'submitted'        — uploaded + submitted for approval
@@ -616,26 +643,63 @@ def run_all_and_submit(batch_names: list[str], headless: bool = False) -> dict[s
             log.info(f"  UPLOAD+SUBMIT: {batch_name}")
             log.info(f"{'='*55}")
 
-            job_id = upload_batch(driver, batch_name)
-            if not job_id:
-                log.error(f"  [FAIL] Upload failed for {batch_name}")
+            try:
+                job_id = upload_batch(driver, batch_name)
+                if not job_id:
+                    log.error(f"  [FAIL] Upload failed for {batch_name}")
+                    results[batch_name] = {"job_id": None, "status": "upload_failed"}
+                    # Navigate back to upload page for next batch
+                    try:
+                        driver.get(ADMIN_UPLOAD_URL)
+                        time.sleep(3)
+                    except Exception:
+                        pass
+                    continue
+
+                log.info(f"  [OK] Uploaded: {batch_name} — Job ID: {job_id}")
+                log.info(f"  [STEP 2] Now submitting for approval...")
+
+                # The page should now show 'Processed Results' with the approval button
+                approved = click_submit_for_approval(driver)
+                if approved:
+                    log.info(f"  [OK] {batch_name} submitted for approval!")
+                    results[batch_name] = {"job_id": job_id, "status": "submitted"}
+                else:
+                    log.error(f"  [FAIL] {batch_name} uploaded but approval failed!")
+                    results[batch_name] = {"job_id": job_id, "status": "approval_failed"}
+
+            except Exception as e:
+                log.error(f"  [EXCEPTION] {batch_name} crashed: {e}")
                 results[batch_name] = {"job_id": None, "status": "upload_failed"}
-                time.sleep(3)
-                continue
+                # Try to take a screenshot
+                try:
+                    ss = os.path.join(BATCHES_DIR, f"crash_{batch_name}.png")
+                    driver.save_screenshot(ss)
+                    log.info(f"  [SCREENSHOT] Saved: {ss}")
+                except Exception:
+                    pass
 
-            log.info(f"  [OK] Uploaded: {batch_name} — Job ID: {job_id}")
-            log.info(f"  [STEP 2] Now submitting for approval...")
+            # Fire live callback so batch_manager can update state immediately
+            if on_result and batch_name in results:
+                try:
+                    on_result(batch_name, results[batch_name])
+                except Exception as cb_err:
+                    log.warning(f"  [CALLBACK] Error in on_result for {batch_name}: {cb_err}")
 
-            # The page should now show 'Processed Results' with the approval button
-            approved = click_submit_for_approval(driver)
-            if approved:
-                log.info(f"  [OK] {batch_name} submitted for approval!")
-                results[batch_name] = {"job_id": job_id, "status": "submitted"}
-            else:
-                log.error(f"  [FAIL] {batch_name} uploaded but approval failed!")
-                results[batch_name] = {"job_id": job_id, "status": "approval_failed"}
-
-            time.sleep(5)  # pause between batches
+            # Navigate back to upload page for the next batch
+            try:
+                driver.get(ADMIN_UPLOAD_URL)
+                time.sleep(5)  # pause between batches
+            except Exception:
+                log.warning(f"  [WARN] Could not navigate back to upload page")
+                # Try to recover by re-login
+                try:
+                    if not login(driver):
+                        log.error("  [FATAL] Re-login failed — stopping")
+                        break
+                except Exception:
+                    log.error("  [FATAL] Driver unresponsive — stopping")
+                    break
 
     except KeyboardInterrupt:
         log.info("Interrupted by user.")

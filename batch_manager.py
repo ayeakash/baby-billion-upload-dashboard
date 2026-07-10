@@ -12,6 +12,7 @@ import sys
 import subprocess
 from datetime import datetime, date
 import collections
+import upload_history
 
 # ── Add local pipeline/ to sys.path so we can import shared modules ──────────
 _PIPELINE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "pipeline")
@@ -407,6 +408,19 @@ def run_automated_upload_thread(batch_name: str):
                     global_log_buffer.write(f"[ERROR] Notion exception for {vname}: {ne}")
         global_log_buffer.write(f"[NOTION] Done — {notion_ok}/{len(videos)} synced.")
         global_log_buffer.write(f"[DONE] Batch '{batch_name}' uploaded and synced to Notion.")
+
+        # Log to permanent upload history
+        try:
+            b_hist = load_batches().get(batch_name, {})
+            upload_history.log_batch(
+                batch_name=batch_name,
+                videos=b_hist.get("videos", []),
+                job_id=job_id or "",
+                status="submitted",
+                source="dashboard",
+            )
+        except Exception as he:
+            log.warning(f"Could not log upload history: {he}")
     except Exception as e:
         log.error(f"Error in automated upload background thread: {e}")
         global_log_buffer.write(f"[EXCEPTION] Automated upload error: {e}")
@@ -453,7 +467,7 @@ def start_automated_upload(batch_name: str) -> tuple[bool, str]:
 
 def run_upload_all_submit_thread():
     """Upload ALL pending batches → Submit for Approval → Sync Notion.
-    Completely separate from the single-batch upload flow."""
+    Updates dashboard LIVE after each batch completes."""
     global upload_running, upload_batch_name
 
     upload_running = True
@@ -462,6 +476,83 @@ def run_upload_all_submit_thread():
     global_log_buffer.write(f"\n{'='*60}")
     global_log_buffer.write(f"  UPLOAD ALL + SUBMIT FOR APPROVAL")
     global_log_buffer.write(f"{'='*60}\n")
+
+    # Counters for final summary
+    submitted = 0
+    failed_upload = 0
+    failed_approval = 0
+
+    def _on_batch_result(bn, result):
+        """Called by uploader after each batch finishes — updates state LIVE."""
+        nonlocal submitted, failed_upload, failed_approval
+
+        upload_batch_name_live = bn
+        job_id = result.get("job_id")
+        status = result.get("status", "upload_failed")
+
+        if status == "upload_failed":
+            failed_upload += 1
+            global_log_buffer.write(f"[FAILED] {bn} — upload failed")
+            with _batches_lock:
+                bs = load_batches()
+                if bn in bs:
+                    bs[bn]["upload_failed"] = True
+                    bs[bn]["fail_reason"] = "Upload failed on admin site"
+                    save_batches(bs)
+                    for v in bs[bn].get("videos", []):
+                        pid = v.get("page_id", "")
+                        if pid and not pid.startswith("manual_"):
+                            try:
+                                notion_client.mark_upload_failed_in_notion(pid)
+                            except Exception:
+                                pass
+
+        elif status == "approval_failed":
+            failed_approval += 1
+            global_log_buffer.write(f"[FAILED] {bn} — upload failed (Job: {job_id}, submit button missing/failed)")
+            with _batches_lock:
+                bs = load_batches()
+                if bn in bs:
+                    bs[bn]["upload_failed"] = True
+                    bs[bn]["fail_reason"] = f"Upload failed — submit button didn't appear (Job: {job_id})"
+                    bs[bn]["upload_job_id"] = job_id
+                    save_batches(bs)
+                    for v in bs[bn].get("videos", []):
+                        pid = v.get("page_id", "")
+                        if pid and not pid.startswith("manual_"):
+                            try:
+                                notion_client.mark_upload_failed_in_notion(pid)
+                            except Exception:
+                                pass
+
+        else:  # submitted
+            submitted += 1
+            global_log_buffer.write(f"[SUCCESS] {bn} — uploaded + submitted for approval (Job: {job_id})")
+            ok, msg = mark_batch_uploaded(bn, job_id)
+            if ok:
+                global_log_buffer.write(f"[MARKED] {bn} → Uploaded tab. {msg}")
+            else:
+                global_log_buffer.write(f"[WARNING] {bn} mark-uploaded issue: {msg}")
+
+        # Log to permanent upload history
+        try:
+            bs_hist = load_batches()
+            if bn in bs_hist:
+                fail_reason = ""
+                if status == "upload_failed":
+                    fail_reason = "Upload failed on admin site"
+                elif status == "approval_failed":
+                    fail_reason = "Uploaded but Submit for Approval failed"
+                upload_history.log_batch(
+                    batch_name=bn,
+                    videos=bs_hist[bn].get("videos", []),
+                    job_id=job_id or "",
+                    status=status,
+                    source="dashboard",
+                    fail_reason=fail_reason,
+                )
+        except Exception as he:
+            log.warning(f"Could not log upload history for {bn}: {he}")
 
     try:
         # Collect all pending batches that have CSV + ZIP ready
@@ -489,55 +580,8 @@ def run_upload_all_submit_thread():
 
         global_log_buffer.write(f"[INFO] Found {len(pending)} batch(es) to upload+submit: {', '.join(pending)}\n")
 
-        # Run the upload+submit flow (single Selenium session for all batches)
-        results = uploader.run_all_and_submit(pending, headless=False)
-
-        # Process results
-        upload_date = date.today().isoformat()
-        submitted = 0
-        failed_upload = 0
-        failed_approval = 0
-
-        for bn, result in results.items():
-            upload_batch_name = bn
-            job_id = result.get("job_id")
-            status = result.get("status", "upload_failed")
-
-            if status == "upload_failed":
-                # Mark batch as failed
-                failed_upload += 1
-                global_log_buffer.write(f"[FAILED] {bn} — upload failed")
-                with _batches_lock:
-                    bs = load_batches()
-                    if bn in bs:
-                        bs[bn]["upload_failed"] = True
-                        bs[bn]["fail_reason"] = "Upload failed on admin site"
-                        save_batches(bs)
-                continue
-
-            if status == "approval_failed":
-                # Uploaded but approval failed (e.g., 'failed to fetch')
-                failed_approval += 1
-                global_log_buffer.write(f"[FAILED] {bn} — uploaded (Job: {job_id}) but approval submission failed (failed to fetch)")
-                with _batches_lock:
-                    bs = load_batches()
-                    if bn in bs:
-                        bs[bn]["upload_failed"] = True
-                        bs[bn]["fail_reason"] = f"Uploaded (Job: {job_id}) but 'Submit for Approval' failed"
-                        bs[bn]["upload_job_id"] = job_id
-                        save_batches(bs)
-                continue
-
-            # status == "submitted" — full success
-            submitted += 1
-            global_log_buffer.write(f"[SUCCESS] {bn} — uploaded + submitted for approval (Job: {job_id})")
-
-            # Mark as uploaded (moves to Uploaded tab + syncs Notion)
-            ok, msg = mark_batch_uploaded(bn, job_id)
-            if ok:
-                global_log_buffer.write(f"[MARKED] {bn} → Uploaded tab. {msg}")
-            else:
-                global_log_buffer.write(f"[WARNING] {bn} mark-uploaded issue: {msg}")
+        # Run the upload+submit flow with live callback
+        results = uploader.run_all_and_submit(pending, headless=False, on_result=_on_batch_result)
 
         global_log_buffer.write(f"\n{'='*60}")
         global_log_buffer.write(f"  RESULTS: {submitted} submitted, {failed_upload} upload failed, {failed_approval} approval failed")

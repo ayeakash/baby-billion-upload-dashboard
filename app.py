@@ -58,6 +58,7 @@ def get_batches():
     pending = []
     uploaded = []
     finalized = []
+    failed = []
     
     for name, b in batches.items():
         # Check if the local directory still exists
@@ -139,8 +140,10 @@ def get_batches():
             except Exception as e:
                 log.debug(f"Could not read CSV for {name}: {e}")
 
-        # Group by status
-        if b["status"] == "pending_first_review":
+        # Group by status — failed batches go to a separate group
+        if b.get("upload_failed"):
+            failed.append(b)
+        elif b["status"] == "pending_first_review":
             pending.append(b)
         elif b["status"] == "pending_second_review":
             uploaded.append(b)
@@ -151,11 +154,28 @@ def get_batches():
     pending.sort(key=lambda x: x.get("created_at", ""), reverse=True)
     uploaded.sort(key=lambda x: x.get("created_at", ""), reverse=True)
     finalized.sort(key=lambda x: x.get("finalized_date", "") or x.get("created_at", ""), reverse=True)
+    failed.sort(key=lambda x: x.get("created_at", ""), reverse=True)
+    
+    # Summary counts
+    total_videos = sum(len(b.get("videos", [])) for b in pending + uploaded + finalized + failed)
+    total_uploaded_videos = sum(len(b.get("videos", [])) for b in uploaded + finalized)
+    total_failed_videos = sum(len(b.get("videos", [])) for b in failed)
     
     return jsonify({
         "pending": pending,
         "uploaded": uploaded,
         "finalized": finalized,
+        "failed": failed,
+        "summary": {
+            "total_batches": len(pending) + len(uploaded) + len(finalized) + len(failed),
+            "total_videos": total_videos,
+            "pending_batches": len(pending),
+            "uploaded_batches": len(uploaded),
+            "finalized_batches": len(finalized),
+            "failed_batches": len(failed),
+            "total_uploaded_videos": total_uploaded_videos,
+            "total_failed_videos": total_failed_videos,
+        },
         "pipeline_running": batch_manager.pipeline_running,
         "pipeline_paused": batch_manager.pipeline_paused,
         "upload_running": batch_manager.upload_running,
@@ -734,41 +754,57 @@ def clear_local_batch(batch_name):
 
 @app.route("/api/batches/clear-all-local", methods=["POST"])
 def clear_all_local_batches():
-    """Clear ALL batches from local storage and UI — does NOT touch Notion."""
+    """Clear only PENDING batches from local storage — preserves Uploaded/Finalized."""
     import shutil
     import state_manager as sm
 
-    # Reset state.json batch references
+    batches = batch_manager.load_batches()
+
+    # Identify which batches to clear (only pending, not uploaded/finalized)
+    to_clear = []
+    to_keep = {}
+    for name, b in batches.items():
+        status = b.get("status", "")
+        if status in ("pending_second_review", "finalized"):
+            to_keep[name] = b  # preserve uploaded & finalized
+        elif b.get("upload_failed"):
+            to_keep[name] = b  # preserve failed (for tracking)
+        else:
+            to_clear.append(name)
+
+    # Reset state.json batch references only for cleared batches
+    cleared = 0
     try:
         state = sm.get_all()
-        cleared = 0
         for page_id, rec in state.items():
-            if isinstance(rec, dict) and rec.get("batch"):
+            if isinstance(rec, dict) and rec.get("batch") in to_clear:
                 sm.upsert(page_id, pipeline_status="pending", batch="", local_file="")
                 cleared += 1
     except Exception as e:
         log.error(f"Error clearing state refs: {e}")
-        cleared = 0
 
-    # Delete all batch files from disk
+    # Delete batch files from disk only for cleared batches
     deleted_files = 0
     if os.path.isdir(uploader.BATCHES_DIR):
-        for entry in os.listdir(uploader.BATCHES_DIR):
-            full = os.path.join(uploader.BATCHES_DIR, entry)
-            try:
-                if os.path.isdir(full) and entry.startswith("Batch_"):
-                    shutil.rmtree(full)
-                    deleted_files += 1
-                elif os.path.isfile(full) and entry.startswith("Batch_"):
-                    os.remove(full)
-                    deleted_files += 1
-            except Exception as e:
-                log.warning(f"Could not delete {entry}: {e}")
+        for batch_name in to_clear:
+            for entry in [batch_name, f"{batch_name}.csv", f"{batch_name}.zip"]:
+                full = os.path.join(uploader.BATCHES_DIR, entry)
+                try:
+                    if os.path.isdir(full):
+                        shutil.rmtree(full)
+                        deleted_files += 1
+                    elif os.path.isfile(full):
+                        os.remove(full)
+                        deleted_files += 1
+                except Exception as e:
+                    log.warning(f"Could not delete {entry}: {e}")
 
-    # Clear batches.json
-    batch_manager.save_batches({})
+    # Save batches.json with only the kept batches
+    batch_manager.save_batches(to_keep)
 
-    msg = f"Cleared all batches locally. {cleared} state refs reset, {deleted_files} files removed. Notion untouched."
+    msg = (f"Cleared {len(to_clear)} pending batch(es). "
+           f"{cleared} state refs reset, {deleted_files} files removed. "
+           f"{len(to_keep)} uploaded/finalized/failed batch(es) preserved.")
     log.info(msg)
     return jsonify({"message": msg})
 
@@ -982,6 +1018,27 @@ def finalize_batch(batch_name):
         return jsonify({"error": msg}), 400
     return jsonify({"message": msg})
 
+@app.route("/api/batches/<batch_name>/retry", methods=["POST"])
+def retry_batch(batch_name):
+    """Clear the upload_failed flag and re-queue batch for upload."""
+    batches = batch_manager.load_batches()
+    if batch_name not in batches:
+        return jsonify({"error": f"Batch '{batch_name}' not found."}), 400
+    b = batches[batch_name]
+    if not b.get("upload_failed"):
+        return jsonify({"error": f"Batch '{batch_name}' is not in failed state."}), 400
+    # Reset failure state
+    b["upload_failed"] = False
+    b["fail_reason"] = None
+    b["status"] = "pending_first_review"
+    b["upload_completed"] = False
+    for v in b.get("videos", []):
+        if v.get("pipeline_status") in ("upload_failed", "uploaded_approval_failed"):
+            v["pipeline_status"] = "batched"
+    batch_manager.save_batches(batches)
+    log.info(f"Batch '{batch_name}' retry: cleared failure, moved back to pending.")
+    return jsonify({"message": f"Batch '{batch_name}' moved back to Pending Review for retry."})
+
 @app.route("/api/batches/<batch_name>/open-folder", methods=["POST"])
 def open_folder(batch_name):
     batch_dir = os.path.abspath(os.path.join(uploader.BATCHES_DIR, batch_name))
@@ -1015,6 +1072,27 @@ def play_video(batch_name, filename):
     response = send_from_directory(directory, filename)
     response.headers["Accept-Ranges"] = "bytes"
     return response
+
+# ── Upload History ────────────────────────────────────────────────────────────
+import upload_history
+
+@app.route("/api/upload-history")
+def get_upload_history():
+    """Get recent upload history records."""
+    limit = request.args.get("limit", default=200, type=int)
+    records = upload_history.get_history(limit=limit)
+    stats = upload_history.get_stats()
+    return jsonify({"records": records, "stats": stats})
+
+@app.route("/api/upload-history/stats")
+def get_upload_stats():
+    """Get aggregate upload stats."""
+    return jsonify(upload_history.get_stats())
+
+@app.route("/api/submission-tracker")
+def get_submission_tracker():
+    """Track CMS job submissions: which succeeded, which failed, and what videos each contains."""
+    return jsonify(upload_history.get_submission_tracker())
 
 # ── Cross-computer review routes ──────────────────────────────────────────────
 
