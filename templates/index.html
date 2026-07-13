@@ -1209,6 +1209,7 @@
                     <button class="tab-btn" onclick="switchTab('uploaded')">Uploaded <span id="badge-uploaded" class="tab-badge">0</span></button>
                     <button class="tab-btn" onclick="switchTab('failed')">Failed <span id="badge-failed" class="tab-badge" style="background:rgba(255,180,171,0.15);color:var(--md-sys-color-error)">0</span></button>
                     <button class="tab-btn" onclick="switchTab('finalized')">Finalized <span id="badge-finalized" class="tab-badge">0</span></button>
+                    <button class="tab-btn" onclick="switchTab('bfb')" style="background:linear-gradient(135deg,rgba(224,184,229,0.12),rgba(168,184,255,0.08));border:1px solid rgba(224,184,229,0.25)">🍼 BFB <span id="badge-bfb" class="tab-badge" style="background:rgba(224,184,229,0.15);color:var(--md-sys-color-tertiary)">0</span></button>
                 </div>
                 <div class="search-wrapper">
                     <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -1222,6 +1223,7 @@
 
             <div id="batches-container" class="batches-list"></div>
             <div id="notion-reviews-container" class="batches-list" style="display:none;"></div>
+            <div id="bfb-container" class="batches-list" style="display:none;"></div>
         </div>
 
         <div id="log-section" class="log-section">
@@ -1264,6 +1266,16 @@
         let isPipelinePaused = false;
         let isUploadRunning = false;
         let isUploadPaused = false;
+
+        // ── BFB State ───────────────────────────────────────────────
+        let bfbTeachers = [];
+        let bfbVideos = [];
+        let bfbSelectedTeacher = null;
+        let bfbLoading = false;
+        let bfbDownloading = false;
+
+        // ── Global HTML escape ──────────────────────────────────────
+        const esc = (s) => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 
         function copyToClipboard(text, el, event) {
             if (event) event.stopPropagation();
@@ -1530,15 +1542,196 @@
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             event.currentTarget.classList.add('active');
             currentTab = tabName;
+            // Hide all tab containers
+            document.getElementById('batches-container').style.display = 'none';
+            document.getElementById('notion-reviews-container').style.display = 'none';
+            document.getElementById('bfb-container').style.display = 'none';
+
             if (tabName === 'notion-reviews') {
-                document.getElementById('batches-container').style.display = 'none';
                 document.getElementById('notion-reviews-container').style.display = '';
                 fetchNotionReviews();
+            } else if (tabName === 'bfb') {
+                document.getElementById('bfb-container').style.display = '';
+                if (bfbTeachers.length === 0) fetchBfbTeachers();
+                renderBfb();
             } else {
                 document.getElementById('batches-container').style.display = '';
-                document.getElementById('notion-reviews-container').style.display = 'none';
                 renderCurrentTab();
             }
+        }
+
+        // ═════════════════════════════════════════════════════════════
+        //  BFB — Bottle-Fed Billionaires Section
+        // ═════════════════════════════════════════════════════════════
+
+        function fetchBfbTeachers() {
+            fetch('/api/bfb/teachers').then(r => r.json()).then(data => {
+                if (data.ok) {
+                    bfbTeachers = data.teachers || [];
+                    const totalVids = bfbTeachers.reduce((s, t) => s + t.video_count, 0);
+                    document.getElementById('badge-bfb').innerText = totalVids;
+                    renderBfb();
+                }
+            }).catch(e => console.error('BFB teachers fetch failed:', e));
+        }
+
+        function fetchBfbVideos(teacher) {
+            bfbSelectedTeacher = teacher;
+            bfbLoading = true;
+            renderBfb();
+            const url = teacher ? `/api/bfb/videos?teacher=${encodeURIComponent(teacher)}` : '/api/bfb/videos';
+            fetch(url).then(r => r.json()).then(data => {
+                bfbLoading = false;
+                if (data.ok) {
+                    bfbVideos = data.videos || [];
+                }
+                renderBfb();
+            }).catch(e => {
+                bfbLoading = false;
+                console.error('BFB videos fetch failed:', e);
+                renderBfb();
+            });
+        }
+
+        function startBfbDownload(teacher) {
+            if (isPipelineRunning || bfbDownloading) {
+                showToast('error', 'Pipeline Busy', 'Pipeline is already running.');
+                return;
+            }
+            bfbDownloading = true;
+            renderBfb();
+            fetch('/api/bfb/download', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({teacher: teacher || null})
+            }).then(r => r.json()).then(data => {
+                if (data.error) {
+                    showToast('error', 'BFB Error', data.error);
+                    bfbDownloading = false;
+                } else {
+                    showToast('success', 'BFB Download', data.message);
+                    // Pipeline running flag will be set by fetchBatches polling
+                }
+                renderBfb();
+            }).catch(e => {
+                bfbDownloading = false;
+                showToast('error', 'BFB Error', 'Download request failed: ' + e);
+                renderBfb();
+            });
+        }
+
+        function renderBfb() {
+            const container = document.getElementById('bfb-container');
+
+            // Teacher selector cards
+            let teacherCards = '';
+            if (bfbTeachers.length > 0) {
+                teacherCards = bfbTeachers.map(t => {
+                    const isActive = bfbSelectedTeacher === t.teacher;
+                    return `<div onclick="fetchBfbVideos('${t.teacher}')" style="
+                        cursor:pointer; padding:12px 16px; border-radius:var(--md-sys-shape-md);
+                        background:${isActive ? 'linear-gradient(135deg, var(--md-sys-color-primary-container), rgba(168,184,255,0.15))' : 'var(--md-sys-color-surface-container)'};
+                        border:1px solid ${isActive ? 'var(--md-sys-color-primary)' : 'var(--md-sys-color-outline-variant)'};
+                        transition:all 0.2s; flex:1; min-width:140px;
+                    ">
+                        <div style="font-size:0.72rem; color:var(--md-sys-color-outline); font-weight:500; margin-bottom:4px">${esc(t.teacher)}</div>
+                        <div style="display:flex; align-items:baseline; gap:4px">
+                            <span style="font-size:1.5rem; font-weight:700; color:${isActive ? 'var(--md-sys-color-primary)' : 'var(--md-sys-color-on-surface)'}">${t.video_count}</span>
+                            <span style="font-size:0.65rem; color:var(--md-sys-color-outline)">ready</span>
+                        </div>
+                    </div>`;
+                }).join('');
+            } else {
+                teacherCards = '<div style="color:var(--md-sys-color-outline);font-size:0.8rem;padding:12px">Loading teachers...</div>';
+            }
+
+            // "Show All" card
+            const allActive = bfbSelectedTeacher === null && bfbVideos.length > 0;
+            const allCard = `<div onclick="fetchBfbVideos(null)" style="
+                cursor:pointer; padding:12px 16px; border-radius:var(--md-sys-shape-md);
+                background:${allActive ? 'linear-gradient(135deg, rgba(224,184,229,0.2), rgba(168,184,255,0.12))' : 'var(--md-sys-color-surface-container)'};
+                border:1px solid ${allActive ? 'var(--md-sys-color-tertiary)' : 'var(--md-sys-color-outline-variant)'};
+                transition:all 0.2s; min-width:120px;
+            ">
+                <div style="font-size:0.72rem; color:var(--md-sys-color-outline); font-weight:500; margin-bottom:4px">All Teachers</div>
+                <div style="display:flex; align-items:baseline; gap:4px">
+                    <span style="font-size:1.5rem; font-weight:700; color:var(--md-sys-color-tertiary)">${bfbTeachers.reduce((s,t)=>s+t.video_count,0)}</span>
+                    <span style="font-size:0.65rem; color:var(--md-sys-color-outline)">total</span>
+                </div>
+            </div>`;
+
+            // Video list
+            let videoList = '';
+            if (bfbLoading) {
+                videoList = `<div class="empty-state" style="padding:32px">
+                    <span class="spinner" style="width:20px;height:20px;border-width:2px;display:inline-block;margin-bottom:8px"></span>
+                    <p style="font-size:0.82rem">Loading videos from Notion…</p>
+                </div>`;
+            } else if (bfbVideos.length === 0 && bfbSelectedTeacher !== undefined) {
+                videoList = `<div class="empty-state" style="padding:32px">
+                    <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z"/></svg>
+                    <p style="font-size:0.82rem">Select a teacher to view their "Ready To Upload" videos.</p>
+                </div>`;
+            } else if (bfbVideos.length > 0) {
+                videoList = `<div style="overflow-x:auto">
+                    <table style="width:100%;border-collapse:collapse;font-size:0.75rem">
+                        <thead><tr style="border-bottom:1px solid var(--md-sys-color-outline-variant)">
+                            <th style="text-align:left;padding:8px 10px;color:var(--md-sys-color-outline);font-weight:500;font-size:0.68rem">Video</th>
+                            <th style="text-align:left;padding:8px 10px;color:var(--md-sys-color-outline);font-weight:500;font-size:0.68rem">Category</th>
+                            <th style="text-align:left;padding:8px 10px;color:var(--md-sys-color-outline);font-weight:500;font-size:0.68rem">Age</th>
+                            <th style="text-align:left;padding:8px 10px;color:var(--md-sys-color-outline);font-weight:500;font-size:0.68rem">Teacher</th>
+                            <th style="text-align:left;padding:8px 10px;color:var(--md-sys-color-outline);font-weight:500;font-size:0.68rem">Language</th>
+                            <th style="text-align:left;padding:8px 10px;color:var(--md-sys-color-outline);font-weight:500;font-size:0.68rem">Link</th>
+                        </tr></thead>
+                        <tbody>${bfbVideos.map((v, i) => {
+                            const lang = v.lang_suffix === '___ln_Hi' ? 'Hinglish' : v.lang_suffix === '___ln_En' ? 'English' : '—';
+                            const langColor = lang === 'Hinglish' ? '#f59e0b' : lang === 'English' ? '#60a5fa' : '#888';
+                            return `<tr style="border-bottom:1px solid rgba(62,62,67,0.4);transition:background 0.15s" onmouseenter="this.style.background='rgba(168,184,255,0.04)'" onmouseleave="this.style.background=''">
+                                <td style="padding:8px 10px;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(v.video_name)}">${esc(cleanTitle(v.video_name))}</td>
+                                <td style="padding:8px 10px;color:var(--md-sys-color-on-surface-variant)">${esc(v.category || '—')}</td>
+                                <td style="padding:8px 10px"><span style="background:rgba(168,184,255,0.12);color:var(--md-sys-color-primary);padding:2px 8px;border-radius:100px;font-size:0.65rem;font-weight:500">${esc(v.age_group || '—')}</span></td>
+                                <td style="padding:8px 10px;color:var(--md-sys-color-on-surface-variant);font-size:0.7rem">${esc(v.teacher || '—')}</td>
+                                <td style="padding:8px 10px"><span style="color:${langColor};font-weight:500;font-size:0.7rem">${lang}</span></td>
+                                <td style="padding:8px 10px"><a href="${esc(v.drive_link)}" target="_blank" style="color:var(--md-sys-color-primary);text-decoration:none;font-size:0.68rem" title="${esc(v.drive_link)}">🔗 Open</a></td>
+                            </tr>`;
+                        }).join('')}</tbody>
+                    </table>
+                </div>`;
+            }
+
+            // Download button
+            const downloadDisabled = isPipelineRunning || bfbDownloading || bfbVideos.length === 0;
+            const downloadBtnText = bfbDownloading ? '<span class="spinner" style="width:12px;height:12px;border-width:2px;display:inline-block"></span> Downloading...' : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg> Download ${bfbVideos.length} Video${bfbVideos.length !== 1 ? 's' : ''}`;
+
+            container.innerHTML = `
+                <div style="margin-bottom:12px">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+                        <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--md-sys-color-tertiary-container),var(--md-sys-color-primary-container));display:flex;align-items:center;justify-content:center;font-size:16px">🍼</div>
+                        <div>
+                            <h2 style="font-size:1rem;font-weight:600;color:var(--md-sys-color-on-surface);line-height:1.2">Bottle-Fed Billionaires</h2>
+                            <p style="font-size:0.7rem;color:var(--md-sys-color-outline)">Production database — Ready To Upload videos</p>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+                        ${allCard}
+                        ${teacherCards}
+                    </div>
+                </div>
+
+                ${bfbVideos.length > 0 ? `
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding:0 4px">
+                    <span style="font-size:0.78rem;color:var(--md-sys-color-on-surface-variant);font-weight:500">
+                        ${bfbVideos.length} video${bfbVideos.length !== 1 ? 's' : ''} ready
+                        ${bfbSelectedTeacher ? ` for ${esc(bfbSelectedTeacher)}` : ' across all teachers'}
+                    </span>
+                    <button class="btn btn-primary" onclick="startBfbDownload(${bfbSelectedTeacher ? "'" + bfbSelectedTeacher + "'" : 'null'})" ${downloadDisabled ? 'disabled' : ''} style="font-size:0.78rem;padding:8px 16px">
+                        ${downloadBtnText}
+                    </button>
+                </div>
+                ` : ''}
+
+                ${videoList}
+            `;
         }
 
         function fetchNotionReviews() {
@@ -1785,6 +1978,8 @@
                 isPipelinePaused = data.pipeline_paused;
                 isUploadRunning = data.upload_running;
                 isUploadPaused = data.upload_paused;
+                // Reset BFB download flag when pipeline finishes
+                if (!isPipelineRunning && bfbDownloading) bfbDownloading = false;
                 const uploadBatchName = data.upload_batch_name;
                 updateOperationToasts();
 

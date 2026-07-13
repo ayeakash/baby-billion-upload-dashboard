@@ -103,3 +103,15 @@ SELENIUM_WAIT_SEC     = 20
 UPLOAD_RETRY_MAX      = 3
 STATUS_POLL_SEC       = 10
 STATUS_MAX_POLLS      = 30
+
+# ── BFB (Bottle-Fed Billionaires) Production Database ─────────────────────────
+BFB_DATABASE_ID = "25663e60e8f480b89643e7b7953dee50"
+BFB_TEACHERS = ["Ms Pranika", "Ms Nidhi", "Ms Isha", "Ms Donna", "Ms Joy"]
+BFB_PROP_TITLE = "Videos"
+BFB_PROP_FINAL_DRAFT_HINGLISH = "Final Draft Hinglish"
+BFB_PROP_FINAL_DRAFT_ENGLISH  = "Final Draft English"
+BFB_PROP_CATEGORY    = "Category"
+BFB_PROP_AGE_GROUP   = "Age-Group"
+BFB_PROP_UPLOAD_DATE = "Upload Date"
+BFB_PROP_MOVED_TO_UPLOAD = "Moved To Upload"
+BFB_PROP_YT_UPLOAD_URL   = "YT Upload URL"

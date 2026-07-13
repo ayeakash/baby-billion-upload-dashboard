@@ -1073,6 +1073,129 @@ def play_video(batch_name, filename):
     response.headers["Accept-Ranges"] = "bytes"
     return response
 
+# ── BFB (Bottle-Fed Billionaires) API ─────────────────────────────────────────
+import bfb_notion_client
+
+@app.route("/api/bfb/teachers")
+def bfb_teachers():
+    """Return teacher names and their Ready To Upload video counts."""
+    try:
+        summaries = bfb_notion_client.query_bfb_teachers_summary()
+        return jsonify({"ok": True, "teachers": summaries})
+    except Exception as e:
+        log.error(f"Error fetching BFB teacher summary: {e}")
+        return jsonify({"ok": False, "error": str(e), "teachers": []}), 500
+
+@app.route("/api/bfb/videos")
+def bfb_videos():
+    """Return videos in Ready To Upload for a specific teacher (or all)."""
+    teacher = request.args.get("teacher")  # None = all teachers
+    try:
+        videos = bfb_notion_client.query_bfb_ready_to_upload(teacher=teacher)
+        return jsonify({"ok": True, "videos": videos, "total": len(videos)})
+    except Exception as e:
+        log.error(f"Error fetching BFB videos: {e}")
+        return jsonify({"ok": False, "error": str(e), "videos": []}), 500
+
+@app.route("/api/bfb/download", methods=["POST"])
+def bfb_download():
+    """Download selected BFB videos and create batches (same pipeline as AI Sprint)."""
+    data = request.json or {}
+    teacher = data.get("teacher")  # optional filter
+    video_ids = data.get("video_ids")  # optional list of page_ids to download (None = all)
+
+    if batch_manager.pipeline_running:
+        return jsonify({"error": "Pipeline is already running. Stop it first."}), 400
+
+    import threading
+
+    def _bfb_download_thread():
+        batch_manager.pipeline_running = True
+        buf = batch_manager.global_log_buffer
+        buf.write("\n============================================================")
+        buf.write(f"BFB DOWNLOAD: Starting for teacher={teacher or 'ALL'}")
+        buf.write("============================================================\n")
+
+        try:
+            # 1. Fetch videos from BFB database
+            all_videos = bfb_notion_client.query_bfb_ready_to_upload(teacher=teacher)
+            if video_ids:
+                all_videos = [v for v in all_videos if v["page_id"] in video_ids]
+
+            buf.write(f"[BFB] Found {len(all_videos)} video(s) to download")
+
+            if not all_videos:
+                buf.write("[BFB] No videos to download.")
+                return
+
+            # 2. Download each video using the existing downloader
+            import downloader
+            import state_manager as sm
+
+            downloaded = []
+            for i, v in enumerate(all_videos, 1):
+                vname = v["video_name"]
+                link = v["drive_link"]
+                buf.write(f"\n[BFB] [{i}/{len(all_videos)}] Downloading: {vname}")
+                buf.write(f"  Link: {link[:80]}...")
+
+                # Check if already downloaded
+                state_key = v["page_id"] + v.get("lang_suffix", "")
+                existing = sm.get(state_key)
+                if existing and existing.get("pipeline_status") in ("downloaded", "batched", "uploaded"):
+                    buf.write(f"  ⏭ Already processed (status={existing['pipeline_status']})")
+                    continue
+
+                try:
+                    local_path = downloader.download_video(v["page_id"], vname, link)
+                    if local_path and os.path.isfile(local_path):
+                        size_mb = os.path.getsize(local_path) / (1024 * 1024)
+                        buf.write(f"  ✓ Downloaded ({size_mb:.1f} MB)")
+                        v["local_file"] = local_path
+                        downloaded.append(v)
+
+                        # Update state.json
+                        sm.upsert(state_key,
+                                  video_name=v["video_name"],
+                                  page_id=v["page_id"],
+                                  age_group=v.get("age_group", ""),
+                                  category=v.get("category", ""),
+                                  local_file=local_path,
+                                  pipeline_status="downloaded",
+                                  source_db="bfb")
+
+                        # Mark as moved to upload in Notion
+                        bfb_notion_client.mark_bfb_moved_to_upload(v["page_id"])
+                    else:
+                        buf.write(f"  ✗ Download failed or file missing")
+                except Exception as e:
+                    buf.write(f"  ✗ Error: {e}")
+
+            buf.write(f"\n[BFB] Downloaded {len(downloaded)}/{len(all_videos)} videos")
+
+            if downloaded:
+                # 3. Create batches using existing batcher
+                buf.write("\n[BFB] Creating batches from downloaded videos...")
+                import batcher
+                batch_names = batcher.run(downloaded)
+                buf.write(f"[BFB] Created {len(batch_names)} batch(es): {batch_names}")
+
+                # 4. Scan and register batches in the dashboard
+                batch_manager.scan_and_register_batches()
+                buf.write("[BFB] Batches registered in dashboard")
+
+        except Exception as e:
+            buf.write(f"[BFB] ERROR: {e}")
+            log.error(f"BFB download error: {e}")
+        finally:
+            batch_manager.pipeline_running = False
+            batch_manager.active_pipeline_process = None
+            buf.write("\n[BFB] Download pipeline complete.")
+
+    t = threading.Thread(target=_bfb_download_thread, daemon=True)
+    t.start()
+    return jsonify({"message": f"BFB download started for teacher={teacher or 'ALL'}. Monitor logs."})
+
 # ── Upload History ────────────────────────────────────────────────────────────
 import upload_history
 
