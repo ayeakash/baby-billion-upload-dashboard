@@ -1,6 +1,7 @@
 """Debug: dump actual categories page HTML to understand real DOM structure."""
-import sys, time
-sys.path.insert(0, r"d:\BabyBillion\upload_dashboard\pipeline")
+import os, sys, time
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "pipeline"))
+from config import BB_USERNAME, BB_PASSWORD  # from credentials.py / env — never hardcode
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -25,8 +26,8 @@ else:
 # Login
 driver.get(f"{BASE_URL}/login")
 time.sleep(3)
-driver.find_element(By.CSS_SELECTOR, "input[type='text'], input[type='email']").send_keys("ms.bubbles1b@gmail.com")
-driver.find_element(By.CSS_SELECTOR, "input[type='password']").send_keys("zYs9PjPdAdSsMjp")
+driver.find_element(By.CSS_SELECTOR, "input[type='text'], input[type='email']").send_keys(BB_USERNAME)
+driver.find_element(By.CSS_SELECTOR, "input[type='password']").send_keys(BB_PASSWORD)
 driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
 time.sleep(5)
 print(f"After login URL: {driver.current_url}")

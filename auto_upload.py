@@ -130,22 +130,15 @@ def get_next_batch_number() -> int:
 
 
 def load_batches_json() -> dict:
-    """Load batches.json."""
-    if os.path.isfile(BATCHES_JSON):
-        try:
-            with open(BATCHES_JSON, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except Exception:
-            return {}
-    return {}
+    """Load batches.json via batch_manager (locked against the dashboard)."""
+    import batch_manager
+    return batch_manager.load_batches()
 
 
 def save_batches_json(data: dict):
-    """Save batches.json atomically."""
-    tmp = BATCHES_JSON + ".tmp"
-    with open(tmp, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
-    os.replace(tmp, BATCHES_JSON)
+    """Save batches.json via batch_manager (thread + cross-process lock)."""
+    import batch_manager
+    batch_manager.save_batches(data)
 
 
 def scan_videos(source_dir: str) -> list[dict]:

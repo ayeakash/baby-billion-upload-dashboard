@@ -35,6 +35,17 @@ upload_resume_event.set()
 # Event to signal the polling loop to abort immediately
 abort_event = threading.Event()
 
+# ── Lazy import of the repo-root procutils (works both when the dashboard
+#    imports us and when pipeline.py runs standalone from pipeline/) ───────────
+def _procutils():
+    import sys as _sys
+    _root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    if _root not in _sys.path:
+        _sys.path.insert(0, _root)
+    import procutils
+    return procutils
+
+
 # ── Lazy Selenium import ───────────────────────────────────────────────────────
 def _get_selenium():
     try:
@@ -481,24 +492,28 @@ def _do_upload(driver, By, WebDriverWait, EC, NoSuchElementException,
 active_driver = None
 
 def abort():
-    """Immediately stop any running upload. Kill Chrome processes aggressively."""
+    """Immediately stop any running upload.
+
+    Closes ONLY the Selenium-owned browser session (graceful quit, falling
+    back to killing the chromedriver process tree). The user's personal
+    Chrome is never touched.
+    """
     global active_driver
-    import subprocess as sp
     abort_event.set()  # Signal the polling loop to stop immediately
     log.info("Aborting active Selenium upload session...")
 
-    # Force-kill ALL Chrome and chromedriver processes
-    for proc_name in ("chromedriver", "chrome"):
-        try:
-            sp.run(
-                ["taskkill", "/F", "/IM", f"{proc_name}.exe", "/T"],
-                capture_output=True, timeout=5,
-            )
-        except Exception:
-            pass
-
+    driver = active_driver
     active_driver = None
-    log.info("Selenium abort complete — Chrome processes killed.")
+    if driver is not None:
+        _safe_quit_driver(driver)
+
+    # Clean up any leftover chromedriver from a crashed earlier session
+    try:
+        _procutils().kill_selenium_browser()
+    except Exception as e:
+        log.warning(f"Selenium browser cleanup failed: {e}")
+
+    log.info("Selenium abort complete — automation browser closed.")
 
 def run_all(batch_names: list[str], headless: bool = False) -> dict[str, str | None]:
     """
@@ -920,11 +935,10 @@ def _safe_quit_driver(driver, timeout=5):
     if quit_thread.is_alive():
         log.warning(f"  driver.quit() hung for {timeout}s — force-killing Chrome process")
         try:
-            # Get the Chrome PID and kill it
-            import subprocess as sp
+            # Get the chromedriver PID and kill its whole tree (cross-platform)
             if hasattr(driver, 'service') and hasattr(driver.service, 'process') and driver.service.process:
                 pid = driver.service.process.pid
-                sp.run(["taskkill", "/F", "/T", "/PID", str(pid)], capture_output=True, timeout=5)
+                _procutils().kill_process_tree(pid)
         except Exception as e:
             log.debug(f"  Force-kill fallback error: {e}")
     log.info("  Selenium driver closed.")

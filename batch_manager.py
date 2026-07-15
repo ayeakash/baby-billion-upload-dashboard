@@ -24,11 +24,15 @@ import state_manager
 import notion_client
 import uploader
 import zipper
+import procutils
 
 log = logging.getLogger(__name__)
 
 BATCHES_JSON = os.path.join(os.path.dirname(__file__), "batches.json")
 _batches_lock = threading.RLock()  # RLock allows same thread to re-acquire (reentrant)
+
+from fslock import FileLock  # pipeline/fslock.py (pipeline dir is on sys.path)
+_BATCHES_FILE_LOCK = BATCHES_JSON + ".lock"
 
 class LogBuffer:
     def __init__(self, maxlen=2000):
@@ -93,19 +97,25 @@ def load_batches() -> dict:
         return {}
 
 def save_batches(batches: dict):
+    # Thread lock (this process) + file lock (other processes: auto_upload.py,
+    # the pipeline subprocess) — both required to avoid lost updates.
     with _batches_lock:
-        tmp_file = BATCHES_JSON + ".tmp"
         try:
-            with open(tmp_file, "w", encoding="utf-8") as f:
-                json.dump(batches, f, indent=2, ensure_ascii=False)
-            os.replace(tmp_file, BATCHES_JSON)
-        except Exception as e:
-            log.error(f"Error saving batches.json: {e}")
-            if os.path.isfile(tmp_file):
+            with FileLock(_BATCHES_FILE_LOCK, timeout=15):
+                tmp_file = BATCHES_JSON + ".tmp"
                 try:
-                    os.remove(tmp_file)
-                except:
-                    pass
+                    with open(tmp_file, "w", encoding="utf-8") as f:
+                        json.dump(batches, f, indent=2, ensure_ascii=False)
+                    os.replace(tmp_file, BATCHES_JSON)
+                except Exception as e:
+                    log.error(f"Error saving batches.json: {e}")
+                    if os.path.isfile(tmp_file):
+                        try:
+                            os.remove(tmp_file)
+                        except OSError:
+                            pass
+        except TimeoutError as e:
+            log.error(f"batches.json lock timeout — write skipped: {e}")
 
 def get_active_uploaded_batch() -> str | None:
     """Return the name of a batch that has been uploaded but not yet confirmed (Mark Uploaded).
@@ -186,19 +196,31 @@ def scan_and_register_batches():
             changed = True
             log.info(f"Registered new batch: {batch_name} with status {status}")
         else:
-            # Update video list and pipeline statuses in batches.json
+            # Update video list and pipeline statuses in batches.json.
+            # IMPORTANT: preserve batches.json-only fields (redo_reason, manual
+            # 'bad'/'uploaded_pending_final_review' statuses) — they exist only
+            # here, not in state.json, and used to be wiped on every rescan.
             batch_record = batches[batch_name]
+            existing_by_pid = {ev.get("page_id"): ev for ev in batch_record.get("videos", [])}
+            LOCAL_ONLY_STATUSES = {"bad", "uploaded_pending_final_review"}
             updated_videos = []
             for v in v_list:
-                updated_videos.append({
+                prev = existing_by_pid.get(v["page_id"], {})
+                new_status = v.get("pipeline_status", "")
+                if prev.get("pipeline_status") in LOCAL_ONLY_STATUSES:
+                    new_status = prev["pipeline_status"]
+                merged = {
                     "page_id": v["page_id"],
                     "video_name": v.get("video_name", ""),
                     "age_group": v.get("age_group", ""),
                     "category": v.get("category", ""),
                     "local_file": v.get("local_file", ""),
                     "drive_link": v.get("drive_link", ""),
-                    "pipeline_status": v.get("pipeline_status", "")
-                })
+                    "pipeline_status": new_status
+                }
+                if prev.get("redo_reason"):
+                    merged["redo_reason"] = prev["redo_reason"]
+                updated_videos.append(merged)
             batch_record["videos"] = updated_videos
             
             # Sync metadata if it was updated in state.json
@@ -679,7 +701,19 @@ def finalize_batch(batch_name: str) -> tuple[bool, str]:
             global_log_buffer.write(f"[ERROR] Failed to update Notion for {video_name} (ID: {page_id})")
             fail_count += 1
 
-    # 2. Delete local files
+    # 2. Delete local files — ONLY if every good video synced to Notion.
+    #    On partial failure we keep the media so the sync can be retried;
+    #    deleting first made partial failures unrecoverable.
+    if fail_count > 0:
+        b["status"] = "pending_second_review"
+        save_batches(batches)
+        global_log_buffer.write(
+            f"[WARNING] Finalization incomplete for '{batch_name}': "
+            f"{fail_count} Notion sync failure(s). Local files KEPT — fix Notion and finalize again."
+        )
+        return False, (f"Batch '{batch_name}' NOT finalized: {fail_count} Notion sync failure(s). "
+                       f"Local files kept so you can retry.")
+
     global_log_buffer.write(f"[CLEANUP] Deleting local files for batch {batch_name}...")
     for v in b["videos"]:
         local_file = v.get("local_file")
@@ -804,19 +838,18 @@ def stop_pipeline_batching() -> tuple[bool, str]:
         global_log_buffer.write("[ABORT] Stopping pipeline batcher subprocess...")
         # If suspended, resume first so it can terminate properly
         if pipeline_paused:
-            PROCESS_SUSPEND_RESUME = 0x0800
-            handle = ctypes.windll.kernel32.OpenProcess(PROCESS_SUSPEND_RESUME, False, active_pipeline_process.pid)
-            if handle:
-                ctypes.windll.ntdll.NtResumeProcess(handle)
-                ctypes.windll.kernel32.CloseHandle(handle)
+            procutils.resume_process(active_pipeline_process.pid)
             pipeline_paused = False
-            
+
         active_pipeline_process.terminate()
         try:
             active_pipeline_process.wait(timeout=3)
         except subprocess.TimeoutExpired:
             active_pipeline_process.kill()
             active_pipeline_process.wait()
+        # The pipeline may have had a Selenium session open — close only that
+        # automation browser (never the user's own browser).
+        procutils.kill_selenium_browser()
         global_log_buffer.write("[ABORTED] Pipeline batcher stopped by user.")
     except Exception as e:
         log.error(f"Error stopping pipeline batcher: {e}")
@@ -836,19 +869,12 @@ def pause_pipeline_batching() -> tuple[bool, str]:
         
     try:
         global_log_buffer.write("[PAUSE] Pausing pipeline batcher subprocess...")
-        PROCESS_SUSPEND_RESUME = 0x0800
-        handle = ctypes.windll.kernel32.OpenProcess(PROCESS_SUSPEND_RESUME, False, active_pipeline_process.pid)
-        if handle:
-            ret = ctypes.windll.ntdll.NtSuspendProcess(handle)
-            ctypes.windll.kernel32.CloseHandle(handle)
-            if ret == 0:
-                pipeline_paused = True
-                global_log_buffer.write("[PAUSED] Pipeline batcher suspended. Click Resume to continue.")
-                return True, "Pipeline batcher successfully paused."
-            else:
-                return False, f"NtSuspendProcess failed with code {ret}."
-        else:
-            return False, "Failed to open process handle."
+        ok, detail = procutils.suspend_process(active_pipeline_process.pid)
+        if ok:
+            pipeline_paused = True
+            global_log_buffer.write("[PAUSED] Pipeline batcher suspended. Click Resume to continue.")
+            return True, "Pipeline batcher successfully paused."
+        return False, f"Failed to pause pipeline batcher: {detail}"
     except Exception as e:
         log.error(f"Error pausing pipeline batcher: {e}")
         return False, f"Failed to pause pipeline batcher: {e}"
@@ -862,19 +888,12 @@ def resume_pipeline_batching() -> tuple[bool, str]:
         
     try:
         global_log_buffer.write("[RESUME] Resuming pipeline batcher subprocess...")
-        PROCESS_SUSPEND_RESUME = 0x0800
-        handle = ctypes.windll.kernel32.OpenProcess(PROCESS_SUSPEND_RESUME, False, active_pipeline_process.pid)
-        if handle:
-            ret = ctypes.windll.ntdll.NtResumeProcess(handle)
-            ctypes.windll.kernel32.CloseHandle(handle)
-            if ret == 0:
-                pipeline_paused = False
-                global_log_buffer.write("[RESUMED] Pipeline batcher resumed.")
-                return True, "Pipeline batcher successfully resumed."
-            else:
-                return False, f"NtResumeProcess failed with code {ret}."
-        else:
-            return False, "Failed to open process handle."
+        ok, detail = procutils.resume_process(active_pipeline_process.pid)
+        if ok:
+            pipeline_paused = False
+            global_log_buffer.write("[RESUMED] Pipeline batcher resumed.")
+            return True, "Pipeline batcher successfully resumed."
+        return False, f"Failed to resume pipeline batcher: {detail}"
     except Exception as e:
         log.error(f"Error resuming pipeline batcher: {e}")
         return False, f"Failed to resume pipeline batcher: {e}"

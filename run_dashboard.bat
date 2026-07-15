@@ -44,12 +44,12 @@ echo  ============================================================
 echo   BabyBillion Pipeline Dashboard
 echo  ============================================================
 echo.
-echo  Starting Dashboard server on http://127.0.0.1:5000...
+echo  Starting Dashboard server on http://127.0.0.1:5050...
 echo  Press Ctrl+C in this window to stop the server.
 echo.
 
 :: ── Launch browser AFTER a short delay so Flask can start ────
-start /b cmd /c "ping -n 3 127.0.0.1 >nul 2>&1 & start http://127.0.0.1:5000"
+start /b cmd /c "ping -n 3 127.0.0.1 >nul 2>&1 & start http://127.0.0.1:5050"
 
 :: ── Run the Flask app from this directory ────────────────────
 python "%~dp0app.py"

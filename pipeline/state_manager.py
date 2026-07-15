@@ -9,10 +9,26 @@ from __future__ import annotations
 import json
 import os
 import threading
+from contextlib import contextmanager
 from datetime import datetime
 from config import STATE_FILE
+from fslock import FileLock
 
 _lock = threading.Lock()   # serialise all reads + writes across threads
+_FILE_LOCK_PATH = STATE_FILE + ".lock"
+
+
+@contextmanager
+def _state_lock():
+    """Thread lock + cross-process file lock together.
+
+    The threading.Lock alone couldn't stop the Flask dashboard and the
+    pipeline subprocess from clobbering each other's writes (or
+    next_batch_number handing out duplicate batch numbers).
+    """
+    with _lock:
+        with FileLock(_FILE_LOCK_PATH):
+            yield
 
 
 def _load_unlocked() -> dict:
@@ -24,7 +40,7 @@ def _load_unlocked() -> dict:
 
 
 def _load() -> dict:
-    with _lock:
+    with _state_lock():
         return _load_unlocked()
 
 
@@ -76,7 +92,7 @@ def upsert(state_key: str, **fields):
     state_key: The unique key for this record (may include lang suffix).
     fields:    Arbitrary fields to store, including 'page_id' for the real Notion page ID.
     """
-    with _lock:
+    with _state_lock():
         state = _load_unlocked()
         key = _key(state_key)
         if key not in state:
@@ -132,7 +148,7 @@ def get_pending_upload(batch_name: str) -> list[dict]:
 def next_batch_number(count: int = 1) -> int:
     """Atomically reserve `count` batch numbers and return the first one.
     The counter is stored in state.json under the key "_meta"."""
-    with _lock:
+    with _state_lock():
         state = _load_unlocked()
         meta = state.setdefault("_meta", {})
         current = meta.get("batch_counter", 0)

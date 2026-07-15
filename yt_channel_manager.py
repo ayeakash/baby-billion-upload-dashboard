@@ -4,6 +4,7 @@ yt_channel_manager.py — Backend for the YouTube Channel Download Manager.
 Manages multiple YouTube channels: checking for new videos, downloading them,
 and creating upload-ready batches with CSV + ZIP files.
 """
+from __future__ import annotations
 
 import os
 import sys
@@ -131,6 +132,12 @@ def fetch_channel_videos(channel_url: str) -> list[dict]:
     ]
     result = subprocess.run(cmd, capture_output=True, timeout=180)
     stdout = result.stdout.decode('utf-8', errors='replace')
+
+    # A failed yt-dlp run must be an error, not "channel has 0 videos" —
+    # otherwise every tracked video would look 'new' downstream.
+    if result.returncode != 0 and not stdout.strip():
+        stderr = result.stderr.decode('utf-8', errors='replace')[-500:]
+        raise RuntimeError(f"yt-dlp failed (exit {result.returncode}): {stderr.strip()}")
 
     videos = []
     for line in stdout.strip().split('\n'):
@@ -593,20 +600,18 @@ BATCHES_JSON = BASE_DIR / "batches.json"
 
 
 def _load_batches_json() -> dict:
-    if BATCHES_JSON.exists():
-        try:
-            with open(BATCHES_JSON, 'r', encoding='utf-8') as f:
-                return json.load(f)
-        except Exception:
-            return {}
-    return {}
+    """Read batches.json through batch_manager's lock (same-process safety).
+
+    This module used to keep its own unlocked reader/writer, racing the
+    dashboard's upload threads. batch_manager owns batches.json now.
+    """
+    import batch_manager
+    return batch_manager.load_batches()
 
 
 def _save_batches_json(data: dict):
-    tmp = str(BATCHES_JSON) + ".tmp"
-    with open(tmp, 'w', encoding='utf-8') as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
-    os.replace(tmp, str(BATCHES_JSON))
+    import batch_manager
+    batch_manager.save_batches(data)
 
 
 def register_batches_for_upload(ch: dict, batch_names: list[str] | None = None) -> dict:

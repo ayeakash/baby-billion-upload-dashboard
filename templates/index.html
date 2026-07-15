@@ -1264,7 +1264,7 @@
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
                 Pause
             </button>
-            <button class="btn btn-danger" onclick="killAllPython(this)" title="Kill all background Python processes" style="margin-left: 4px; padding: 6px 10px; font-size: 0.78rem; opacity: 0.8;">
+            <button class="btn btn-danger" onclick="killAllPython(this)" title="Shut down the dashboard completely (stops batching + upload; never touches your browser)" style="margin-left: 4px; padding: 6px 10px; font-size: 0.78rem; opacity: 0.8;">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" x2="12" y1="2" y2="12"/></svg>
                 Kill All
             </button>
@@ -1416,8 +1416,10 @@
             fetchBatches();
             syncBatchSize();
             loadCsvOptions();
-            setInterval(fetchBatches, 5000);
-            setInterval(fetchLogs, 1500);
+            window.__pollTimers = [
+                setInterval(fetchBatches, 5000),
+                setInterval(fetchLogs, 1500),
+            ];
             // Ensure console starts collapsed on every page load
             document.getElementById('log-section').classList.remove('expanded');
             document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeVideoModal(); closeDropdown(); } });
@@ -1964,10 +1966,10 @@
                     variants.forEach((v, vi) => {
                         html += `<div class="video-item" style="grid-template-columns:2.5fr 0.6fr 2.5fr 1fr 1fr 1.2fr${vi > 0 ? ';border-top:1px dashed var(--md-sys-color-outline-variant)' : ''}">
                             <div class="video-name-cell" title="${r.page_id}">
-                                ${vi === 0 ? `<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.video_name || '—'}</span>` : `<span style="opacity:0.3;font-size:0.6rem">↳ same page</span>`}
+                                ${vi === 0 ? `<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(r.video_name) || '—'}</span>` : `<span style="opacity:0.3;font-size:0.6rem">↳ same page</span>`}
                             </div>
                             <div class="video-meta-cell"><span style="font-size:0.6rem;font-weight:600;padding:1px 6px;border-radius:4px;background:${v.color}22;color:${v.color};letter-spacing:0.02em">${v.lang}</span></div>
-                            <div class="video-meta-cell" style="color:var(--md-custom-color-success);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${v.title}">${v.title}</div>
+                            <div class="video-meta-cell" style="color:var(--md-custom-color-success);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(v.title)}">${esc(v.title)}</div>
                             <div class="video-meta-cell">${vi === 0 ? (r.age_group || '—') : ''}</div>
                             <div class="video-meta-cell">${vi === 0 ? (r.category || '—') : ''}</div>
                             <div style="display:flex;gap:4px;align-items:center">${vi === 0 ? `<button class="btn btn-primary" style="font-size:0.65rem;padding:0.3rem 0.6rem" onclick="finalizeOneReview('${r.page_id}', this)">Finalize</button><button class="btn" style="font-size:0.65rem;padding:0.3rem 0.5rem;background:var(--md-sys-color-error-container);color:var(--md-sys-color-on-error-container);border:none;cursor:pointer" onclick="rejectOneReview('${r.page_id}', this)" title="Delete — clears Upload Progress so video can be re-downloaded">✕</button>` : ''}</div>
@@ -2223,7 +2225,7 @@
                 if (b.upload_failed) {
                     sc = 'status-error'; sl = 'Failed';
                     if (b.upload_job_id) jb = `<span style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;background:rgba(255,100,100,0.1);padding:2px 6px;border-radius:var(--md-sys-shape-sm);color:var(--md-sys-color-error);cursor:pointer;display:inline-flex;align-items:center;gap:3px" onclick="copyToClipboard('${b.upload_job_id}',this,event)" title="Copy CMS ID: ${b.upload_job_id}"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>${b.upload_job_id.substring(0,8)}…</span>`;
-                    if (b.fail_reason) failBanner = `<div style="margin:0.5rem 0;padding:0.5rem 0.75rem;background:rgba(147,0,10,0.15);border:1px solid rgba(255,180,171,0.2);border-radius:var(--md-sys-shape-sm);font-size:0.72rem;color:var(--md-sys-color-error);display:flex;align-items:center;gap:6px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>${b.fail_reason}</span></div>`;
+                    if (b.fail_reason) failBanner = `<div style="margin:0.5rem 0;padding:0.5rem 0.75rem;background:rgba(147,0,10,0.15);border:1px solid rgba(255,180,171,0.2);border-radius:var(--md-sys-shape-sm);font-size:0.72rem;color:var(--md-sys-color-error);display:flex;align-items:center;gap:6px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>${esc(b.fail_reason)}</span></div>`;
                 } else if (b.status === 'pending_second_review') {
                     sc = 'status-uploaded'; sl = 'Uploaded';
                     if (b.upload_job_id) jb = `<span style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;background:rgba(180,197,255,0.1);padding:2px 6px;border-radius:var(--md-sys-shape-sm);color:var(--md-sys-color-primary);cursor:pointer;display:inline-flex;align-items:center;gap:3px" onclick="copyToClipboard('${b.upload_job_id}',this,event)" title="Copy CMS ID: ${b.upload_job_id}"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>${b.upload_job_id.substring(0,8)}…</span>`;
@@ -2250,11 +2252,10 @@
                         ${renderActionPanel(b)}
                         <div class="video-grid-header"><div>video_name</div><div>categories_name</div><div>age_groups</div><div>channel_name</div><div>tags</div><div>playlist_name</div><div>content_formats</div><div>content_types</div><div style="text-align:right;padding-right:0.4rem">Status</div></div>
                         <div class="video-grid-rows">${b.videos.map(v => {
-                            const esc = (s) => (s||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
                             return `
-                            <div class="video-item${v.pipeline_status === 'bad' ? ' bad' : ''}" ${v.pipeline_status === 'bad' && v.redo_reason ? `title="Re-do reason: ${(v.redo_reason||'').replace(/"/g,'&quot;')}"` : ''}>
+                            <div class="video-item${v.pipeline_status === 'bad' ? ' bad' : ''}" ${v.pipeline_status === 'bad' && v.redo_reason ? `title="Re-do reason: ${esc(v.redo_reason)}"` : ''}>
                                 <div class="video-name-cell">
-                                    ${b.local_folder_exists ? `<button class="play-icon-btn" onclick="playVideo('${b.batch_name}','${v.video_name}.mp4')" title="Preview"><svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></button>` : `<div style="width:22px;height:22px;display:flex;align-items:center;justify-content:center;opacity:0.2"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2"/></svg></div>`}
+                                    ${b.local_folder_exists ? `<button class="play-icon-btn" onclick="playVideo(decodeURIComponent('${encodeURIComponent(b.batch_name)}'),decodeURIComponent('${encodeURIComponent(v.video_name)}')+'.mp4')" title="Preview"><svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></button>` : `<div style="width:22px;height:22px;display:flex;align-items:center;justify-content:center;opacity:0.2"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2"/></svg></div>`}
                                     <div style="display:flex;flex-direction:column;gap:1px;min-width:0">
                                         <div class="video-meta-cell" style="font-weight:500" title="${esc(v.video_name)}">${esc(v.video_name)}</div>
                                         <span style="font-family:'JetBrains Mono',monospace;font-size:0.55rem;color:var(--md-sys-color-outline);cursor:pointer;display:inline-flex;align-items:center;gap:3px;padding:1px 3px;border-radius:3px;background:rgba(255,255,255,0.03)" onclick="copyToClipboard('${v.page_id}',this,event)" title="Copy Page ID">${v.page_id}</span>
@@ -2324,7 +2325,7 @@
 
             if (batch.upload_failed) {
                 return `<div class="batch-action-panel" style="border-color:rgba(255,180,171,0.2)">
-                    <div class="panel-info"><span class="panel-info-title" style="color:var(--md-sys-color-error)">Upload Failed</span><span class="panel-info-value">${batch.fail_reason || 'Upload did not complete successfully.'}</span></div>
+                    <div class="panel-info"><span class="panel-info-title" style="color:var(--md-sys-color-error)">Upload Failed</span><span class="panel-info-value">${esc(batch.fail_reason) || 'Upload did not complete successfully.'}</span></div>
                     <div class="panel-actions">
                         ${batch.local_folder_exists ? `<button class="btn btn-secondary" onclick="openBatchFolder('${batch.batch_name}')">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> Open</button>` : ''}
@@ -2444,15 +2445,23 @@
             }
             delete btn.dataset.confirmKill;
             btn.disabled = true;
-            btn.innerHTML = '<span class="spinner"></span> Killing...';
-            appendTerminalText('\n[SYSTEM] Killing all Python processes...\n');
+            btn.innerHTML = '<span class="spinner"></span> Shutting down...';
+            appendTerminalText('\n[SYSTEM] Shutting down the dashboard...\n');
             fetch('/api/kill-all-python', {method:'POST'})
                 .then(r => r.json()).then(d => {
-                    appendTerminalText(d.error ? `[ERROR] ${d.error}\n` : `[SUCCESS] ${d.message}\n`);
-                    btn.disabled = false;
-                    btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" x2="12" y1="2" y2="12"/></svg> Kill All';
-                    btn.style.opacity = '0.8';
-                    fetchBatches();
+                    if (d.error) {
+                        appendTerminalText(`[ERROR] ${d.error}\n`);
+                        btn.disabled = false;
+                        btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" x2="12" y1="2" y2="12"/></svg> Kill All';
+                        btn.style.opacity = '0.8';
+                        return;
+                    }
+                    // Server is exiting — freeze the UI instead of polling a dead server
+                    appendTerminalText(`[SUCCESS] ${d.message}\n`);
+                    showToast('success', 'Dashboard Shut Down', 'Server stopped. Restart with run_dashboard.sh / .bat');
+                    btn.innerHTML = 'Server stopped';
+                    document.title = '⏹ BabyBillion Pipeline (stopped)';
+                    if (window.__pollTimers) window.__pollTimers.forEach(t => clearInterval(t));
                 }).catch(e => { appendTerminalText(`[ERROR] ${e}\n`); btn.disabled = false; });
         }
 
@@ -2495,8 +2504,8 @@
         function stopActiveOperation() {
             const b = document.getElementById('stop-btn'); if (b.disabled) return;
             b.disabled = true; b.innerHTML = `<span class="spinner"></span> Stopping...`;
-            const tid = showToast('progress', 'Stopping Everything', 'Killing all processes…');
-            appendTerminalText(`\n[SYSTEM] Stopping everything...\n`);
+            const tid = showToast('progress', 'Stopping', 'Stopping batching / upload… (your browser is not touched)');
+            appendTerminalText(`\n[SYSTEM] Stopping batching / upload...\n`);
             fetch('/api/stop-everything', {method:'POST'}).then(r=>r.json()).then(d => {
                 appendTerminalText(d.error ? `[ERROR] ${d.error}\n` : `[SUCCESS] ${d.message}\n`);
                 if (d.error) updateToast(tid, 'error', 'Stop Failed', d.error);

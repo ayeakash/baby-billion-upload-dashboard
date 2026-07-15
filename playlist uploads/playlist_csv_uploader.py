@@ -52,8 +52,16 @@ LOG_FILE = SCRIPT_DIR / "playlist_upload_log.txt"
 BASE_URL = "https://cms-v1.d148rwrq639wa8.amplifyapp.com"
 LOGIN_URL = f"{BASE_URL}/login"
 CATEGORIES_URL = f"{BASE_URL}/dashboard/cms/categories"
-USERNAME = "ms.bubbles1b@gmail.com"
-PASSWORD = "zYs9PjPdAdSsMjp"
+# Credentials come from pipeline/credentials.py (gitignored) or env vars.
+# NEVER hardcode them here — this file is committed to a public repo.
+sys.path.insert(0, str(SCRIPT_DIR.parent / "pipeline"))
+try:
+    from config import BB_USERNAME as USERNAME, BB_PASSWORD as PASSWORD
+except ImportError:
+    USERNAME = os.environ.get("BB_USERNAME", "")
+    PASSWORD = os.environ.get("BB_PASSWORD", "")
+if not USERNAME or not PASSWORD:
+    raise SystemExit("Set BB_USERNAME/BB_PASSWORD in pipeline/credentials.py or env vars.")
 
 # CSV filename stem -> exact dashboard category name
 # (only for names that DON'T match after simple underscore->space conversion)

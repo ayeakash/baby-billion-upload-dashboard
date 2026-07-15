@@ -686,7 +686,7 @@ def run_parallel_pipeline(all_videos: list[dict], headless: bool = False, skip_u
                             raise RuntimeError("Notion writeback returned False")
                     except Exception as notion_err:
                         log.warning(
-                            f"    [WARN] Notion update failed for {pid}: {notion_err} "
+                            f"    [WARN] Notion update failed for {state_key}: {notion_err} "
                             f"-- queuing for synchronous retry before pipeline exits"
                         )
                         with _notion_retry_lock:

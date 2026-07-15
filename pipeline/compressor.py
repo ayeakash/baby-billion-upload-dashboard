@@ -163,18 +163,26 @@ def compress(page_id: str, video_name: str, local_file: str) -> str | None:
             "-movflags", "+faststart",
             tmp_file,
         ]
+        crf_ok = False
         try:
-            subprocess.run(crf_cmd, stdout=subprocess.DEVNULL,
-                           stderr=subprocess.DEVNULL, timeout=600)
+            crf_result = subprocess.run(crf_cmd, stdout=subprocess.DEVNULL,
+                                        stderr=subprocess.DEVNULL, timeout=600)
+            crf_ok = crf_result.returncode == 0
         except Exception:
-            pass
+            crf_ok = False
 
-        if os.path.isfile(tmp_file):
+        # A timed-out/failed ffmpeg leaves a PARTIAL tmp file — never promote it.
+        if crf_ok and os.path.isfile(tmp_file) and os.path.getsize(tmp_file) > 1024:
             result_size    = os.path.getsize(tmp_file)
             result_size_mb = result_size / (1024 * 1024)
             log.info(f"    CRF 32 result: {result_size_mb:.1f} MB")
         else:
-            log.error(f"  [COMPRESS] CRF fallback also failed — using original")
+            log.error(f"  [COMPRESS] CRF fallback failed or incomplete — using original")
+            if os.path.isfile(tmp_file):
+                try:
+                    os.remove(tmp_file)
+                except OSError:
+                    pass
             return local_file
 
     # ── Replace original with compressed ─────────────────────────────────────

@@ -96,22 +96,27 @@ def log_batch(
         )
 
 
-def get_history(limit: int = 500) -> list[dict]:
-    """Read the most recent N records from the history file."""
+def _iter_records():
+    """Yield each valid JSON record from the history file (shared reader)."""
     if not os.path.isfile(HISTORY_FILE):
-        return []
-    records = []
+        return
     try:
         with open(HISTORY_FILE, "r", encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
-                if line:
-                    try:
-                        records.append(json.loads(line))
-                    except json.JSONDecodeError:
-                        continue
-    except Exception:
-        return []
+                if not line:
+                    continue
+                try:
+                    yield json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+    except OSError:
+        return
+
+
+def get_history(limit: int = 500) -> list[dict]:
+    """Read the most recent N records from the history file."""
+    records = list(_iter_records())
     # Return most recent first, capped at limit
     return list(reversed(records[-limit:]))
 
@@ -127,33 +132,21 @@ def get_stats() -> dict:
     by_source = {}
     by_date = {}
 
-    try:
-        with open(HISTORY_FILE, "r", encoding="utf-8") as f:
-            for line in f:
-                line = line.strip()
-                if not line:
-                    continue
-                try:
-                    rec = json.loads(line)
-                except json.JSONDecodeError:
-                    continue
+    for rec in _iter_records():
+        total += 1
+        s = rec.get("status", "")
+        if s in ("uploaded", "submitted"):
+            uploaded += 1
+        elif "failed" in s:
+            failed += 1
 
-                total += 1
-                s = rec.get("status", "")
-                if s in ("uploaded", "submitted"):
-                    uploaded += 1
-                elif "failed" in s:
-                    failed += 1
+        src = rec.get("source", "unknown")
+        by_source[src] = by_source.get(src, 0) + 1
 
-                src = rec.get("source", "unknown")
-                by_source[src] = by_source.get(src, 0) + 1
-
-                ts = rec.get("timestamp", "")
-                if ts:
-                    day = ts[:10]
-                    by_date[day] = by_date.get(day, 0) + 1
-    except Exception:
-        pass
+        ts = rec.get("timestamp", "")
+        if ts:
+            day = ts[:10]
+            by_date[day] = by_date.get(day, 0) + 1
 
     return {
         "total": total,
@@ -187,40 +180,27 @@ def get_submission_tracker() -> list[dict]:
 
     # Group by (batch_name, job_id) — each is one submission attempt
     jobs = {}
-    try:
-        with open(HISTORY_FILE, "r", encoding="utf-8") as f:
-            for line in f:
-                line = line.strip()
-                if not line:
-                    continue
-                try:
-                    rec = json.loads(line)
-                except json.JSONDecodeError:
-                    continue
+    for rec in _iter_records():
+        batch = rec.get("batch_name", "")
+        job_id = rec.get("job_id", "")
+        key = f"{batch}|{job_id}"
 
-                batch = rec.get("batch_name", "")
-                job_id = rec.get("job_id", "")
-                key = f"{batch}|{job_id}"
+        if key not in jobs:
+            jobs[key] = {
+                "job_id": job_id,
+                "batch_name": batch,
+                "status": rec.get("status", "unknown"),
+                "timestamp": rec.get("timestamp", ""),
+                "source": rec.get("source", "unknown"),
+                "video_count": 0,
+                "videos": [],
+                "fail_reason": rec.get("fail_reason", ""),
+            }
 
-                if key not in jobs:
-                    jobs[key] = {
-                        "job_id": job_id,
-                        "batch_name": batch,
-                        "status": rec.get("status", "unknown"),
-                        "timestamp": rec.get("timestamp", ""),
-                        "source": rec.get("source", "unknown"),
-                        "video_count": 0,
-                        "videos": [],
-                        "fail_reason": rec.get("fail_reason", ""),
-                    }
-
-                jobs[key]["video_count"] += 1
-                vname = rec.get("video_name", "")
-                if vname and vname not in jobs[key]["videos"]:
-                    jobs[key]["videos"].append(vname)
-
-    except Exception:
-        return []
+        jobs[key]["video_count"] += 1
+        vname = rec.get("video_name", "")
+        if vname and vname not in jobs[key]["videos"]:
+            jobs[key]["videos"].append(vname)
 
     # Sort newest first
     result = sorted(jobs.values(), key=lambda j: j["timestamp"], reverse=True)

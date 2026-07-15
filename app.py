@@ -4,11 +4,12 @@ app.py -- Flask server for the BabyBillion Pipeline Web Dashboard.
 from __future__ import annotations
 
 import logging
-from flask import Flask, jsonify, request, send_from_directory, render_template
+from flask import Flask, jsonify, request, send_from_directory, render_template, abort
 from datetime import datetime, date
 
 # ── Add local pipeline/ to sys.path so we can import shared modules ──────────
 import os
+import re as _re
 import sys
 _PIPELINE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "pipeline")
 if _PIPELINE_DIR not in sys.path:
@@ -22,8 +23,67 @@ log = logging.getLogger(__name__)
 import config
 import batch_manager
 import uploader
+import procutils
 
 app = Flask(__name__, template_folder="templates")
+
+# ── Safety helpers ────────────────────────────────────────────────────────────
+_BATCH_NAME_RE = _re.compile(r"^[A-Za-z0-9][A-Za-z0-9 ._-]*$")
+
+def _require_safe_batch_name(batch_name: str) -> str:
+    """Reject batch names that could escape BATCHES_DIR (path traversal)."""
+    if not batch_name or ".." in batch_name or not _BATCH_NAME_RE.match(batch_name):
+        abort(400, description=f"Invalid batch name: {batch_name!r}")
+    return batch_name
+
+def _safe_filename_component(value: str) -> str:
+    """Strip path separators / traversal from a user-supplied filename stem."""
+    value = value.replace("/", "_").replace("\\", "_").replace("\x00", "")
+    value = value.replace("..", "_").strip()
+    return value
+
+def _reset_batch_for_retry(batch_name: str) -> tuple[bool, str]:
+    """Clear a batch's failed state and move it back to pending review."""
+    batches = batch_manager.load_batches()
+    if batch_name not in batches:
+        return False, f"Batch '{batch_name}' not found."
+    b = batches[batch_name]
+    b["upload_failed"] = False
+    b["fail_reason"] = None
+    b["status"] = "pending_first_review"
+    b["upload_completed"] = False
+    for v in b.get("videos", []):
+        if v.get("pipeline_status") in ("upload_failed", "uploaded_approval_failed"):
+            v["pipeline_status"] = "batched"
+    batch_manager.save_batches(batches)
+    return True, f"Batch '{batch_name}' moved back to Pending Review for retry."
+
+# ── CSRF guard: destructive POSTs must come from our own page (or a local
+#    tool like curl, which sends no Origin header). A cross-site page in the
+#    user's browser always sends its own Origin and gets rejected.
+@app.before_request
+def _reject_cross_site_posts():
+    if request.method != "POST":
+        return None
+    origin = request.headers.get("Origin", "")
+    if not origin:
+        return None  # curl / same-machine scripts
+    from urllib.parse import urlparse
+    host = urlparse(origin).hostname or ""
+    if host not in ("127.0.0.1", "localhost"):
+        log.warning(f"Blocked cross-site POST from Origin={origin} to {request.path}")
+        return jsonify({"error": "Cross-site requests are not allowed."}), 403
+    return None
+
+@app.route("/api/health")
+def health():
+    """Lightweight liveness/status probe."""
+    return jsonify({
+        "ok": True,
+        "pipeline_running": batch_manager.pipeline_running,
+        "upload_running": batch_manager.upload_running,
+        "time": datetime.now().isoformat(),
+    })
 
 # Disable browser caching so HTML/JS changes are always picked up
 @app.after_request
@@ -244,10 +304,13 @@ def csv_options():
 def update_csv(batch_name):
     """Update a single field in a batch's CSV file."""
     import csv as csv_mod
+    _require_safe_batch_name(batch_name)
     data = request.json or {}
     video_name = data.get("video_name")
     field = data.get("field")
     value = data.get("value", "")
+    if field == "video_name":
+        value = _safe_filename_component(value)
 
     allowed_fields = {"video_name", "age_groups", "categories_name", "playlist_name",
                       "channel_name", "tags", "content_formats", "content_types"}
@@ -305,6 +368,7 @@ def update_csv(batch_name):
 @app.route("/api/batches/<batch_name>/regenerate-csv", methods=["POST"])
 def regenerate_csv(batch_name):
     """Delete the CSV and regenerate it from the batch folder using category mapping."""
+    _require_safe_batch_name(batch_name)
     import csv as csv_mod
     import re as _re
     from category_mapper import get_category_fields, _normalize_age
@@ -478,6 +542,7 @@ def regenerate_csv(batch_name):
 @app.route("/api/batches/<batch_name>/force-compress", methods=["POST"])
 def force_compress_batch(batch_name):
     """Force-compress all MP4s in a batch folder using ffmpeg, ignoring size checks."""
+    _require_safe_batch_name(batch_name)
     import threading
 
     batch_dir = os.path.join(uploader.BATCHES_DIR, batch_name)
@@ -560,6 +625,7 @@ def force_compress_batch(batch_name):
 @app.route("/api/batches/<batch_name>/delete", methods=["POST"])
 def delete_batch(batch_name):
     """Delete a batch: stop upload if running, remove files, reset state."""
+    _require_safe_batch_name(batch_name)
     import shutil
     import state_manager as sm
 
@@ -696,6 +762,7 @@ def delete_all_batches():
 @app.route("/api/batches/<batch_name>/clear-local", methods=["POST"])
 def clear_local_batch(batch_name):
     """Clear a batch from local storage and UI only — does NOT touch Notion."""
+    _require_safe_batch_name(batch_name)
     import shutil
     import state_manager as sm
 
@@ -838,44 +905,47 @@ def stop_pipeline():
         return jsonify({"error": msg}), 400
     return jsonify({"message": msg})
 
+def _reset_run_flags():
+    """Reset all of batch_manager's run-state flags."""
+    batch_manager.pipeline_running = False
+    batch_manager.active_pipeline_process = None
+    batch_manager.pipeline_paused = False
+    batch_manager.upload_running = False
+    batch_manager.upload_batch_name = None
+    batch_manager.upload_paused = False
+
 @app.route("/api/kill-all-python", methods=["POST"])
 def kill_all_python():
-    """Kill all other Python processes on this machine, then restart self."""
-    import subprocess as sp
-    my_pid = os.getpid()
+    """KILL: shut the whole dashboard program down.
+
+    Stops the pipeline subprocess and the Selenium upload (closing only the
+    automation browser — the user's own browser is never touched), then exits
+    this server process. The response is sent before the exit fires.
+    """
+    import threading
     try:
-        # Get list of all python PIDs
-        result = sp.run(
-            ["powershell", "-Command",
-             f"Get-Process python* -ErrorAction SilentlyContinue | Where-Object {{ $_.Id -ne {my_pid} }} | Select-Object -ExpandProperty Id"],
-            capture_output=True, text=True, timeout=5
-        )
-        pids = [p.strip() for p in result.stdout.strip().split("\n") if p.strip()]
-        killed = 0
-        for pid in pids:
+        if batch_manager.pipeline_running:
             try:
-                sp.run(["taskkill", "/F", "/PID", pid], capture_output=True, timeout=5)
-                killed += 1
-            except Exception:
-                pass
-        # Reset internal pipeline state
-        batch_manager.pipeline_running = False
-        batch_manager.active_pipeline_process = None
-        batch_manager.pipeline_paused = False
-        # Reset internal upload state
-        batch_manager.upload_running = False
-        batch_manager.upload_batch_name = None
-        batch_manager.upload_paused = False
-        # Also kill Chrome/chromedriver
-        for proc in ("chromedriver", "chrome"):
+                batch_manager.stop_pipeline_batching()
+            except Exception as e:
+                log.warning(f"Pipeline stop during shutdown: {e}")
+        if batch_manager.upload_running:
             try:
-                sp.run(["taskkill", "/F", "/IM", f"{proc}.exe", "/T"], capture_output=True, timeout=5)
-            except Exception:
-                pass
-        batch_manager.global_log_buffer.write(f"\n[SYSTEM] Killed {killed} Python process(es) + Chrome. Dashboard still running (PID {my_pid}).")
-        return jsonify({"message": f"Killed {killed} Python process(es) + Chrome. Dashboard still running."})
+                batch_manager.stop_automated_upload()
+            except Exception as e:
+                log.warning(f"Upload stop during shutdown: {e}")
+        procutils.kill_selenium_browser()
+        _reset_run_flags()
+        batch_manager.global_log_buffer.write("\n[SYSTEM] Dashboard shutting down (Kill pressed).")
+        log.info("Kill requested — shutting down dashboard.")
+
+        # Exit after the response has gone out
+        threading.Timer(0.8, lambda: os._exit(0)).start()
+        return jsonify({"message": "Dashboard shut down. Close this tab — restart with run_dashboard.sh.",
+                        "shutdown": True})
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        log.error(f"kill_all_python failed: {e}")
+        return jsonify({"error": "Failed to shut down — see server logs."}), 500
 
 @app.route("/api/batches/stop-upload", methods=["POST"])
 def stop_upload():
@@ -886,19 +956,23 @@ def stop_upload():
 
 @app.route("/api/stop-everything", methods=["POST"])
 def stop_everything():
-    """Nuclear stop: kill pipeline, upload, Chrome, reset all state."""
-    import subprocess as sp
+    """STOP: end the running work (batching / uploading), keep the dashboard up.
+
+    Only the Selenium automation browser is closed (via stop_automated_upload
+    → uploader.abort). The user's own browser and other programs are never
+    touched.
+    """
     msgs = []
 
-    # 1. Stop pipeline
+    # 1. Stop pipeline (terminates the batching subprocess)
     if batch_manager.pipeline_running:
         try:
             batch_manager.stop_pipeline_batching()
-            msgs.append("Pipeline stopped")
+            msgs.append("Batching stopped")
         except Exception as e:
             msgs.append(f"Pipeline stop error: {e}")
 
-    # 2. Stop upload
+    # 2. Stop upload (closes the Selenium session only)
     if batch_manager.upload_running:
         try:
             batch_manager.stop_automated_upload()
@@ -906,45 +980,12 @@ def stop_everything():
         except Exception as e:
             msgs.append(f"Upload stop error: {e}")
 
-    # 3. Force-kill Chrome/chromedriver
-    for proc in ("chromedriver", "chrome"):
-        try:
-            sp.run(["taskkill", "/F", "/IM", f"{proc}.exe", "/T"],
-                   capture_output=True, timeout=5)
-        except Exception:
-            pass
-    msgs.append("Chrome killed")
-
-    # 4. Kill any other python processes (not us)
-    my_pid = os.getpid()
-    try:
-        result = sp.run(
-            ["powershell", "-Command",
-             f"Get-Process python* -ErrorAction SilentlyContinue | Where-Object {{ $_.Id -ne {my_pid} }} | Select-Object -ExpandProperty Id"],
-            capture_output=True, text=True, timeout=5
-        )
-        pids = [p.strip() for p in result.stdout.strip().split("\n") if p.strip()]
-        for pid in pids:
-            try:
-                sp.run(["taskkill", "/F", "/PID", pid], capture_output=True, timeout=5)
-            except Exception:
-                pass
-        if pids:
-            msgs.append(f"Killed {len(pids)} Python process(es)")
-    except Exception:
-        pass
-
-    # 5. Reset all flags
-    batch_manager.pipeline_running = False
-    batch_manager.active_pipeline_process = None
-    batch_manager.pipeline_paused = False
-    batch_manager.upload_running = False
-    batch_manager.upload_batch_name = None
-    batch_manager.upload_paused = False
+    # 3. Reset all flags
+    _reset_run_flags()
 
     summary = "; ".join(msgs) if msgs else "Nothing was running"
-    batch_manager.global_log_buffer.write(f"\n[STOP] Everything stopped: {summary}")
-    return jsonify({"message": f"All stopped. {summary}"})
+    batch_manager.global_log_buffer.write(f"\n[STOP] {summary}")
+    return jsonify({"message": summary})
 
 @app.route("/api/batches/pause-pipeline", methods=["POST"])
 def pause_pipeline():
@@ -1025,34 +1066,26 @@ def retry_batch(batch_name):
     batches = batch_manager.load_batches()
     if batch_name not in batches:
         return jsonify({"error": f"Batch '{batch_name}' not found."}), 400
-    b = batches[batch_name]
-    if not b.get("upload_failed"):
+    if not batches[batch_name].get("upload_failed"):
         return jsonify({"error": f"Batch '{batch_name}' is not in failed state."}), 400
-    # Reset failure state
-    b["upload_failed"] = False
-    b["fail_reason"] = None
-    b["status"] = "pending_first_review"
-    b["upload_completed"] = False
-    for v in b.get("videos", []):
-        if v.get("pipeline_status") in ("upload_failed", "uploaded_approval_failed"):
-            v["pipeline_status"] = "batched"
-    batch_manager.save_batches(batches)
+    ok, msg = _reset_batch_for_retry(batch_name)
+    if not ok:
+        return jsonify({"error": msg}), 400
     log.info(f"Batch '{batch_name}' retry: cleared failure, moved back to pending.")
-    return jsonify({"message": f"Batch '{batch_name}' moved back to Pending Review for retry."})
+    return jsonify({"message": msg})
 
 @app.route("/api/batches/<batch_name>/open-folder", methods=["POST"])
 def open_folder(batch_name):
+    _require_safe_batch_name(batch_name)
     batch_dir = os.path.abspath(os.path.join(uploader.BATCHES_DIR, batch_name))
     if not os.path.isdir(batch_dir):
         return jsonify({"error": f"Folder {batch_dir} does not exist."}), 404
-    
-    try:
-        # Windows-specific folder open
-        os.startfile(batch_dir)
-        return jsonify({"message": f"Opened folder '{batch_name}' in Windows Explorer."})
-    except Exception as e:
-        log.error(f"Failed to open folder {batch_dir}: {e}")
-        return jsonify({"error": f"Failed to open folder: {str(e)}"}), 500
+
+    ok, msg = procutils.open_in_file_manager(batch_dir)
+    if ok:
+        return jsonify({"message": f"Opened folder '{batch_name}' in the file manager."})
+    log.error(f"Failed to open folder {batch_dir}: {msg}")
+    return jsonify({"error": msg}), 500
 
 @app.route("/api/logs")
 def get_logs():
@@ -1066,7 +1099,11 @@ def get_logs():
 
 @app.route("/videos/<batch_name>/<filename>")
 def play_video(batch_name, filename):
+    _require_safe_batch_name(batch_name)
     directory = os.path.abspath(os.path.join(uploader.BATCHES_DIR, batch_name))
+    # Containment check: resolved dir must stay inside BATCHES_DIR
+    if not directory.startswith(os.path.abspath(uploader.BATCHES_DIR) + os.sep):
+        return "Invalid batch path", 400
     if not os.path.isdir(directory):
         return "Batch folder not found", 404
     # Set headers correctly to allow video streaming (seeking)
@@ -1602,14 +1639,8 @@ def yt_channels_stop_upload():
     """Stop the upload pipeline."""
     success, msg = batch_manager.stop_automated_upload()
     if not success:
-        # Try harder
-        import subprocess as sp
-        for proc in ("chromedriver", "chrome"):
-            try:
-                sp.run(["taskkill", "/F", "/IM", f"{proc}.exe", "/T"],
-                       capture_output=True, timeout=5)
-            except Exception:
-                pass
+        # Try harder — close only the Selenium automation browser
+        procutils.kill_selenium_browser()
         batch_manager.upload_running = False
         batch_manager.upload_batch_name = None
         batch_manager.upload_paused = False
@@ -1627,18 +1658,9 @@ def yt_channels_single_upload(batch_name):
 @app.route("/api/yt-channels/batch/<batch_name>/retry", methods=["POST"])
 def yt_channels_batch_retry(batch_name):
     """Retry a failed batch."""
-    batches = batch_manager.load_batches()
-    if batch_name not in batches:
-        return jsonify({"error": f"Batch '{batch_name}' not found."}), 404
-    b = batches[batch_name]
-    b["upload_failed"] = False
-    b["fail_reason"] = None
-    b["status"] = "pending_first_review"
-    b["upload_completed"] = False
-    for v in b.get("videos", []):
-        if v.get("pipeline_status") in ("upload_failed", "uploaded_approval_failed"):
-            v["pipeline_status"] = "batched"
-    batch_manager.save_batches(batches)
+    ok, msg = _reset_batch_for_retry(batch_name)
+    if not ok:
+        return jsonify({"error": msg}), 404
     return jsonify({"ok": True, "message": f"Batch '{batch_name}' reset for retry."})
 
 @app.route("/api/yt-channels/batch/<batch_name>/finalize", methods=["POST"])

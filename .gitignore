@@ -49,3 +49,15 @@ scratch_*.py
 
 re-upload batches/
 
+# ── YouTube channel-manager runtime data ─────────────────
+youtube/
+yt_channels.json
+*_registry.csv
+*_downloads/
+*_batches/
+cms_scraped.json
+
+# ── Lock files (fslock) ───────────────────────────────────
+*.lock
+*.tmp
+
