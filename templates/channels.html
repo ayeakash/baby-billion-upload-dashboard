@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Channels — BabyBillion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0D0D11; --surface: #161619; --surface-high: #1C1B20;
+            --surface-highest: #262529; --surface-bright: #313035;
+            --on-surface: #E6E3E8; --on-surface-dim: #CAC8CE;
+            --outline: #918F96; --outline-dim: #3E3E43;
+            --primary: #A8B8FF; --primary-container: #2D3F6E; --on-primary: #162454;
+            --primary-glow: rgba(168,184,255,0.12);
+            --success: #7EDBA5; --success-dim: rgba(126,219,165,0.12);
+            --warning: #F0C878; --warning-dim: rgba(240,200,120,0.12);
+            --error: #FFB4AB; --error-dim: rgba(255,180,171,0.12);
+            --tertiary: #E0B8E5; --tertiary-container: #573E5C;
+            --cyan: #80D8D0; --cyan-dim: rgba(128,216,208,0.12);
+            --r-sm: 8px; --r-md: 12px; --r-lg: 16px; --r-xl: 24px; --r-full: 100px;
+            --shadow-1: 0 1px 3px 1px rgba(0,0,0,0.2), 0 1px 2px 0 rgba(0,0,0,0.35);
+            --shadow-2: 0 2px 6px 2px rgba(0,0,0,0.2), 0 1px 2px 0 rgba(0,0,0,0.35);
+            --shadow-3: 0 6px 16px 4px rgba(0,0,0,0.25);
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--on-surface); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+        /* ═══ TOPBAR ═══ */
+        .topbar { display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; height: 54px; background: linear-gradient(135deg, rgba(22,21,27,0.94), rgba(16,15,20,0.97)); backdrop-filter: blur(20px) saturate(1.5); border-bottom: 1px solid rgba(168,184,255,0.08); position: sticky; top: 0; z-index: 100; }
+        .topbar-left { display: flex; align-items: center; gap: 10px; }
+        .topbar-icon { width: 32px; height: 32px; border-radius: 9px; background: linear-gradient(135deg, var(--primary-container), var(--tertiary-container)); display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 12px rgba(168,184,255,0.15); }
+        .topbar-icon svg { width: 16px; height: 16px; stroke: var(--primary); fill: none; stroke-width: 2; }
+        .topbar h1 { font-size: 0.92rem; font-weight: 600; }
+        .topbar .sub { font-size: 0.65rem; color: var(--outline); }
+        .topbar-right { display: flex; gap: 0.5rem; align-items: center; }
+
+        /* NAV */
+        .nav-menu-wrapper { position: relative; }
+        .nav-btn { width: 32px; height: 32px; border-radius: 7px; background: var(--surface-high); border: 1px solid var(--outline-dim); color: var(--on-surface-dim); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .nav-btn:hover { background: var(--surface-highest); border-color: var(--outline); }
+        .nav-btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
+        .nav-dd { display: none; position: absolute; top: calc(100% + 5px); left: 0; z-index: 999; background: var(--surface-high); border: 1px solid var(--outline-dim); border-radius: var(--r-md); min-width: 210px; box-shadow: var(--shadow-3); overflow: hidden; animation: ddIn 0.12s ease; }
+        .nav-dd.open { display: block; }
+        @keyframes ddIn { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; } }
+        .nav-dd-head { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--outline-dim); font-size: 0.62rem; font-weight: 600; color: var(--outline); text-transform: uppercase; letter-spacing: 0.06em; }
+        .nav-dd a { display: flex; align-items: center; gap: 8px; padding: 0.55rem 0.75rem; color: var(--on-surface); text-decoration: none; font-size: 0.78rem; font-weight: 500; transition: background 0.15s; }
+        .nav-dd a:hover { background: rgba(168,184,255,0.06); }
+        .nav-dd a svg { width: 14px; height: 14px; stroke: var(--primary); fill: none; stroke-width: 2; flex-shrink: 0; }
+        .nav-dd a .nd { font-size: 0.62rem; color: var(--outline); font-weight: 400; }
+        .nav-dd a.active { background: rgba(168,184,255,0.08); border-left: 2px solid var(--primary); }
+        .nav-dd-sep { height: 1px; background: var(--outline-dim); }
+
+        /* ═══ LAYOUT ═══ */
+        .container { max-width: 1240px; margin: 0 auto; padding: 1.25rem 1.5rem; }
+
+        /* ═══ GLOBAL SUMMARY ═══ */
+        .global-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin-bottom: 1rem; }
+        .gs-card { background: var(--surface); border-radius: var(--r-md); padding: 0.6rem 0.8rem; border: 1px solid var(--outline-dim); }
+        .gs-card .gs-head { display: flex; align-items: center; gap: 5px; margin-bottom: 3px; }
+        .gs-card .gs-head svg { width: 13px; height: 13px; fill: none; stroke-width: 2; }
+        .gs-card .gs-lbl { font-size: 0.62rem; color: var(--outline); font-weight: 500; }
+        .gs-card .gs-val { font-size: 1.35rem; font-weight: 800; line-height: 1; }
+        .gs-card .gs-sub { font-size: 0.58rem; color: var(--outline); margin-left: 3px; }
+
+        /* ═══ UPLOAD BAR ═══ */
+        .upload-bar { background: linear-gradient(135deg, rgba(45,63,110,0.4), rgba(87,62,92,0.3)); border: 1px solid rgba(168,184,255,0.15); border-radius: var(--r-md); padding: 0.65rem 1rem; margin-bottom: 1rem; display: none; align-items: center; justify-content: space-between; gap: 1rem; }
+        .upload-bar.vis { display: flex; }
+        .upload-bar .ui { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; }
+
+        /* ═══ CHANNEL CARD ═══ */
+        .ch-grid { display: grid; gap: 1rem; }
+        .ch-card { background: var(--surface); border: 1px solid var(--outline-dim); border-radius: var(--r-lg); overflow: hidden; transition: border-color 0.2s; }
+        .ch-card:hover { border-color: var(--outline); }
+        .ch-head { display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1.1rem; gap: 0.75rem; flex-wrap: wrap; }
+        .ch-info { display: flex; align-items: center; gap: 10px; }
+        .ch-av { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, var(--primary-container), var(--tertiary-container)); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; color: var(--primary); flex-shrink: 0; }
+        .ch-name { font-weight: 600; font-size: 0.9rem; }
+        .ch-url { font-size: 0.68rem; color: var(--outline); }
+        .ch-url a { color: var(--primary); text-decoration: none; }
+        .ch-url a:hover { text-decoration: underline; }
+        .ch-meta { font-size: 0.62rem; color: var(--outline); margin-top: 1px; }
+        .ch-acts { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+
+        /* ═══ PIPELINE STAGE CARDS ═══ */
+        .pipe-stages { display: flex; gap: 0; border-top: 1px solid var(--outline-dim); overflow-x: auto; }
+        .pipe-stage { flex: 1; min-width: 0; padding: 0.6rem 0.5rem; text-align: center; border-right: 1px solid var(--outline-dim); cursor: pointer; transition: all 0.2s; position: relative; user-select: none; }
+        .pipe-stage:last-child { border-right: none; }
+        .pipe-stage:hover { background: rgba(168,184,255,0.04); }
+        .pipe-stage.active { background: linear-gradient(180deg, rgba(168,184,255,0.08) 0%, transparent 100%); }
+        .pipe-stage.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; border-radius: 1px 1px 0 0; }
+        .pipe-stage.active.st-pending_dl::after { background: var(--tertiary); }
+        .pipe-stage.active.st-downloaded::after { background: var(--cyan); }
+        .pipe-stage.active.st-not_registered::after { background: var(--warning); }
+        .pipe-stage.active.st-registered::after { background: var(--primary); }
+        .pipe-stage.active.st-uploaded::after { background: var(--success); }
+        .pipe-stage.active.st-failed::after { background: var(--error); }
+        .pipe-stage.active.st-finalized::after { background: var(--success); }
+        .pipe-stage .ps-icon { font-size: 0.85rem; margin-bottom: 2px; }
+        .pipe-stage .ps-val { font-size: 1.15rem; font-weight: 700; line-height: 1; }
+        .pipe-stage .ps-lbl { font-size: 0.58rem; color: var(--outline); font-weight: 500; text-transform: uppercase; letter-spacing: 0.03em; margin-top: 2px; }
+        .pipe-stage .ps-sub { font-size: 0.55rem; color: var(--outline); }
+
+        /* Stage colors */
+        .ps-val.c-tertiary { color: var(--tertiary); }
+        .ps-val.c-cyan { color: var(--cyan); }
+        .ps-val.c-warning { color: var(--warning); }
+        .ps-val.c-primary { color: var(--primary); }
+        .ps-val.c-success { color: var(--success); }
+        .ps-val.c-error { color: var(--error); }
+        .ps-val.c-dim { color: var(--outline); }
+
+        /* ═══ ACTION BAR (between stages and detail) ═══ */
+        .action-bar { display: flex; align-items: center; gap: 0.4rem; padding: 0.5rem 1.1rem; border-top: 1px solid var(--outline-dim); background: var(--surface-high); flex-wrap: wrap; }
+        .action-bar .ab-title { font-size: 0.78rem; font-weight: 600; margin-right: auto; display: flex; align-items: center; gap: 6px; }
+        .action-bar .ab-title svg { width: 14px; height: 14px; fill: none; stroke-width: 2; }
+        .action-bar .ab-count { font-size: 0.68rem; color: var(--outline); font-weight: 400; }
+
+        /* ═══ DETAIL PANEL ═══ */
+        .detail-panel { border-top: 1px solid var(--outline-dim); display: none; max-height: 420px; overflow-y: auto; }
+        .detail-panel.vis { display: block; }
+
+        /* Video list */
+        .vid-list { padding: 0; }
+        .vid-item { display: flex; align-items: center; gap: 10px; padding: 6px 1.1rem; border-bottom: 1px solid rgba(62,62,67,0.25); font-size: 0.76rem; transition: background 0.1s; }
+        .vid-item:hover { background: rgba(168,184,255,0.03); }
+        .vid-item .vi-icon { font-size: 0.7rem; flex-shrink: 0; width: 18px; text-align: center; }
+        .vid-item .vi-title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--on-surface-dim); }
+        .vid-item .vi-id { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: var(--outline); flex-shrink: 0; }
+        .vid-item .vi-size { font-size: 0.65rem; color: var(--outline); flex-shrink: 0; min-width: 50px; text-align: right; }
+        .vid-item .vi-batch { font-size: 0.62rem; color: var(--primary); flex-shrink: 0; }
+
+        /* Batch table */
+        .btbl { width: 100%; border-collapse: collapse; font-size: 0.76rem; }
+        .btbl th { text-align: left; padding: 7px 10px; color: var(--outline); font-weight: 500; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid var(--outline-dim); position: sticky; top: 0; background: var(--surface); z-index: 1; }
+        .btbl td { padding: 7px 10px; border-bottom: 1px solid rgba(62,62,67,0.3); }
+        .btbl tr:hover td { background: rgba(168,184,255,0.03); }
+        .b-status { padding: 2px 7px; border-radius: var(--r-full); font-size: 0.62rem; font-weight: 500; display: inline-flex; align-items: center; gap: 3px; }
+        .b-status.bs-nr { background: var(--warning-dim); color: var(--warning); }
+        .b-status.bs-reg { background: var(--primary-glow); color: var(--primary); }
+        .b-status.bs-up { background: var(--success-dim); color: var(--success); }
+        .b-status.bs-fail { background: var(--error-dim); color: var(--error); }
+        .b-status.bs-fin { background: rgba(126,219,165,0.18); color: var(--success); }
+
+        /* Empty state inside detail */
+        .detail-empty { padding: 2rem; text-align: center; color: var(--outline); font-size: 0.8rem; }
+        .detail-empty svg { width: 32px; height: 32px; stroke: var(--outline-dim); fill: none; stroke-width: 1.5; margin-bottom: 0.5rem; display: block; margin-inline: auto; }
+
+        /* ═══ BUTTONS ═══ */
+        .btn { font-family: 'Inter', sans-serif; font-weight: 500; font-size: 0.75rem; padding: 0.4rem 0.85rem; border-radius: var(--r-full); border: none; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+        .btn:active:not(:disabled) { transform: scale(0.97); }
+        .btn:disabled { opacity: 0.38; cursor: not-allowed; }
+        .btn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
+        .btn-p { background: linear-gradient(135deg, var(--primary), #8BA0ED); color: var(--on-primary); }
+        .btn-p:hover:not(:disabled) { box-shadow: 0 2px 12px var(--primary-glow); }
+        .btn-t { background: var(--surface-highest); color: var(--on-surface); }
+        .btn-t:hover:not(:disabled) { background: var(--surface-bright); }
+        .btn-s { background: linear-gradient(135deg, var(--success), #5DC08A); color: #0F1F15; }
+        .btn-d { background: linear-gradient(135deg, var(--error), #E8887E); color: #690005; }
+        .btn-o { background: transparent; border: 1px solid var(--outline-dim); color: var(--on-surface-dim); }
+        .btn-o:hover:not(:disabled) { border-color: var(--outline); background: var(--surface-high); }
+        .btn-w { background: var(--warning); color: #1F1A0E; }
+        .btn-w:hover:not(:disabled) { filter: brightness(1.1); }
+        .btn-sm { font-size: 0.68rem; padding: 0.28rem 0.55rem; }
+        .spinner { width: 13px; height: 13px; border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; border-top-color: currentColor; animation: spin 0.7s linear infinite; display: inline-block; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ═══ MODAL ═══ */
+        .modal-ov { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 200; }
+        .modal-ov.vis { display: flex; }
+        .modal { background: var(--surface); border: 1px solid var(--outline-dim); border-radius: var(--r-xl); padding: 1.5rem; width: 460px; max-width: 95vw; box-shadow: var(--shadow-3); }
+        .modal h2 { font-size: 1rem; margin-bottom: 1.1rem; display: flex; align-items: center; gap: 7px; }
+        .modal h2 svg { width: 18px; height: 18px; stroke: var(--primary); fill: none; stroke-width: 2; }
+        .fg { margin-bottom: 0.85rem; }
+        .fg label { display: block; font-size: 0.7rem; font-weight: 500; color: var(--on-surface-dim); margin-bottom: 3px; }
+        .fg input, .fg select { width: 100%; padding: 0.5rem 0.7rem; background: var(--surface-high); border: 1px solid var(--outline-dim); border-radius: var(--r-sm); color: var(--on-surface); font-family: 'Inter', sans-serif; font-size: 0.8rem; outline: none; transition: border-color 0.2s; }
+        .fg input:focus, .fg select:focus { border-color: var(--primary); }
+        .fg input::placeholder { color: var(--outline); }
+        .fr { display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; }
+        .modal-acts { display: flex; gap: 0.4rem; justify-content: flex-end; margin-top: 1.25rem; }
+
+        /* ═══ TOAST ═══ */
+        .toast-c { position: fixed; top: 60px; right: 1rem; z-index: 300; display: flex; flex-direction: column; gap: 0.4rem; }
+        .toast { background: var(--surface); border: 1px solid var(--outline-dim); border-radius: var(--r-md); padding: 0.65rem 0.85rem; box-shadow: var(--shadow-2); display: flex; align-items: flex-start; gap: 7px; min-width: 260px; max-width: 380px; animation: tIn 0.3s ease; font-size: 0.75rem; }
+        .toast-t { font-weight: 600; }
+        .toast-m { color: var(--on-surface-dim); font-size: 0.68rem; margin-top: 1px; }
+        .toast.suc { border-color: rgba(126,219,165,0.3); }
+        .toast.err { border-color: rgba(255,180,171,0.3); }
+        @keyframes tIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; } }
+        .toast.out { animation: tOut 0.3s ease forwards; }
+        @keyframes tOut { to { opacity: 0; transform: translateX(20px); } }
+
+        /* EMPTY */
+        .empty { text-align: center; padding: 3.5rem 2rem; color: var(--outline); }
+        .empty svg { width: 48px; height: 48px; stroke: var(--outline-dim); fill: none; stroke-width: 1.5; margin-bottom: 0.75rem; }
+        .empty h3 { font-size: 0.95rem; color: var(--on-surface-dim); margin-bottom: 0.4rem; }
+        .empty p { font-size: 0.78rem; margin-bottom: 1.25rem; }
+
+        /* PROGRESS */
+        .dl-panel { padding: 0.85rem 1.1rem; border-top: 1px solid var(--outline-dim); display: none; }
+        .dl-panel.vis { display: block; }
+        .prog-track { height: 5px; background: var(--surface-highest); border-radius: 3px; overflow: hidden; margin: 0.6rem 0; }
+        .prog-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--success)); border-radius: 3px; transition: width 0.4s ease; width: 0%; }
+        .prog-txt { font-size: 0.72rem; color: var(--on-surface-dim); display: flex; justify-content: space-between; }
+        .log-box { background: var(--bg); border: 1px solid var(--outline-dim); border-radius: var(--r-sm); padding: 0.6rem; margin-top: 0.6rem; max-height: 200px; overflow-y: auto; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; line-height: 1.6; color: var(--on-surface-dim); }
+        .log-box .ls { color: var(--success); }
+        .log-box .le { color: var(--error); }
+        .log-box .li { color: var(--primary); }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--outline-dim); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--outline); }
+
+        @media (max-width: 640px) { .global-summary { grid-template-columns: repeat(2,1fr); } .pipe-stages { flex-wrap: wrap; } .pipe-stage { min-width: 33.33%; } .fr { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <div class="topbar-left">
+            <div class="nav-menu-wrapper">
+                <button class="nav-btn" onclick="toggleNav()" title="Navigation">
+                    <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+                <div class="nav-dd" id="navDd">
+                    <div class="nav-dd-head">Navigate</div>
+                    <a href="/"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg><div>Dashboard<br><span class="nd">Batch management & uploads</span></div></a>
+                    <div class="nav-dd-sep"></div>
+                    <a href="/channels" class="active"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg><div>YouTube Channels<br><span class="nd">Track, download & upload</span></div></a>
+                </div>
+            </div>
+            <div class="topbar-icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+            <div><h1>YouTube Channels</h1><span class="sub">Download, batch & upload videos from tracked channels</span></div>
+        </div>
+        <div class="topbar-right">
+            <button class="btn btn-t" onclick="showAddModal()">+ Add Channel</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="global-summary" id="gs">
+            <div class="gs-card"><div class="gs-head"><svg viewBox="0 0 24 24" stroke="var(--primary)"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="gs-lbl">Pending</span></div><span class="gs-val" style="color:var(--primary)" id="gsP">—</span><span class="gs-sub">batches</span></div>
+            <div class="gs-card"><div class="gs-head"><svg viewBox="0 0 24 24" stroke="var(--warning)"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><span class="gs-lbl">Uploaded</span></div><span class="gs-val" style="color:var(--warning)" id="gsU">—</span><span class="gs-sub">batches</span></div>
+            <div class="gs-card"><div class="gs-head"><svg viewBox="0 0 24 24" stroke="var(--error)"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg><span class="gs-lbl">Failed</span></div><span class="gs-val" style="color:var(--error)" id="gsF">—</span><span class="gs-sub">batches</span></div>
+            <div class="gs-card"><div class="gs-head"><svg viewBox="0 0 24 24" stroke="var(--success)"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><span class="gs-lbl">Finalized</span></div><span class="gs-val" style="color:var(--success)" id="gsFin">—</span><span class="gs-sub">batches</span></div>
+        </div>
+
+        <div class="upload-bar" id="uploadBar"><div class="ui"><span class="spinner"></span><span id="uploadTxt">Uploading...</span></div><button class="btn btn-d btn-sm" onclick="stopUpload()"><svg viewBox="0 0 24 24" style="width:11px;height:11px"><rect x="3" y="3" width="18" height="18" rx="2"/></svg> Stop</button></div>
+
+        <div class="ch-grid" id="chGrid">
+            <div class="empty" id="emptyState">
+                <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
+                <h3>No channels tracked yet</h3>
+                <p>Add a YouTube channel to start tracking and downloading new videos.</p>
+                <button class="btn btn-p" onclick="showAddModal()">+ Add Your First Channel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-c" id="toastC"></div>
+
+    <!-- Add Channel Modal -->
+    <div class="modal-ov" id="addModal">
+        <div class="modal">
+            <h2><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add YouTube Channel</h2>
+            <form id="addForm" onsubmit="addChannel(event)">
+                <div class="fg"><label>Channel URL *</label><input type="text" id="chUrl" placeholder="https://www.youtube.com/@ChannelName" required></div>
+                <div class="fr">
+                    <div class="fg"><label>Channel ID *</label><input type="text" id="chId" placeholder="e.g. BillionBuilders" required></div>
+                    <div class="fg"><label>Display Name *</label><input type="text" id="chName" placeholder="e.g. Billion Builders" required></div>
+                </div>
+                <div class="fr">
+                    <div class="fg"><label>CSV Channel Name</label><input type="text" id="chCsv" placeholder="e.g. BillionBuilders"></div>
+                    <div class="fg"><label>Category</label><input type="text" id="chCat" placeholder="e.g. Entertainment" value="Entertainment"></div>
+                </div>
+                <div class="fr">
+                    <div class="fg"><label>Content Type</label><select id="chCT"><option value="Original">Original</option><option value="Licensed">Licensed</option></select></div>
+                    <div class="fg"><label>Language</label><select id="chLang"><option value="English">English</option><option value="Hindi">Hindi</option></select></div>
+                </div>
+                <div class="modal-acts"><button type="button" class="btn btn-o" onclick="hideAddModal()">Cancel</button><button type="submit" class="btn btn-p">Add Channel</button></div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+    // ═══ STATE ═══
+    let channels = [];
+    let pollIntervals = {};
+    let uploadPoll = null;
+    let isUploading = false;
+    let activeStage = {};   // channelId -> stageKey
+    let pipelineData = {};  // channelId -> pipeline summary
+    let batchData = {};     // channelId -> batch list
+    let videoCache = {};    // channelId_status -> video list
+
+    const api = async (url, method='GET', body=null) => {
+        const o = { method, headers: {'Content-Type':'application/json'} };
+        if (body) o.body = JSON.stringify(body);
+        return (await fetch(url, o)).json();
+    };
+    const esc = s => { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; };
+
+    // ═══ NAV ═══
+    function toggleNav() { document.getElementById('navDd').classList.toggle('open'); }
+    document.addEventListener('click', e => { const w = document.querySelector('.nav-menu-wrapper'); const d = document.getElementById('navDd'); if (d && w && !w.contains(e.target)) d.classList.remove('open'); });
+
+    // ═══ TOAST ═══
+    let _tid = 0;
+    function toast(type, title, msg, ms) {
+        const id = 'tt'+(++_tid);
+        const c = document.getElementById('toastC');
+        const t = document.createElement('div');
+        t.className = `toast ${type}`; t.id = id;
+        t.innerHTML = `<span>${type==='suc'?'✅':type==='err'?'❌':'ℹ️'}</span><div><div class="toast-t">${title}</div><div class="toast-m">${msg}</div></div>`;
+        c.appendChild(t);
+        setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 300); }, ms||4000);
+    }
+
+    // ═══ GLOBAL SUMMARY ═══
+    async function loadGS() {
+        const d = await api('/api/yt-channels/global-summary');
+        document.getElementById('gsP').textContent = d.pending;
+        document.getElementById('gsU').textContent = d.uploaded;
+        document.getElementById('gsF').textContent = d.failed;
+        document.getElementById('gsFin').textContent = d.finalized;
+    }
+
+    // ═══ LOAD CHANNELS ═══
+    async function loadChannels() {
+        const d = await api('/api/yt-channels');
+        channels = d.channels || [];
+        renderChannels();
+        loadGS();
+        pollUploadStatus();
+    }
+
+    // ═══ RENDER ═══
+    function renderChannels() {
+        const grid = document.getElementById('chGrid');
+        const empty = document.getElementById('emptyState');
+        if (!channels.length) { grid.innerHTML = ''; grid.appendChild(empty); empty.style.display = 'block'; return; }
+        empty.style.display = 'none';
+        grid.innerHTML = channels.map(ch => {
+            const ini = (ch.name||ch.id).split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+            const defs = ch.csv_defaults||{};
+            return `
+            <div class="ch-card" id="card-${ch.id}">
+                <div class="ch-head">
+                    <div class="ch-info">
+                        <div class="ch-av">${ini}</div>
+                        <div>
+                            <div class="ch-name">${esc(ch.name||ch.id)}</div>
+                            <div class="ch-url"><a href="${ch.url}" target="_blank">${ch.url}</a></div>
+                            <div class="ch-meta">${defs.categories_name||''} · ${defs.content_types||''} · ${defs.language||''}</div>
+                        </div>
+                    </div>
+                    <div class="ch-acts">
+                        <button class="btn btn-t btn-sm" onclick="checkChannel('${ch.id}')" id="ckBtn-${ch.id}"><svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Check New</button>
+                        <button class="btn btn-s btn-sm" onclick="downloadChannel('${ch.id}')" id="dlBtn-${ch.id}"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download</button>
+                        <button class="btn btn-o btn-sm" onclick="removeChannel('${ch.id}')" title="Remove"><svg viewBox="0 0 24 24" style="width:11px;height:11px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+                    </div>
+                </div>
+                <div class="pipe-stages" id="stages-${ch.id}"><div style="padding:12px;color:var(--outline);font-size:0.75rem">Loading pipeline...</div></div>
+                <div class="action-bar" id="abar-${ch.id}" style="display:none"></div>
+                <div class="dl-panel" id="dlp-${ch.id}"></div>
+                <div class="detail-panel" id="det-${ch.id}"></div>
+            </div>`;
+        }).join('');
+        channels.forEach(ch => loadPipeline(ch.id));
+    }
+
+    // ═══ PIPELINE STAGES ═══
+    const STAGES = [
+        { key:'pending_dl', icon:'⏳', label:'Pending DL',     color:'c-tertiary', sub:'on YT' },
+        { key:'downloaded', icon:'📥', label:'Downloaded',      color:'c-cyan',     sub:'not batched' },
+        { key:'not_registered', icon:'📦', label:'Batched',     color:'c-warning',  sub:'not registered' },
+        { key:'registered', icon:'🚀', label:'Ready Upload',    color:'c-primary',  sub:'registered' },
+        { key:'uploaded',   icon:'✅', label:'Uploaded',         color:'c-success',  sub:'on CMS' },
+        { key:'failed',     icon:'❌', label:'Failed',           color:'c-error',    sub:'need retry' },
+        { key:'finalized',  icon:'🏁', label:'Finalized',       color:'c-dim',      sub:'complete' },
+    ];
+
+    async function loadPipeline(id) {
+        const [summary, batches] = await Promise.all([
+            api(`/api/yt-channels/${id}/pipeline-summary`),
+            api(`/api/yt-channels/${id}/batches`),
+        ]);
+        pipelineData[id] = summary;
+        batchData[id] = batches.batches || [];
+        renderStages(id);
+    }
+
+    function getStageCount(id, key) {
+        const p = pipelineData[id];
+        const b = batchData[id] || [];
+        if (!p) return 0;
+        if (key === 'pending_dl') return p.pending_dl || 0;
+        if (key === 'downloaded') return p.downloaded || 0;
+        // Batch-level counts
+        const bc = p.batch_counts || {};
+        if (key === 'not_registered') return bc.not_registered || 0;
+        if (key === 'registered') return bc.registered || 0;
+        if (key === 'uploaded') return bc.uploaded || 0;
+        if (key === 'failed') return bc.upload_failed || 0;
+        if (key === 'finalized') return bc.finalized || 0;
+        return 0;
+    }
+
+    function getStageVideoCount(id, key) {
+        const p = pipelineData[id]; if (!p) return '';
+        const bv = p.batch_video_counts || {};
+        if (key === 'not_registered') return bv.not_registered ? `${bv.not_registered} vids` : '';
+        if (key === 'registered') return bv.registered ? `${bv.registered} vids` : '';
+        if (key === 'uploaded') return bv.uploaded ? `${bv.uploaded} vids` : '';
+        if (key === 'failed') return bv.upload_failed ? `${bv.upload_failed} vids` : '';
+        if (key === 'finalized') return bv.finalized ? `${bv.finalized} vids` : '';
+        return '';
+    }
+
+    function renderStages(id) {
+        const container = document.getElementById(`stages-${id}`);
+        const cur = activeStage[id];
+        container.innerHTML = STAGES.map(s => {
+            const count = getStageCount(id, s.key);
+            const isActive = cur === s.key;
+            const vidCount = getStageVideoCount(id, s.key);
+            const isBatch = ['not_registered','registered','uploaded','failed','finalized'].includes(s.key);
+            const unit = isBatch ? (count===1?'batch':'batches') : '';
+            return `<div class="pipe-stage ${isActive?'active':''} st-${s.key}" onclick="selectStage('${id}','${s.key}')">
+                <div class="ps-icon">${s.icon}</div>
+                <div class="ps-val ${count>0?s.color:'c-dim'}">${count}</div>
+                <div class="ps-lbl">${s.label}</div>
+                <div class="ps-sub">${vidCount || (isBatch?unit:s.sub)}</div>
+            </div>`;
+        }).join('');
+
+        // If there's an active stage, render its action bar and detail
+        if (cur) renderActionBar(id, cur);
+    }
+
+    function selectStage(id, key) {
+        if (activeStage[id] === key) {
+            delete activeStage[id];
+            document.getElementById(`abar-${id}`).style.display = 'none';
+            document.getElementById(`det-${id}`).className = 'detail-panel';
+            renderStages(id);
+            return;
+        }
+        activeStage[id] = key;
+        renderStages(id);
+        loadDetailPanel(id, key);
+    }
+
+    function renderActionBar(id, key) {
+        const bar = document.getElementById(`abar-${id}`);
+        const count = getStageCount(id, key);
+        const stage = STAGES.find(s => s.key === key);
+        let actions = '';
+
+        if (key === 'pending_dl' && count > 0) {
+            actions = `<button class="btn btn-s btn-sm" onclick="downloadChannel('${id}')"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download All</button>`;
+        } else if (key === 'not_registered' && count > 0) {
+            actions = `<button class="btn btn-w btn-sm" onclick="registerBatches('${id}')">Register All (${count})</button>`;
+        } else if (key === 'registered' && count > 0) {
+            actions = `<button class="btn btn-p btn-sm" onclick="uploadAll('${id}')"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Upload All</button>`;
+        }
+
+        bar.style.display = 'flex';
+        bar.innerHTML = `<div class="ab-title"><svg viewBox="0 0 24 24" stroke="currentColor">${getStageIcon(key)}</svg>${stage.label} <span class="ab-count">${count} ${['pending_dl','downloaded'].includes(key)?'videos':'batches'}</span></div>${actions}`;
+    }
+
+    function getStageIcon(key) {
+        const icons = {
+            pending_dl: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+            downloaded: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>',
+            not_registered: '<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>',
+            registered: '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+            uploaded: '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>',
+            failed: '<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>',
+            finalized: '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>',
+        };
+        return icons[key] || '';
+    }
+
+    // ═══ DETAIL PANEL ═══
+    async function loadDetailPanel(id, key) {
+        const panel = document.getElementById(`det-${id}`);
+        panel.className = 'detail-panel vis';
+        panel.innerHTML = '<div style="padding:1rem;text-align:center"><span class="spinner" style="width:18px;height:18px;border-width:2px"></span></div>';
+
+        if (key === 'pending_dl' || key === 'downloaded') {
+            // Video list
+            const status = key === 'pending_dl' ? 'pending' : 'downloaded';
+            const cacheKey = `${id}_${status}`;
+            let videos = videoCache[cacheKey];
+            if (!videos) {
+                const d = await api(`/api/yt-channels/${id}/videos?status=${status}`);
+                videos = d.videos || [];
+                videoCache[cacheKey] = videos;
+            }
+            renderVideoList(panel, videos, key);
+        } else {
+            // Batch table
+            const batches = batchData[id] || [];
+            const statusMap = { not_registered:'not_registered', registered:'pending', uploaded:'uploaded', failed:'failed', finalized:'finalized' };
+            const filtered = batches.filter(b => b.status === statusMap[key]);
+            renderBatchTable(panel, filtered, key, id);
+        }
+    }
+
+    function renderVideoList(panel, videos, key) {
+        if (!videos.length) {
+            const msg = key === 'pending_dl' ? 'All tracked videos have been downloaded! ✅' : 'No videos in this stage.';
+            panel.innerHTML = `<div class="detail-empty"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>${msg}</div>`;
+            return;
+        }
+        const icon = key === 'pending_dl' ? '⏳' : '📥';
+        panel.innerHTML = `<div class="vid-list">${videos.map(v => `
+            <div class="vid-item">
+                <span class="vi-icon">${icon}</span>
+                <span class="vi-title" title="${esc(v.title)}">${esc(v.title || v.safe_name)}</span>
+                ${v.file_size_mb ? `<span class="vi-size">${v.file_size_mb} MB</span>` : ''}
+                ${v.batch ? `<span class="vi-batch">${v.batch}</span>` : ''}
+                <span class="vi-id">${v.video_id}</span>
+            </div>`).join('')}</div>`;
+    }
+
+    function renderBatchTable(panel, batches, key, chId) {
+        if (!batches.length) {
+            panel.innerHTML = `<div class="detail-empty"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>No batches in this stage.</div>`;
+            return;
+        }
+        const rows = batches.map(b => {
+            let acts = '';
+            if (b.status === 'not_registered') acts = `<button class="btn btn-w btn-sm" onclick="registerBatches('${chId}',['${b.batch_name}'])">Register</button>`;
+            else if (b.status === 'pending') acts = `<button class="btn btn-p btn-sm" onclick="singleUpload('${b.batch_name}','${chId}')">Upload</button>`;
+            else if (b.status === 'uploaded') acts = `<button class="btn btn-s btn-sm" onclick="finalizeBatch('${b.batch_name}','${chId}')">Finalize</button>`;
+            else if (b.status === 'failed') acts = `<button class="btn btn-w btn-sm" onclick="retryBatch('${b.batch_name}','${chId}')">Retry</button>`;
+            else if (b.status === 'finalized') acts = `<span style="font-size:0.65rem;color:var(--success)">✓ Done</span>`;
+
+            const statusMap = { not_registered:['bs-nr','unregistered'], pending:['bs-reg','registered'], uploaded:['bs-up','uploaded'], failed:['bs-fail','failed'], finalized:['bs-fin','finalized'] };
+            const [cls, lbl] = statusMap[b.status] || ['',''];
+
+            // Override dropdown options (exclude current status)
+            const overrideOpts = [
+                { val:'pending_first_review', lbl:'→ Registered', cur:'pending' },
+                { val:'pending_second_review', lbl:'→ Uploaded', cur:'uploaded' },
+                { val:'failed', lbl:'→ Failed', cur:'failed' },
+                { val:'finalized', lbl:'→ Finalized', cur:'finalized' },
+                { val:'not_registered', lbl:'→ Unregister', cur:'not_registered' },
+            ].filter(o => o.cur !== b.status);
+
+            const overrideMenu = `<select style="background:var(--surface-highest);color:var(--on-surface-dim);border:1px solid var(--outline-dim);border-radius:4px;font-size:0.6rem;padding:2px 4px;cursor:pointer;font-family:'Inter',sans-serif;max-width:90px" onchange="overrideStatus('${b.batch_name}','${chId}',this.value);this.selectedIndex=0" title="Manual status override">
+                <option value="">Override ⋮</option>
+                ${overrideOpts.map(o => `<option value="${o.val}">${o.lbl}</option>`).join('')}
+            </select>`;
+
+            return `<tr>
+                <td style="font-weight:500;font-family:'JetBrains Mono',monospace;font-size:0.68rem">${b.batch_name}</td>
+                <td>${b.video_count}</td>
+                <td>${b.zip_size_mb} MB</td>
+                <td><span class="b-status ${cls}">${lbl}</span></td>
+                <td>${b.job_id ? `<span style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--primary);cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px" title="Click to copy: ${esc(b.job_id)}" onclick="navigator.clipboard.writeText('${b.job_id}');toast('suc','Copied','Job ID copied to clipboard',2000)">${b.job_id}</span>` : '—'}</td>
+                <td style="display:flex;gap:4px;align-items:center">${acts} ${overrideMenu}</td>
+            </tr>`;
+        }).join('');
+
+        panel.innerHTML = `<table class="btbl"><thead><tr><th>Batch</th><th>Videos</th><th>Size</th><th>Status</th><th>Job ID</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table>`;
+    }
+
+    // ═══ CHANNEL ACTIONS ═══
+    async function checkChannel(id) {
+        const btn = document.getElementById(`ckBtn-${id}`);
+        btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Checking...';
+        try {
+            const d = await api(`/api/yt-channels/${id}/check`, 'POST');
+            if (!d.ok) { toast('err','Error', d.error); }
+            else if (d.new_count === 0) { toast('suc','All caught up!', `${d.total_on_youtube} videos on YouTube, all tracked.`); }
+            else { toast('suc',`${d.new_count} new videos found`, `${d.total_on_youtube} on YouTube · ${d.tracked} tracked · ${d.new_count} new`); }
+            // Invalidate cache & reload
+            delete videoCache[`${id}_pending`];
+            loadPipeline(id);
+        } catch(e) { toast('err','Error', e.message); }
+        finally { btn.disabled = false; btn.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Check New'; }
+    }
+
+    async function downloadChannel(id) {
+        const btn = document.getElementById(`dlBtn-${id}`);
+        btn.disabled = true;
+        try {
+            const res = await api(`/api/yt-channels/${id}/download`, 'POST');
+            if (res.error) { toast('err','Error', res.error); btn.disabled = false; return; }
+            startDlPolling(id);
+        } catch(e) { toast('err','Error', e.message); btn.disabled = false; }
+    }
+
+    function startDlPolling(id) {
+        if (pollIntervals[id]) clearInterval(pollIntervals[id]);
+        const panel = document.getElementById(`dlp-${id}`);
+        panel.classList.add('vis');
+        pollIntervals[id] = setInterval(async () => {
+            try {
+                const d = await api(`/api/yt-channels/${id}/status`);
+                renderDlProgress(id, d);
+                if (d.status === 'done' || d.status === 'idle') {
+                    clearInterval(pollIntervals[id]); delete pollIntervals[id];
+                    document.getElementById(`dlBtn-${id}`).disabled = false;
+                    document.getElementById(`dlBtn-${id}`).innerHTML = '<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download';
+                    // Clear caches, reload
+                    Object.keys(videoCache).forEach(k => { if (k.startsWith(id)) delete videoCache[k]; });
+                    loadPipeline(id);
+                    setTimeout(() => { panel.classList.remove('vis'); }, 3000);
+                }
+            } catch(e) {}
+        }, 2000);
+    }
+
+    function renderDlProgress(id, d) {
+        const panel = document.getElementById(`dlp-${id}`);
+        const pct = d.total > 0 ? Math.round((d.progress / d.total) * 100) : 0;
+        const lbl = d.status === 'running' ? 'Downloading...' : d.status === 'done' ? '✅ Complete' : d.status;
+        const logHtml = (d.log||[]).map(l => {
+            let c = ''; if (l.includes('✓')||l.includes('✅')) c='ls'; else if (l.includes('✗')||l.includes('Error')) c='le'; else if (l.includes('Fetching')||l.includes('Creating')) c='li';
+            return `<div class="${c}">${esc(l)}</div>`;
+        }).join('');
+        panel.innerHTML = `<div class="prog-txt"><span>${lbl}</span><span>${d.progress||0}/${d.total||'?'} (${pct}%)</span></div>
+            <div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div>
+            ${d.batches_created?`<div style="font-size:0.72rem;color:var(--success);margin-bottom:4px">📦 ${d.batches_created} batch(es) created</div>`:''}
+            <div class="log-box">${logHtml}</div>`;
+        const lb = panel.querySelector('.log-box'); if (lb) lb.scrollTop = lb.scrollHeight;
+    }
+
+    // ═══ BATCH ACTIONS ═══
+    async function registerBatches(id, names) {
+        const body = names ? { batch_names: names } : {};
+        const res = await api(`/api/yt-channels/${id}/register-batches`, 'POST', body);
+        toast('suc','Registered', `${res.registered} batch(es) registered, ${res.skipped} already done`);
+        loadPipeline(id); loadGS();
+    }
+
+    async function uploadAll(id) {
+        if (isUploading) { alert('Upload already running.'); return; }
+        if (!confirm('Start uploading all registered batches to CMS?')) return;
+        const res = await api(`/api/yt-channels/${id}/upload-all`, 'POST');
+        if (res.error) { toast('err','Error', res.error); return; }
+        toast('suc','Upload Started', res.message);
+        startUploadPolling();
+    }
+
+    async function singleUpload(bn, chId) {
+        if (isUploading) { alert('Upload already running.'); return; }
+        const res = await api(`/api/yt-channels/batch/${bn}/upload`, 'POST');
+        if (res.error) { toast('err','Error', res.error); return; }
+        toast('suc','Uploading', `${bn} upload started`);
+        startUploadPolling();
+    }
+
+    async function retryBatch(bn, chId) {
+        await api(`/api/yt-channels/batch/${bn}/retry`, 'POST');
+        toast('suc','Retry', `${bn} reset for upload`);
+        loadPipeline(chId); loadGS();
+    }
+
+    async function finalizeBatch(bn, chId) {
+        if (!confirm(`Finalize ${bn}?`)) return;
+        await api(`/api/yt-channels/batch/${bn}/finalize`, 'POST');
+        toast('suc','Finalized', `${bn} marked complete`);
+        loadPipeline(chId); loadGS();
+    }
+
+    async function overrideStatus(bn, chId, newStatus) {
+        if (!newStatus) return;
+        const labels = {pending_first_review:'Registered', pending_second_review:'Uploaded', failed:'Failed', finalized:'Finalized', not_registered:'Unregistered'};
+        if (!confirm(`Override ${bn} → ${labels[newStatus]}?`)) return;
+        try {
+            const res = await api(`/api/yt-channels/batch/${bn}/set-status`, 'POST', {status: newStatus});
+            if (res.error) { toast('err','Override Failed', res.error); return; }
+            toast('suc','Status Changed', res.message);
+            loadPipeline(chId); loadGS();
+        } catch(e) { toast('err','Error', e.message); }
+    }
+
+    // ═══ UPLOAD POLLING ═══
+    function startUploadPolling() {
+        if (uploadPoll) clearInterval(uploadPoll);
+        uploadPoll = setInterval(pollUploadStatus, 3000);
+        pollUploadStatus();
+    }
+
+    async function pollUploadStatus() {
+        try {
+            const d = await api('/api/yt-channels/upload-status');
+            const bar = document.getElementById('uploadBar');
+            isUploading = d.upload_running;
+            if (d.upload_running) {
+                bar.classList.add('vis');
+                document.getElementById('uploadTxt').textContent = `Uploading: ${d.upload_batch_name||'...'}`;
+            } else {
+                bar.classList.remove('vis');
+                if (uploadPoll) { clearInterval(uploadPoll); uploadPoll = null; }
+                channels.forEach(ch => loadPipeline(ch.id));
+                loadGS();
+            }
+        } catch(e) {}
+    }
+
+    async function stopUpload() {
+        await api('/api/yt-channels/stop-upload', 'POST');
+        toast('suc','Stopped', 'Upload stopped');
+        isUploading = false;
+        document.getElementById('uploadBar').classList.remove('vis');
+    }
+
+    // ═══ ADD / REMOVE ═══
+    function showAddModal() { document.getElementById('addModal').classList.add('vis'); }
+    function hideAddModal() { document.getElementById('addModal').classList.remove('vis'); }
+    async function addChannel(e) {
+        e.preventDefault();
+        const d = { url: document.getElementById('chUrl').value.trim(), id: document.getElementById('chId').value.trim(), name: document.getElementById('chName').value.trim(), channel_name: document.getElementById('chCsv').value.trim()||document.getElementById('chId').value.trim(), categories_name: document.getElementById('chCat').value.trim(), content_types: document.getElementById('chCT').value, language: document.getElementById('chLang').value };
+        const res = await api('/api/yt-channels/add', 'POST', d);
+        if (res.error) { alert(res.error); return; }
+        hideAddModal(); document.getElementById('addForm').reset(); loadChannels();
+    }
+    async function removeChannel(id) {
+        if (!confirm(`Remove "${id}" from tracking?`)) return;
+        await api(`/api/yt-channels/${id}/remove`, 'POST'); loadChannels();
+    }
+
+    // Auto-fill
+    document.getElementById('chUrl').addEventListener('input', function() {
+        const m = this.value.trim().match(/@([^/\s]+)/);
+        if (m) { document.getElementById('chId').value=m[1]; document.getElementById('chCsv').value=m[1]; document.getElementById('chName').value=m[1].replace(/([a-z])([A-Z])/g,'$1 $2'); }
+    });
+    document.getElementById('addModal').addEventListener('click', function(e) { if (e.target===this) hideAddModal(); });
+
+    // ═══ INIT ═══
+    loadChannels();
+    </script>
+</body>
+</html>

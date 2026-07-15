@@ -530,17 +530,47 @@ def click_submit_for_approval(driver) -> bool:
     except Exception:
         pass
 
-    # Find the 'Submit Batch for Approval' button
-    btns = driver.find_elements(By.CSS_SELECTOR, "button")
+    # Scroll to bottom to force lazy-loaded content / pagination to render fully.
+    # The CMS doesn't show the Submit button until all processed videos are visible,
+    # which requires scrolling when batches have 10+ videos.
+    try:
+        # Scroll to very bottom multiple times to trigger any lazy loading
+        for _ in range(3):
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            time.sleep(1)
+        # Scroll back up so the button area is in view
+        driver.execute_script("window.scrollTo(0, 0);")
+        time.sleep(0.5)
+    except Exception:
+        pass
+
+    # Find the 'Submit Batch for Approval' button — retry with page reload if not found
     approval_btn = None
-    for btn in btns:
-        txt = btn.text.strip().lower()
-        if "submit" in txt and "approval" in txt:
-            approval_btn = btn
+    for find_attempt in range(3):
+        btns = driver.find_elements(By.CSS_SELECTOR, "button")
+        for btn in btns:
+            txt = btn.text.strip().lower()
+            if "submit" in txt and "approval" in txt:
+                approval_btn = btn
+                break
+        if approval_btn:
             break
 
+        # Button not found — try reloading the page to force full render
+        if find_attempt < 2:
+            log.info(f"  [APPROVAL] Submit button not found (attempt {find_attempt+1}/3) — reloading page...")
+            driver.refresh()
+            time.sleep(4)
+            # Scroll again after reload
+            for _ in range(3):
+                driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+                time.sleep(1)
+            driver.execute_script("window.scrollTo(0, 0);")
+            time.sleep(0.5)
+
+
     if not approval_btn:
-        log.error("  [APPROVAL] 'Submit Batch for Approval' button not found on page!")
+        log.error("  [APPROVAL] 'Submit Batch for Approval' button not found after 3 attempts (scroll + reload)!")
         return False
 
     log.info(f"  [APPROVAL] Clicking 'Submit Batch for Approval'...")

@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BFB Pipeline — BabyBillion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0D0D11; --surface: #161619; --surface-high: #1C1B20;
+            --surface-highest: #262529; --surface-bright: #313035;
+            --on-surface: #E6E3E8; --on-surface-dim: #CAC8CE;
+            --outline: #918F96; --outline-dim: #3E3E43;
+            --primary: #A8B8FF; --primary-container: #2D3F6E; --on-primary: #162454;
+            --primary-glow: rgba(168,184,255,0.12);
+            --success: #7EDBA5; --success-dim: rgba(126,219,165,0.12);
+            --warning: #F0C878; --warning-dim: rgba(240,200,120,0.12);
+            --error: #FFB4AB; --error-dim: rgba(255,180,171,0.12);
+            --tertiary: #E0B8E5; --tertiary-container: #573E5C;
+            --cyan: #80D8D0; --cyan-dim: rgba(128,216,208,0.12);
+            --r-sm: 8px; --r-md: 12px; --r-lg: 16px; --r-xl: 24px; --r-full: 100px;
+            --shadow-1: 0 1px 3px 1px rgba(0,0,0,0.2), 0 1px 2px 0 rgba(0,0,0,0.35);
+            --shadow-2: 0 2px 6px 2px rgba(0,0,0,0.2), 0 1px 2px 0 rgba(0,0,0,0.35);
+            --shadow-3: 0 6px 16px 4px rgba(0,0,0,0.25);
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--on-surface); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+        /* ═══ TOPBAR ═══ */
+        .topbar { display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; height: 54px; background: linear-gradient(135deg, rgba(22,21,27,0.94), rgba(16,15,20,0.97)); backdrop-filter: blur(20px) saturate(1.5); border-bottom: 1px solid rgba(168,184,255,0.08); position: sticky; top: 0; z-index: 100; }
+        .topbar-left { display: flex; align-items: center; gap: 10px; }
+        .topbar-icon { width: 32px; height: 32px; border-radius: 9px; background: linear-gradient(135deg, var(--tertiary-container), var(--primary-container)); display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 12px rgba(224,184,229,0.15); font-size: 16px; }
+        .topbar h1 { font-size: 0.92rem; font-weight: 600; }
+        .topbar .sub { font-size: 0.65rem; color: var(--outline); }
+
+        /* NAV */
+        .nav-menu-wrapper { position: relative; }
+        .nav-btn { width: 32px; height: 32px; border-radius: 7px; background: var(--surface-high); border: 1px solid var(--outline-dim); color: var(--on-surface-dim); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .nav-btn:hover { background: var(--surface-highest); border-color: var(--outline); }
+        .nav-btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
+        .nav-dd { display: none; position: absolute; top: calc(100% + 5px); left: 0; z-index: 999; background: var(--surface-high); border: 1px solid var(--outline-dim); border-radius: var(--r-md); min-width: 210px; box-shadow: var(--shadow-3); overflow: hidden; animation: ddIn 0.12s ease; }
+        .nav-dd.open { display: block; }
+        @keyframes ddIn { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; } }
+        .nav-dd-head { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--outline-dim); font-size: 0.62rem; font-weight: 600; color: var(--outline); text-transform: uppercase; letter-spacing: 0.06em; }
+        .nav-dd a { display: flex; align-items: center; gap: 8px; padding: 0.55rem 0.75rem; color: var(--on-surface); text-decoration: none; font-size: 0.78rem; font-weight: 500; transition: background 0.15s; }
+        .nav-dd a:hover { background: rgba(168,184,255,0.06); }
+        .nav-dd a svg { width: 14px; height: 14px; stroke: var(--primary); fill: none; stroke-width: 2; flex-shrink: 0; }
+        .nav-dd a .nd { font-size: 0.62rem; color: var(--outline); font-weight: 400; }
+        .nav-dd a.active { background: rgba(224,184,229,0.08); border-left: 2px solid var(--tertiary); }
+
+        /* ═══ LAYOUT ═══ */
+        .container { max-width: 1240px; margin: 0 auto; padding: 1.25rem 1.5rem; }
+
+        /* ═══ GLOBAL SUMMARY ═══ */
+        .global-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin-bottom: 1rem; }
+        .gs-card { background: var(--surface); border-radius: var(--r-md); padding: 0.6rem 0.8rem; border: 1px solid var(--outline-dim); }
+        .gs-card .gs-head { display: flex; align-items: center; gap: 5px; margin-bottom: 3px; }
+        .gs-card .gs-head svg { width: 13px; height: 13px; fill: none; stroke-width: 2; }
+        .gs-card .gs-lbl { font-size: 0.62rem; color: var(--outline); font-weight: 500; }
+        .gs-card .gs-val { font-size: 1.35rem; font-weight: 800; line-height: 1; }
+        .gs-card .gs-sub { font-size: 0.58rem; color: var(--outline); margin-left: 3px; }
+
+        /* ═══ TEACHER CARDS ═══ */
+        .teacher-grid { display: flex; gap: 0.5rem; overflow-x: auto; margin-bottom: 1rem; padding-bottom: 0.25rem; }
+        .teacher-card { flex: 1; min-width: 130px; padding: 0.7rem 0.85rem; border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--outline-dim); cursor: pointer; transition: all 0.2s; user-select: none; }
+        .teacher-card:hover { border-color: var(--outline); background: var(--surface-high); }
+        .teacher-card.active { background: linear-gradient(135deg, rgba(224,184,229,0.15), rgba(168,184,255,0.1)); border-color: var(--tertiary); }
+        .teacher-card .tc-name { font-size: 0.72rem; font-weight: 500; color: var(--outline); margin-bottom: 4px; }
+        .teacher-card.active .tc-name { color: var(--tertiary); }
+        .teacher-card .tc-val { font-size: 1.5rem; font-weight: 700; }
+        .teacher-card.active .tc-val { color: var(--tertiary); }
+        .teacher-card .tc-sub { font-size: 0.6rem; color: var(--outline); }
+
+        /* ═══ PIPELINE CARD ═══ */
+        .pipe-card { background: var(--surface); border: 1px solid var(--outline-dim); border-radius: var(--r-lg); overflow: hidden; margin-bottom: 1rem; }
+        .pipe-card:hover { border-color: var(--outline); }
+
+        /* ═══ PIPELINE STAGES ═══ */
+        .pipe-stages { display: flex; gap: 0; border-top: 1px solid var(--outline-dim); overflow-x: auto; }
+        .pipe-stage { flex: 1; min-width: 0; padding: 0.6rem 0.5rem; text-align: center; border-right: 1px solid var(--outline-dim); cursor: pointer; transition: all 0.2s; position: relative; user-select: none; }
+        .pipe-stage:last-child { border-right: none; }
+        .pipe-stage:hover { background: rgba(168,184,255,0.04); }
+        .pipe-stage.active { background: linear-gradient(180deg, rgba(168,184,255,0.08) 0%, transparent 100%); }
+        .pipe-stage.active::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; border-radius: 1px 1px 0 0; }
+        .pipe-stage.active.st-notion::after { background: var(--tertiary); }
+        .pipe-stage.active.st-downloaded::after { background: var(--cyan); }
+        .pipe-stage.active.st-batched::after { background: var(--warning); }
+        .pipe-stage.active.st-registered::after { background: var(--primary); }
+        .pipe-stage.active.st-uploaded::after { background: var(--success); }
+        .pipe-stage.active.st-failed::after { background: var(--error); }
+        .pipe-stage.active.st-finalized::after { background: var(--success); }
+        .ps-icon { font-size: 1rem; margin-bottom: 2px; }
+        .ps-num { font-size: 1.4rem; font-weight: 800; line-height: 1.1; }
+        .ps-lbl { font-size: 0.55rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--on-surface-dim); }
+        .ps-sub { font-size: 0.5rem; color: var(--outline); }
+
+        /* ═══ DETAIL PANEL ═══ */
+        .detail-panel { padding: 1rem 1.1rem; border-top: 1px solid var(--outline-dim); animation: panelIn 0.2s ease; }
+        @keyframes panelIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; } }
+        .detail-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; font-size: 0.8rem; font-weight: 600; }
+        .detail-empty { text-align: center; padding: 2rem; color: var(--outline); font-size: 0.82rem; }
+        .detail-empty svg { width: 36px; height: 36px; stroke: var(--outline); fill: none; stroke-width: 1.5; margin-bottom: 8px; display: block; margin: 0 auto 8px; }
+
+        /* ═══ BATCH TABLE ═══ */
+        .btbl { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+        .btbl thead { border-bottom: 1px solid var(--outline-dim); }
+        .btbl th { text-align: left; padding: 0.5rem 0.65rem; color: var(--outline); font-weight: 500; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.04em; }
+        .btbl td { padding: 0.55rem 0.65rem; border-bottom: 1px solid rgba(62,62,67,0.35); vertical-align: middle; }
+        .btbl tr:hover { background: rgba(168,184,255,0.03); }
+        .b-status { padding: 2px 8px; border-radius: var(--r-full); font-size: 0.6rem; font-weight: 500; }
+        .bs-nr { background: rgba(240,200,120,0.12); color: var(--warning); }
+        .bs-reg { background: rgba(168,184,255,0.12); color: var(--primary); }
+        .bs-up { background: rgba(126,219,165,0.12); color: var(--success); }
+        .bs-fail { background: rgba(255,180,171,0.12); color: var(--error); }
+        .bs-fin { background: rgba(126,219,165,0.08); color: var(--success); }
+
+        /* ═══ VIDEO LIST ═══ */
+        .vid-list { display: flex; flex-direction: column; gap: 2px; }
+        .vid-item { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: var(--r-sm); transition: background 0.15s; font-size: 0.75rem; }
+        .vid-item:hover { background: rgba(168,184,255,0.04); }
+        .vi-icon { font-size: 0.7rem; flex-shrink: 0; }
+        .vi-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .vi-size { font-size: 0.62rem; color: var(--outline); font-family: 'JetBrains Mono', monospace; }
+        .vi-teacher { font-size: 0.62rem; color: var(--tertiary); }
+        .vi-lang { font-size: 0.62rem; font-weight: 500; padding: 1px 6px; border-radius: var(--r-full); }
+        .vi-link { font-size: 0.62rem; color: var(--primary); text-decoration: none; }
+        .vi-link:hover { text-decoration: underline; }
+
+        /* ═══ BUTTONS ═══ */
+        .btn { border: none; border-radius: var(--r-sm); padding: 7px 14px; font-family: inherit; font-weight: 500; font-size: 0.75rem; cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 5px; }
+        .btn-p { background: var(--primary); color: var(--on-primary); }
+        .btn-p:hover { background: #b8c6ff; box-shadow: 0 2px 12px rgba(168,184,255,0.3); }
+        .btn-s { background: var(--success-dim); color: var(--success); border: 1px solid rgba(126,219,165,0.2); }
+        .btn-s:hover { background: rgba(126,219,165,0.2); }
+        .btn-w { background: var(--warning-dim); color: var(--warning); border: 1px solid rgba(240,200,120,0.2); }
+        .btn-w:hover { background: rgba(240,200,120,0.2); }
+        .btn-t { background: rgba(224,184,229,0.12); color: var(--tertiary); border: 1px solid rgba(224,184,229,0.2); }
+        .btn-t:hover { background: rgba(224,184,229,0.2); }
+        .btn-sm { padding: 4px 10px; font-size: 0.68rem; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        /* ═══ TOAST ═══ */
+        .toast-wrap { position: fixed; top: 1rem; right: 1rem; z-index: 10000; display: flex; flex-direction: column; gap: 0.5rem; pointer-events: none; }
+        .toast { pointer-events: auto; padding: 0.6rem 0.85rem; border-radius: var(--r-md); color: #fff; font-size: 0.75rem; box-shadow: var(--shadow-2); animation: toastIn 0.25s ease; min-width: 250px; }
+        .toast.suc { background: linear-gradient(135deg, #1a4a2a, #1a3a2a); border: 1px solid rgba(126,219,165,0.3); }
+        .toast.err { background: linear-gradient(135deg, #4a1a1a, #3a1a1a); border: 1px solid rgba(255,180,171,0.3); }
+        .toast .tt { font-weight: 600; margin-bottom: 2px; }
+        .toast .tm { font-size: 0.68rem; color: rgba(255,255,255,0.7); }
+        @keyframes toastIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; } }
+
+        /* ═══ SPINNER ═══ */
+        .spinner { width: 14px; height: 14px; border: 2px solid rgba(168,184,255,0.2); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.6s linear infinite; display: inline-block; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ═══ PROGRESS ═══ */
+        .prog-txt { display: flex; justify-content: space-between; font-size: 0.72rem; margin-bottom: 4px; }
+        .prog-track { height: 4px; background: var(--surface-highest); border-radius: 2px; overflow: hidden; margin-bottom: 6px; }
+        .prog-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--tertiary)); border-radius: 2px; transition: width 0.3s; }
+        .log-box { max-height: 200px; overflow-y: auto; font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; color: var(--on-surface-dim); background: var(--surface-highest); border-radius: var(--r-sm); padding: 8px; }
+        .log-box .ls { color: var(--success); }
+        .log-box .le { color: var(--error); }
+        .log-box .li { color: var(--primary); }
+
+        /* ═══ DOWNLOAD SECTION ═══ */
+        .dl-section { padding: 1rem 1.1rem; border-top: 1px solid var(--outline-dim); }
+    </style>
+</head>
+<body>
+    <!-- TOPBAR -->
+    <header class="topbar">
+        <div class="topbar-left">
+            <div class="nav-menu-wrapper">
+                <button class="nav-btn" onclick="document.getElementById('navDd').classList.toggle('open')" title="Navigate">
+                    <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+                <div class="nav-dd" id="navDd">
+                    <div class="nav-dd-head">Navigate</div>
+                    <a href="/">
+                        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                        <div>Dashboard<div class="nd">Batch management & uploads</div></div>
+                    </a>
+                    <a href="/bfb" class="active">
+                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+                        <div>BFB Pipeline<div class="nd">Bottle-Fed Billionaires</div></div>
+                    </a>
+                    <a href="/channels">
+                        <svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                        <div>YouTube Channels<div class="nd">Track, download & upload</div></div>
+                    </a>
+                </div>
+            </div>
+            <div class="topbar-icon">🍼</div>
+            <div>
+                <h1>BFB Pipeline</h1>
+                <div class="sub">Bottle-Fed Billionaires — Notion → CMS upload pipeline</div>
+            </div>
+        </div>
+        <div class="topbar-right">
+            <button class="btn btn-t" onclick="downloadFromNotion()" id="dlNotionBtn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                Download from Notion
+            </button>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- GLOBAL SUMMARY -->
+        <div class="global-summary" id="globalSummary"></div>
+
+        <!-- TEACHER CARDS -->
+        <div class="teacher-grid" id="teacherGrid"></div>
+
+        <!-- PIPELINE CARD -->
+        <div class="pipe-card" id="pipeCard">
+            <div class="pipe-stages" id="pipeStages"></div>
+            <div id="detailPanel"></div>
+            <div id="dlProgress" style="display:none"></div>
+        </div>
+    </div>
+
+    <div class="toast-wrap" id="toastWrap"></div>
+
+    <!-- Close nav on outside click -->
+    <script>
+    document.addEventListener('click', e => {
+        const nav = document.getElementById('navDd');
+        if (nav.classList.contains('open') && !e.target.closest('.nav-menu-wrapper')) nav.classList.remove('open');
+    });
+    </script>
+
+    <script>
+    // ═══ STATE ═══
+    let pipelineData = null;
+    let batchData = [];
+    let activeStage = null;
+    let selectedTeacher = null;
+    let videoCache = {};
+    let isUploading = false;
+    let uploadPoll = null;
+
+    const STAGES = [
+        { key: 'notion',     icon: '📋', label: 'NOTION RTU',    sub: 'ready on Notion',  cls: 'st-notion',     type: 'video' },
+        { key: 'downloaded', icon: '📥', label: 'DOWNLOADED',    sub: 'not batched',       cls: 'st-downloaded', type: 'video' },
+        { key: 'batched',    icon: '📦', label: 'BATCHED',       sub: '',                  cls: 'st-batched',    type: 'batch' },
+        { key: 'registered', icon: '🚀', label: 'READY UPLOAD',  sub: '',                  cls: 'st-registered', type: 'batch' },
+        { key: 'uploaded',   icon: '✅', label: 'UPLOADED',       sub: '',                  cls: 'st-uploaded',   type: 'batch' },
+        { key: 'failed',     icon: '❌', label: 'FAILED',         sub: '',                  cls: 'st-failed',     type: 'batch' },
+        { key: 'finalized',  icon: '🏁', label: 'FINALIZED',     sub: '',                  cls: 'st-finalized',  type: 'batch' },
+    ];
+
+    // ═══ HELPERS ═══
+    function esc(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+
+    async function api(url, method='GET', body=null) {
+        const opts = { method, headers: {'Content-Type':'application/json'} };
+        if (body) opts.body = JSON.stringify(body);
+        const r = await fetch(url, opts);
+        return r.json();
+    }
+
+    function toast(type, title, msg, duration=4000) {
+        const wrap = document.getElementById('toastWrap');
+        const el = document.createElement('div');
+        el.className = `toast ${type}`;
+        el.innerHTML = `<div class="tt">${title}</div><div class="tm">${msg}</div>`;
+        wrap.appendChild(el);
+        setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, duration);
+    }
+
+    // ═══ INIT ═══
+    document.addEventListener('DOMContentLoaded', () => {
+        loadAll();
+        pollUploadStatus();
+    });
+
+    async function loadAll() {
+        const [summary, batches] = await Promise.all([
+            api('/api/bfb/pipeline-summary'),
+            api('/api/bfb/batches'),
+        ]);
+        pipelineData = summary;
+        batchData = batches.batches || [];
+        renderGlobalSummary();
+        renderTeachers();
+        renderStages();
+    }
+
+    // ═══ GLOBAL SUMMARY ═══
+    function renderGlobalSummary() {
+        if (!pipelineData) return;
+        const bc = pipelineData.batch_counts || {};
+        const pending = (bc.not_registered || 0) + (bc.registered || 0);
+        const uploaded = bc.uploaded || 0;
+        const failed = bc.upload_failed || 0;
+        const finalized = bc.finalized || 0;
+
+        document.getElementById('globalSummary').innerHTML = `
+            <div class="gs-card">
+                <div class="gs-head"><svg viewBox="0 0 24 24" stroke="var(--primary)"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="gs-lbl">Pending</span></div>
+                <span class="gs-val" style="color:var(--primary)">${pending}</span><span class="gs-sub">batches</span>
+            </div>
+            <div class="gs-card">
+                <div class="gs-head"><svg viewBox="0 0 24 24" stroke="var(--warning)"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg><span class="gs-lbl">Uploaded</span></div>
+                <span class="gs-val" style="color:var(--warning)">${uploaded}</span><span class="gs-sub">batches</span>
+            </div>
+            <div class="gs-card">
+                <div class="gs-head"><svg viewBox="0 0 24 24" stroke="var(--error)"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg><span class="gs-lbl">Failed</span></div>
+                <span class="gs-val" style="color:var(--error)">${failed}</span><span class="gs-sub">batches</span>
+            </div>
+            <div class="gs-card">
+                <div class="gs-head"><svg viewBox="0 0 24 24" stroke="var(--success)"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><span class="gs-lbl">Finalized</span></div>
+                <span class="gs-val" style="color:var(--success)">${finalized}</span><span class="gs-sub">batches</span>
+            </div>`;
+    }
+
+    // ═══ TEACHER CARDS ═══
+    function renderTeachers() {
+        if (!pipelineData || !pipelineData.teachers) return;
+        const grid = document.getElementById('teacherGrid');
+        const total = pipelineData.teachers.reduce((s,t) => s + t.video_count, 0);
+
+        const allCard = `<div class="teacher-card ${selectedTeacher === null ? 'active' : ''}" onclick="selectTeacher(null)">
+            <div class="tc-name">All Teachers</div>
+            <div class="tc-val">${total}</div>
+            <div class="tc-sub">total on Notion</div>
+        </div>`;
+
+        const teacherCards = pipelineData.teachers.map(t => `
+            <div class="teacher-card ${selectedTeacher === t.teacher ? 'active' : ''}" onclick="selectTeacher('${esc(t.teacher)}')">
+                <div class="tc-name">${esc(t.teacher)}</div>
+                <div class="tc-val">${t.video_count}</div>
+                <div class="tc-sub">ready</div>
+            </div>
+        `).join('');
+
+        grid.innerHTML = allCard + teacherCards;
+    }
+
+    function selectTeacher(teacher) {
+        selectedTeacher = teacher;
+        renderTeachers();
+        // If notion stage is active, refresh it
+        if (activeStage === 'notion') {
+            videoCache = {};
+            showStageDetail('notion');
+        }
+    }
+
+    // ═══ PIPELINE STAGES ═══
+    function getStageCount(key) {
+        if (!pipelineData) return 0;
+        const bc = pipelineData.batch_counts || {};
+        if (key === 'notion') return pipelineData.notion_ready || 0;
+        if (key === 'downloaded') return pipelineData.downloaded || 0;
+        if (key === 'batched') return bc.not_registered || 0;
+        if (key === 'registered') return bc.registered || 0;
+        if (key === 'uploaded') return bc.uploaded || 0;
+        if (key === 'failed') return bc.upload_failed || 0;
+        if (key === 'finalized') return bc.finalized || 0;
+        return 0;
+    }
+
+    function getStageVideoCount(key) {
+        if (!pipelineData) return '';
+        const bv = pipelineData.batch_video_counts || {};
+        if (key === 'batched') return bv.not_registered ? `${bv.not_registered} vids` : '';
+        if (key === 'registered') return bv.registered ? `${bv.registered} vids` : '';
+        if (key === 'uploaded') return bv.uploaded ? `${bv.uploaded} vids` : '';
+        if (key === 'failed') return bv.upload_failed ? `${bv.upload_failed} vids` : '';
+        if (key === 'finalized') return bv.finalized ? `${bv.finalized} vids` : '';
+        return '';
+    }
+
+    function renderStages() {
+        const el = document.getElementById('pipeStages');
+        el.innerHTML = STAGES.map(s => {
+            const count = getStageCount(s.key);
+            const vidCount = getStageVideoCount(s.key);
+            const sub = vidCount || s.sub;
+            const isActive = activeStage === s.key;
+            return `<div class="pipe-stage ${s.cls} ${isActive ? 'active' : ''}" onclick="toggleStage('${s.key}')">
+                <div class="ps-icon">${s.icon}</div>
+                <div class="ps-num">${count}</div>
+                <div class="ps-lbl">${s.label}</div>
+                <div class="ps-sub">${sub}</div>
+            </div>`;
+        }).join('');
+
+        if (activeStage) showStageDetail(activeStage);
+    }
+
+    function toggleStage(key) {
+        activeStage = activeStage === key ? null : key;
+        renderStages();
+        if (!activeStage) document.getElementById('detailPanel').innerHTML = '';
+    }
+
+    // ═══ STAGE DETAIL ═══
+    async function showStageDetail(key) {
+        const panel = document.getElementById('detailPanel');
+        const stage = STAGES.find(s => s.key === key);
+        if (!stage) return;
+
+        // Header
+        const count = getStageCount(key);
+        const label = stage.label;
+
+        if (stage.type === 'video') {
+            if (key === 'notion') {
+                // Fetch from Notion API
+                const cacheKey = `notion_${selectedTeacher || 'all'}`;
+                let videos = videoCache[cacheKey];
+                if (!videos) {
+                    panel.innerHTML = `<div class="detail-panel"><div class="detail-empty"><span class="spinner"></span><br>Loading from Notion…</div></div>`;
+                    const url = selectedTeacher ? `/api/bfb/videos?teacher=${encodeURIComponent(selectedTeacher)}` : '/api/bfb/videos';
+                    const d = await api(url);
+                    videos = d.videos || [];
+                    videoCache[cacheKey] = videos;
+                }
+                renderNotionVideoList(panel, videos);
+            } else {
+                panel.innerHTML = `<div class="detail-panel"><div class="detail-head">${stage.icon} ${label} <span style="font-weight:400;font-size:0.72rem;color:var(--outline)">${count} videos</span></div><div class="detail-empty">Downloaded videos not yet in a batch.</div></div>`;
+            }
+        } else {
+            // Batch table
+            const statusMap = { batched:'not_registered', registered:'pending', uploaded:'uploaded', failed:'failed', finalized:'finalized' };
+            const filtered = batchData.filter(b => b.status === statusMap[key]);
+            renderBatchTable(panel, filtered, key);
+        }
+    }
+
+    function renderNotionVideoList(panel, videos) {
+        if (!videos.length) {
+            panel.innerHTML = `<div class="detail-panel"><div class="detail-empty"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>No videos ready on Notion ${selectedTeacher ? `for ${selectedTeacher}` : ''} ✅</div></div>`;
+            return;
+        }
+
+        const rows = videos.map(v => {
+            const lang = v.lang_suffix === '___ln_Hi' ? 'Hinglish' : v.lang_suffix === '___ln_En' ? 'English' : '—';
+            const langColor = lang === 'Hinglish' ? 'var(--warning)' : 'var(--primary)';
+            const name = (v.video_name || '').replace(/___pg_[a-f0-9]+/i, '').replace(/___ln_(Hi|En)/, '');
+            return `<div class="vid-item">
+                <span class="vi-icon">📋</span>
+                <span class="vi-title" title="${esc(v.video_name)}">${esc(name)}</span>
+                <span class="vi-teacher">${esc(v.teacher || '')}</span>
+                <span class="vi-lang" style="color:${langColor};background:${lang === 'Hinglish' ? 'var(--warning-dim)' : 'var(--primary-glow)'}">${lang}</span>
+                ${v.drive_link ? `<a class="vi-link" href="${esc(v.drive_link)}" target="_blank">🔗 Link</a>` : ''}
+            </div>`;
+        }).join('');
+
+        const downloadBtn = `<button class="btn btn-t btn-sm" onclick="downloadFromNotion()" ${videos.length === 0 ? 'disabled' : ''}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+            Download ${videos.length} Videos
+        </button>`;
+
+        panel.innerHTML = `<div class="detail-panel">
+            <div class="detail-head">📋 Notion RTU <span style="font-weight:400;font-size:0.72rem;color:var(--outline)">${videos.length} videos ${selectedTeacher ? `· ${selectedTeacher}` : ''}</span><div>${downloadBtn}</div></div>
+            <div class="vid-list">${rows}</div>
+        </div>`;
+    }
+
+    function renderBatchTable(panel, batches, key) {
+        if (!batches.length) {
+            panel.innerHTML = `<div class="detail-panel"><div class="detail-empty"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>No batches in this stage.</div></div>`;
+            return;
+        }
+
+        // Bulk action button
+        let bulkAct = '';
+        if (key === 'batched') bulkAct = `<button class="btn btn-w btn-sm" onclick="registerAll()">Register All (${batches.length})</button>`;
+        else if (key === 'registered') bulkAct = `<button class="btn btn-p btn-sm" onclick="uploadAll()">Upload All</button>`;
+
+        const rows = batches.map(b => {
+            let acts = '';
+            if (b.status === 'not_registered') acts = `<button class="btn btn-w btn-sm" onclick="registerBatch('${b.batch_name}')">Register</button>`;
+            else if (b.status === 'pending') acts = `<button class="btn btn-p btn-sm" onclick="singleUpload('${b.batch_name}')">Upload</button>`;
+            else if (b.status === 'uploaded') acts = `<button class="btn btn-s btn-sm" onclick="finalizeBatch('${b.batch_name}')">Finalize</button>`;
+            else if (b.status === 'failed') acts = `<button class="btn btn-w btn-sm" onclick="retryBatch('${b.batch_name}')">Retry</button>`;
+            else if (b.status === 'finalized') acts = `<span style="font-size:0.65rem;color:var(--success)">✓ Done</span>`;
+
+            const statusMap = { not_registered:['bs-nr','unregistered'], pending:['bs-reg','registered'], uploaded:['bs-up','uploaded'], failed:['bs-fail','failed'], finalized:['bs-fin','finalized'] };
+            const [cls, lbl] = statusMap[b.status] || ['',''];
+
+            // Override dropdown
+            const overrideOpts = [
+                { val:'pending_first_review', lbl:'→ Registered', cur:'pending' },
+                { val:'pending_second_review', lbl:'→ Uploaded', cur:'uploaded' },
+                { val:'failed', lbl:'→ Failed', cur:'failed' },
+                { val:'finalized', lbl:'→ Finalized', cur:'finalized' },
+                { val:'not_registered', lbl:'→ Unregister', cur:'not_registered' },
+            ].filter(o => o.cur !== b.status);
+
+            const overrideMenu = `<select style="background:var(--surface-highest);color:var(--on-surface-dim);border:1px solid var(--outline-dim);border-radius:4px;font-size:0.6rem;padding:2px 4px;cursor:pointer;font-family:'Inter',sans-serif;max-width:90px" onchange="overrideStatus('${b.batch_name}',this.value);this.selectedIndex=0" title="Manual status override">
+                <option value="">Override ⋮</option>
+                ${overrideOpts.map(o => `<option value="${o.val}">${o.lbl}</option>`).join('')}
+            </select>`;
+
+            return `<tr>
+                <td style="font-weight:500;font-family:'JetBrains Mono',monospace;font-size:0.68rem">${b.batch_name}</td>
+                <td>${b.video_count}</td>
+                <td>${b.zip_size_mb} MB</td>
+                <td><span class="b-status ${cls}">${lbl}</span></td>
+                <td>${b.job_id ? `<span style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--primary);cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px" title="Click to copy: ${esc(b.job_id)}" onclick="navigator.clipboard.writeText('${b.job_id}');toast('suc','Copied','Job ID copied to clipboard',2000)">${b.job_id}</span>` : '—'}</td>
+                <td style="display:flex;gap:4px;align-items:center">${acts} ${overrideMenu}</td>
+            </tr>`;
+        }).join('');
+
+        const stage = STAGES.find(s => s.key === key);
+        panel.innerHTML = `<div class="detail-panel">
+            <div class="detail-head">${stage.icon} ${stage.label} <span style="font-weight:400;font-size:0.72rem;color:var(--outline)">${batches.length} batches</span><div>${bulkAct}</div></div>
+            <table class="btbl"><thead><tr><th>Batch</th><th>Videos</th><th>Size</th><th>Status</th><th>Job ID</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table>
+        </div>`;
+    }
+
+    // ═══ ACTIONS ═══
+    async function downloadFromNotion() {
+        const teacher = selectedTeacher;
+        const btn = document.getElementById('dlNotionBtn');
+        btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Downloading...';
+        try {
+            const res = await api('/api/bfb/download', 'POST', { teacher: teacher || null });
+            if (res.error) { toast('err', 'Error', res.error); return; }
+            toast('suc', 'Download Started', res.message);
+            // Start polling for pipeline status
+            startDlPolling();
+        } catch(e) { toast('err', 'Error', e.message); }
+        finally { btn.disabled = false; btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg> Download from Notion'; }
+    }
+
+    let dlPoll = null;
+    function startDlPolling() {
+        if (dlPoll) clearInterval(dlPoll);
+        dlPoll = setInterval(async () => {
+            try {
+                const d = await api('/api/batches/pipeline-status');
+                if (!d.running) {
+                    clearInterval(dlPoll); dlPoll = null;
+                    toast('suc', 'Download Complete', 'BFB download pipeline finished.');
+                    videoCache = {};
+                    loadAll();
+                }
+            } catch(e) { /* ignore */ }
+        }, 5000);
+    }
+
+    async function registerBatch(batchName) {
+        // Use the YT channels register endpoint (it works for any batch)
+        const allBatches = await api('/api/yt-channels/BillionBuilders/register-batches', 'POST', { batch_names: [batchName] });
+        toast('suc', 'Registered', `${batchName} registered`);
+        loadAll();
+    }
+
+    async function registerAll() {
+        const unreg = batchData.filter(b => b.status === 'not_registered').map(b => b.batch_name);
+        if (!unreg.length) { toast('suc', 'Nothing to register', 'All batches are already registered.'); return; }
+        const res = await api('/api/yt-channels/BillionBuilders/register-batches', 'POST', { batch_names: unreg });
+        toast('suc', 'Registered', `${res.registered} batch(es) registered`);
+        loadAll();
+    }
+
+    async function singleUpload(bn) {
+        if (isUploading) { alert('Upload already running.'); return; }
+        const res = await api(`/api/yt-channels/batch/${bn}/upload`, 'POST');
+        if (res.error) { toast('err', 'Error', res.error); return; }
+        toast('suc', 'Uploading', `${bn} upload started`);
+        startUploadPolling();
+    }
+
+    async function uploadAll() {
+        if (isUploading) { alert('Upload already running.'); return; }
+        if (!confirm('Start uploading all registered BFB batches?')) return;
+        // Upload all registered BB batches
+        const registered = batchData.filter(b => b.status === 'pending').map(b => b.batch_name);
+        if (!registered.length) { toast('suc', 'Nothing to upload', 'No registered batches.'); return; }
+        const res = await api('/api/yt-channels/BillionBuilders/upload-all', 'POST');
+        if (res.error) { toast('err', 'Error', res.error); return; }
+        toast('suc', 'Upload Started', res.message);
+        startUploadPolling();
+    }
+
+    async function retryBatch(bn) {
+        await api(`/api/yt-channels/batch/${bn}/retry`, 'POST');
+        toast('suc', 'Retry', `${bn} reset for upload`);
+        loadAll();
+    }
+
+    async function finalizeBatch(bn) {
+        if (!confirm(`Finalize ${bn}?`)) return;
+        await api(`/api/yt-channels/batch/${bn}/finalize`, 'POST');
+        toast('suc', 'Finalized', `${bn} marked complete`);
+        loadAll();
+    }
+
+    async function overrideStatus(bn, newStatus) {
+        if (!newStatus) return;
+        const labels = {pending_first_review:'Registered', pending_second_review:'Uploaded', failed:'Failed', finalized:'Finalized', not_registered:'Unregistered'};
+        if (!confirm(`Override ${bn} → ${labels[newStatus]}?`)) return;
+        try {
+            const res = await api(`/api/yt-channels/batch/${bn}/set-status`, 'POST', {status: newStatus});
+            if (res.error) { toast('err', 'Override Failed', res.error); return; }
+            toast('suc', 'Status Changed', res.message);
+            loadAll();
+        } catch(e) { toast('err', 'Error', e.message); }
+    }
+
+    // ═══ UPLOAD POLLING ═══
+    function startUploadPolling() {
+        if (uploadPoll) clearInterval(uploadPoll);
+        uploadPoll = setInterval(pollUploadStatus, 3000);
+        pollUploadStatus();
+    }
+
+    async function pollUploadStatus() {
+        try {
+            const d = await api('/api/yt-channels/upload-status');
+            isUploading = d.running || false;
+            if (!isUploading && uploadPoll) {
+                clearInterval(uploadPoll); uploadPoll = null;
+                loadAll();
+            }
+        } catch(e) { /* ignore */ }
+    }
+    </script>
+</body>
+</html>

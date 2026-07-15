@@ -1,0 +1,23 @@
+{
+  "channels": [
+    {
+      "id": "BillionBuilders",
+      "name": "Billion Builders",
+      "url": "https://www.youtube.com/@BillionBuilders",
+      "registry_file": "BillionBuilders_registry.csv",
+      "download_dir": "BillionBuilders_downloads",
+      "batch_dir": "BillionBuilders_batches",
+      "batch_prefix": "Batch_BB",
+      "csv_defaults": {
+        "channel_name": "BillionBuilders",
+        "categories_name": "Entertainment",
+        "age_groups": "",
+        "tags": "",
+        "playlist_name": "",
+        "content_formats": "",
+        "content_types": "Original",
+        "language": "English"
+      }
+    }
+  ]
+}

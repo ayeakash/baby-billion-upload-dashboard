@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import logging
 from flask import Flask, jsonify, request, send_from_directory, render_template
+from datetime import datetime, date
 
 # ── Add local pipeline/ to sys.path so we can import shared modules ──────────
 import os
@@ -1196,6 +1197,100 @@ def bfb_download():
     t.start()
     return jsonify({"message": f"BFB download started for teacher={teacher or 'ALL'}. Monitor logs."})
 
+@app.route("/bfb")
+def bfb_page():
+    return render_template("bfb.html")
+
+@app.route("/api/bfb/pipeline-summary")
+def bfb_pipeline_summary():
+    """Cross-reference BFB Notion 'Ready To Upload' with state.json and batches.json
+    to produce pipeline stage counts for the BFB page."""
+    try:
+        # 1. Count videos ready on Notion (not yet downloaded)
+        teacher_summaries = bfb_notion_client.query_bfb_teachers_summary()
+        notion_ready_total = sum(t["video_count"] for t in teacher_summaries)
+
+        # 2. Count BFB videos in state.json that are downloaded but not batched
+        import state_manager as sm
+        state = sm.get_all()
+        downloaded_not_batched = 0
+        for key, entry in state.items():
+            if entry.get("source_db") == "bfb" and entry.get("pipeline_status") == "downloaded":
+                downloaded_not_batched += 1
+
+        # 3. Count BFB batches by status from batches.json
+        batches = batch_manager.load_batches()
+        bb_batches = {k: v for k, v in batches.items() if k.startswith("Batch_BB")}
+
+        batch_counts = {"not_registered": 0, "registered": 0, "uploaded": 0, "upload_failed": 0, "finalized": 0}
+        batch_video_counts = {"not_registered": 0, "registered": 0, "uploaded": 0, "upload_failed": 0, "finalized": 0}
+
+        for name, b in bb_batches.items():
+            st = b.get("status", "")
+            vids = b.get("video_count") or len(b.get("videos", []))
+            if st in ("pending_first_review", "pending"):
+                batch_counts["registered"] += 1
+                batch_video_counts["registered"] += vids
+            elif st == "pending_second_review":
+                batch_counts["uploaded"] += 1
+                batch_video_counts["uploaded"] += vids
+            elif st == "finalized":
+                batch_counts["finalized"] += 1
+                batch_video_counts["finalized"] += vids
+            elif st == "failed" or b.get("upload_failed"):
+                batch_counts["upload_failed"] += 1
+                batch_video_counts["upload_failed"] += vids
+            else:
+                # not_registered (no status or unknown)
+                batch_counts["not_registered"] += 1
+                batch_video_counts["not_registered"] += vids
+
+        return jsonify({
+            "ok": True,
+            "notion_ready": notion_ready_total,
+            "downloaded": downloaded_not_batched,
+            "teachers": teacher_summaries,
+            "batch_counts": batch_counts,
+            "batch_video_counts": batch_video_counts,
+        })
+    except Exception as e:
+        log.error(f"BFB pipeline summary error: {e}")
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+@app.route("/api/bfb/batches")
+def bfb_batches():
+    """Return all Batch_BB_* batches with normalized status."""
+    batches = batch_manager.load_batches()
+    result = []
+    for name, b in sorted(batches.items()):
+        if not name.startswith("Batch_BB"):
+            continue
+        st = b.get("status", "")
+        # Normalize status for frontend
+        if st in ("pending_first_review", "pending"):
+            norm = "pending"
+        elif st == "pending_second_review":
+            norm = "uploaded"
+        elif st == "finalized":
+            norm = "finalized"
+        elif st == "failed" or b.get("upload_failed"):
+            norm = "failed"
+        else:
+            norm = "not_registered"
+
+        zip_path = os.path.join(os.path.dirname(__file__), "batches", f"{name}.zip")
+        zip_mb = round(os.path.getsize(zip_path) / (1024 * 1024), 1) if os.path.isfile(zip_path) else 0
+
+        result.append({
+            "batch_name": name,
+            "status": norm,
+            "video_count": b.get("video_count") or len(b.get("videos", [])),
+            "zip_size_mb": zip_mb,
+            "job_id": b.get("upload_job_id"),
+            "created_at": b.get("created_at"),
+        })
+    return jsonify({"ok": True, "batches": result})
+
 # ── Upload History ────────────────────────────────────────────────────────────
 import upload_history
 
@@ -1297,6 +1392,316 @@ def reject_one_review(page_id):
             return jsonify({"ok": False, "message": f"Failed to clear Upload Progress for {page_id}."})
     except Exception as e:
         return jsonify({"ok": False, "message": str(e)})
+
+# ── YouTube Channel Manager ──────────────────────────────────────────────────
+import yt_channel_manager as yt_mgr
+
+@app.route("/channels")
+def channels_page():
+    return render_template("channels.html")
+
+@app.route("/api/yt-channels")
+def yt_channels_list():
+    """List all tracked YouTube channels with their stats."""
+    channels = yt_mgr.load_channels()
+    result = []
+    for ch in channels:
+        stats = yt_mgr.get_channel_stats(ch)
+        result.append({**ch, "stats": stats})
+    return jsonify({"channels": result})
+
+@app.route("/api/yt-channels/add", methods=["POST"])
+def yt_channels_add():
+    """Add a new YouTube channel to track."""
+    data = request.json or {}
+    required = ["id", "name", "url"]
+    for field in required:
+        if not data.get(field):
+            return jsonify({"error": f"'{field}' is required"}), 400
+
+    channel_data = {
+        "id": data["id"],
+        "name": data["name"],
+        "url": data["url"],
+        "registry_file": f"{data['id']}_registry.csv",
+        "download_dir": f"{data['id']}_downloads",
+        "batch_dir": f"{data['id']}_batches",
+        "batch_prefix": f"Batch_{data['id'][:4].upper()}",
+        "csv_defaults": {
+            "channel_name": data.get("channel_name", data["id"]),
+            "categories_name": data.get("categories_name", "Entertainment"),
+            "age_groups": data.get("age_groups", ""),
+            "tags": "",
+            "playlist_name": "",
+            "content_formats": "",
+            "content_types": data.get("content_types", "Original"),
+            "language": data.get("language", "English"),
+        }
+    }
+    try:
+        yt_mgr.add_channel(channel_data)
+        return jsonify({"ok": True, "channel": channel_data})
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+
+@app.route("/api/yt-channels/<channel_id>/remove", methods=["POST"])
+def yt_channels_remove(channel_id):
+    ok = yt_mgr.remove_channel(channel_id)
+    if ok:
+        return jsonify({"ok": True})
+    return jsonify({"error": "Channel not found"}), 404
+
+@app.route("/api/yt-channels/<channel_id>/check", methods=["POST"])
+def yt_channels_check(channel_id):
+    """Check for new videos on a channel (hits YouTube)."""
+    ch = yt_mgr.get_channel(channel_id)
+    if not ch:
+        return jsonify({"error": "Channel not found"}), 404
+    try:
+        result = yt_mgr.check_new_videos(ch)
+        return jsonify({"ok": True, **result})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+@app.route("/api/yt-channels/<channel_id>/download", methods=["POST"])
+def yt_channels_download(channel_id):
+    """Start downloading + batching new videos (background task)."""
+    ch = yt_mgr.get_channel(channel_id)
+    if not ch:
+        return jsonify({"error": "Channel not found"}), 404
+
+    task = yt_mgr.get_task_status(channel_id)
+    if task and task["status"] == "running":
+        return jsonify({"error": "Download already in progress"}), 400
+
+    yt_mgr.download_and_batch(channel_id)
+    return jsonify({"ok": True, "message": "Download started"})
+
+@app.route("/api/yt-channels/<channel_id>/status")
+def yt_channels_status(channel_id):
+    """Get current download task status."""
+    task = yt_mgr.get_task_status(channel_id)
+    if not task:
+        return jsonify({"status": "idle"})
+    return jsonify(task)
+
+@app.route("/api/yt-channels/<channel_id>/registry")
+def yt_channels_registry(channel_id):
+    """Get the full registry for a channel."""
+    ch = yt_mgr.get_channel(channel_id)
+    if not ch:
+        return jsonify({"error": "Channel not found"}), 404
+    registry = yt_mgr.load_registry(ch)
+    videos = list(registry.values())
+    videos.sort(key=lambda x: x.get("safe_name", ""))
+    return jsonify({"videos": videos, "total": len(videos)})
+
+@app.route("/api/yt-channels/global-summary")
+def yt_channels_global_summary():
+    """Get global batch summary (Pending/Uploaded/Failed/Finalized) across all sources."""
+    batches = batch_manager.load_batches()
+    pending = uploaded = failed = finalized = 0
+    for name, b in batches.items():
+        status = b.get("status", "")
+        is_failed = b.get("upload_failed", False)
+        if is_failed:
+            failed += 1
+        elif status == "pending_first_review":
+            pending += 1
+        elif status == "pending_second_review":
+            uploaded += 1
+        elif status == "finalized":
+            finalized += 1
+    return jsonify({
+        "pending": pending,
+        "uploaded": uploaded,
+        "failed": failed,
+        "finalized": finalized,
+        "total": len(batches),
+    })
+
+@app.route("/api/yt-channels/<channel_id>/pipeline-summary")
+def yt_channels_pipeline_summary(channel_id):
+    """Get comprehensive pipeline summary for a channel — counts at every stage."""
+    ch = yt_mgr.get_channel(channel_id)
+    if not ch:
+        return jsonify({"error": "Channel not found"}), 404
+    summary = yt_mgr.get_pipeline_summary(ch)
+    return jsonify(summary)
+
+@app.route("/api/yt-channels/<channel_id>/videos")
+def yt_channels_videos_by_status(channel_id):
+    """Get videos filtered by registry status. ?status=pending|downloaded|failed|batched"""
+    ch = yt_mgr.get_channel(channel_id)
+    if not ch:
+        return jsonify({"error": "Channel not found"}), 404
+    status = request.args.get("status", "pending")
+    videos = yt_mgr.get_videos_by_status(ch, status)
+    return jsonify({"videos": videos, "count": len(videos)})
+
+@app.route("/api/yt-channels/<channel_id>/batches")
+def yt_channels_batches(channel_id):
+    """Get batch list with upload status for a channel."""
+    ch = yt_mgr.get_channel(channel_id)
+    if not ch:
+        return jsonify({"error": "Channel not found"}), 404
+    batches = yt_mgr.get_channel_batches(ch)
+    return jsonify({"batches": batches})
+
+@app.route("/api/yt-channels/<channel_id>/register-batches", methods=["POST"])
+def yt_channels_register(channel_id):
+    """Register channel batches into main dashboard for upload."""
+    ch = yt_mgr.get_channel(channel_id)
+    if not ch:
+        return jsonify({"error": "Channel not found"}), 404
+    data = request.json or {}
+    batch_names = data.get("batch_names")  # None = all unregistered
+    result = yt_mgr.register_batches_for_upload(ch, batch_names)
+    # Rescan in batch_manager
+    try:
+        batch_manager.scan_and_register_batches()
+    except Exception:
+        pass
+    return jsonify({"ok": True, **result})
+
+@app.route("/api/yt-channels/<channel_id>/upload-all", methods=["POST"])
+def yt_channels_upload_all(channel_id):
+    """Register all unregistered batches then trigger upload-all-submit."""
+    ch = yt_mgr.get_channel(channel_id)
+    if not ch:
+        return jsonify({"error": "Channel not found"}), 404
+
+    # First register any unregistered batches
+    reg_result = yt_mgr.register_batches_for_upload(ch)
+    try:
+        batch_manager.scan_and_register_batches()
+    except Exception:
+        pass
+
+    # Start upload-all
+    success, msg = batch_manager.start_upload_all_submit()
+    return jsonify({
+        "ok": success,
+        "message": msg,
+        "registered": reg_result.get("registered", 0),
+        "skipped": reg_result.get("skipped", 0),
+    })
+
+@app.route("/api/yt-channels/upload-status")
+def yt_channels_upload_status():
+    """Get current upload pipeline status."""
+    return jsonify({
+        "upload_running": batch_manager.upload_running,
+        "upload_paused": batch_manager.upload_paused,
+        "upload_batch_name": batch_manager.upload_batch_name,
+        "pipeline_running": batch_manager.pipeline_running,
+    })
+
+@app.route("/api/yt-channels/stop-upload", methods=["POST"])
+def yt_channels_stop_upload():
+    """Stop the upload pipeline."""
+    success, msg = batch_manager.stop_automated_upload()
+    if not success:
+        # Try harder
+        import subprocess as sp
+        for proc in ("chromedriver", "chrome"):
+            try:
+                sp.run(["taskkill", "/F", "/IM", f"{proc}.exe", "/T"],
+                       capture_output=True, timeout=5)
+            except Exception:
+                pass
+        batch_manager.upload_running = False
+        batch_manager.upload_batch_name = None
+        batch_manager.upload_paused = False
+        msg = "Upload stopped (forced)"
+    return jsonify({"ok": True, "message": msg})
+
+@app.route("/api/yt-channels/batch/<batch_name>/upload", methods=["POST"])
+def yt_channels_single_upload(batch_name):
+    """Upload a single batch via Selenium."""
+    success, msg = batch_manager.start_automated_upload(batch_name)
+    if not success:
+        return jsonify({"error": msg}), 400
+    return jsonify({"ok": True, "message": msg})
+
+@app.route("/api/yt-channels/batch/<batch_name>/retry", methods=["POST"])
+def yt_channels_batch_retry(batch_name):
+    """Retry a failed batch."""
+    batches = batch_manager.load_batches()
+    if batch_name not in batches:
+        return jsonify({"error": f"Batch '{batch_name}' not found."}), 404
+    b = batches[batch_name]
+    b["upload_failed"] = False
+    b["fail_reason"] = None
+    b["status"] = "pending_first_review"
+    b["upload_completed"] = False
+    for v in b.get("videos", []):
+        if v.get("pipeline_status") in ("upload_failed", "uploaded_approval_failed"):
+            v["pipeline_status"] = "batched"
+    batch_manager.save_batches(batches)
+    return jsonify({"ok": True, "message": f"Batch '{batch_name}' reset for retry."})
+
+@app.route("/api/yt-channels/batch/<batch_name>/finalize", methods=["POST"])
+def yt_channels_batch_finalize(batch_name):
+    """Finalize a batch (mark complete, cleanup)."""
+    batches = batch_manager.load_batches()
+    if batch_name not in batches:
+        return jsonify({"error": f"Batch '{batch_name}' not found."}), 404
+    b = batches[batch_name]
+    b["status"] = "finalized"
+    b["finalized_date"] = datetime.now().isoformat()
+    for v in b.get("videos", []):
+        v["pipeline_status"] = "finalized"
+    batch_manager.save_batches(batches)
+    return jsonify({"ok": True, "message": f"Batch '{batch_name}' finalized."})
+
+@app.route("/api/yt-channels/batch/<batch_name>/mark-uploaded", methods=["POST"])
+def yt_channels_batch_mark_uploaded(batch_name):
+    """Mark a batch as uploaded."""
+    data = request.json or {}
+    job_id = data.get("job_id") or "MANUAL"
+    success, msg = batch_manager.mark_batch_uploaded(batch_name, job_id)
+    if not success:
+        return jsonify({"error": msg}), 400
+    return jsonify({"ok": True, "message": msg})
+
+@app.route("/api/yt-channels/batch/<batch_name>/set-status", methods=["POST"])
+def yt_channels_batch_set_status(batch_name):
+    """Manual override: set a batch to any status.
+    Body: { "status": "pending_first_review"|"pending_second_review"|"finalized"|"failed"|"not_registered" }
+    """
+    data = request.json or {}
+    new_status = data.get("status")
+    valid = {"pending_first_review", "pending_second_review", "finalized", "failed", "not_registered"}
+    if new_status not in valid:
+        return jsonify({"error": f"Invalid status. Use one of: {', '.join(sorted(valid))}"}), 400
+
+    batches = batch_manager.load_batches()
+
+    if new_status == "not_registered":
+        # Remove from batches.json entirely (unregister)
+        if batch_name in batches:
+            del batches[batch_name]
+            batch_manager.save_batches(batches)
+        return jsonify({"ok": True, "message": f"'{batch_name}' unregistered."})
+
+    if batch_name not in batches:
+        return jsonify({"error": f"Batch '{batch_name}' not found in batches.json. Register it first."}), 404
+
+    b = batches[batch_name]
+    b["status"] = new_status
+    if new_status == "failed":
+        b["upload_failed"] = True
+        b["fail_reason"] = data.get("reason", "Manual override")
+    else:
+        b["upload_failed"] = False
+        b["fail_reason"] = None
+    if new_status == "finalized":
+        b["finalized_date"] = datetime.now().isoformat()
+    batch_manager.save_batches(batches)
+
+    display = {"pending_first_review":"registered","pending_second_review":"uploaded","finalized":"finalized","failed":"failed"}.get(new_status, new_status)
+    return jsonify({"ok": True, "message": f"'{batch_name}' → {display}"})
 
 if __name__ == "__main__":
     # Kill any zombie servers still on port 5000 from previous runs

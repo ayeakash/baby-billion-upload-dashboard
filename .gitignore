@@ -22,6 +22,11 @@ batches.json
 # ── Downloads & batches (large media files) ───────────────
 downloads/
 batches/
+BillionBuilders_batches/
+BillionBuilders_downloads/
+BillionBuilders_registry.csv
+bb_download_progress.json
+upload_history.jsonl
 
 # ── Logs ──────────────────────────────────────────────────
 logs/
