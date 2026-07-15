@@ -18,6 +18,25 @@
         "content_types": "Original",
         "language": "English"
       }
+    },
+    {
+      "id": "BabyBillionn",
+      "name": "BabyBillion",
+      "url": "https://www.youtube.com/@BabyBillionn",
+      "registry_file": "BabyBillionn_registry.csv",
+      "download_dir": "BabyBillionn_downloads",
+      "batch_dir": "BabyBillionn_batches",
+      "batch_prefix": "Batch_BN",
+      "csv_defaults": {
+        "channel_name": "BabyBillion",
+        "categories_name": "Entertainment",
+        "age_groups": "",
+        "tags": "",
+        "playlist_name": "",
+        "content_formats": "",
+        "content_types": "Original",
+        "language": "English"
+      }
     }
   ]
 }

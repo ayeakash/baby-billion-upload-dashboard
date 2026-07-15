@@ -1704,25 +1704,39 @@ def yt_channels_batch_set_status(batch_name):
     return jsonify({"ok": True, "message": f"'{batch_name}' → {display}"})
 
 if __name__ == "__main__":
-    # Kill any zombie servers still on port 5000 from previous runs
-    import subprocess, re as _re
+    # Kill any zombie servers still on port 5050 from previous runs
+    import subprocess, re as _re, platform
     try:
         my_pid = os.getpid()
-        result = subprocess.run(
-            ["netstat", "-ano"], capture_output=True, text=True, timeout=5
-        )
-        for line in result.stdout.splitlines():
-            if ":5000" in line and "LISTENING" in line:
-                parts = line.split()
-                pid = int(parts[-1])
+        if platform.system() == "Windows":
+            result = subprocess.run(
+                ["netstat", "-ano"], capture_output=True, text=True, timeout=5
+            )
+            for line in result.stdout.splitlines():
+                if ":5050" in line and "LISTENING" in line:
+                    parts = line.split()
+                    pid = int(parts[-1])
+                    if pid != my_pid:
+                        try:
+                            subprocess.run(["taskkill", "/F", "/PID", str(pid)], capture_output=True, timeout=5)
+                            print(f"  Killed zombie server on port 5050 (PID {pid})")
+                        except Exception:
+                            pass
+        else:
+            # macOS / Linux
+            result = subprocess.run(
+                ["lsof", "-ti", ":5050"], capture_output=True, text=True, timeout=5
+            )
+            for pid_str in result.stdout.strip().splitlines():
+                pid = int(pid_str.strip())
                 if pid != my_pid:
                     try:
-                        subprocess.run(["taskkill", "/F", "/PID", str(pid)], capture_output=True, timeout=5)
-                        print(f"  Killed zombie server on port 5000 (PID {pid})")
+                        os.kill(pid, 9)
+                        print(f"  Killed zombie server on port 5050 (PID {pid})")
                     except Exception:
                         pass
     except Exception:
         pass
 
     # Start flask app locally
-    app.run(host="127.0.0.1", port=5000, debug=False)
+    app.run(host="127.0.0.1", port=5050, debug=False)

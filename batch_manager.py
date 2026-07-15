@@ -559,7 +559,7 @@ def run_upload_all_submit_thread():
         batches = load_batches()
         pending = []
         for bn, b in batches.items():
-            if b.get("status") == "pending_first_review":
+            if b.get("status") == "pending_first_review" and not b.get("upload_failed"):
                 csv_path = os.path.join(uploader.BATCHES_DIR, f"{bn}.csv")
                 zip_path = os.path.join(uploader.BATCHES_DIR, f"{bn}.zip")
                 if os.path.isfile(csv_path):

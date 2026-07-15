@@ -12,16 +12,19 @@ For each batch:
 """
 from __future__ import annotations
 
+import csv
 import os
 import re
 import time
 import logging
 import threading
 from config import (
-    ADMIN_LOGIN_URL, ADMIN_UPLOAD_URL,
+    ADMIN_LOGIN_URL, ADMIN_UPLOAD_URL, ADMIN_BASE_URL,
     BB_USERNAME, BB_PASSWORD, UPLOAD_TYPE,
     SELENIUM_WAIT_SEC, UPLOAD_RETRY_MAX, BATCHES_DIR,
 )
+
+ADMIN_UPLOAD_HISTORY_URL = f"{ADMIN_BASE_URL}/dashboard/cms/video-upload"
 
 log = logging.getLogger(__name__)
 
@@ -643,6 +646,142 @@ def click_submit_for_approval(driver) -> bool:
     return True
 
 
+# ── Post-Upload CMS Verification ─────────────────────────────────────────────
+
+def _normalize_video_name(name: str) -> str:
+    """Normalize a video name for comparison."""
+    name = name.lower().strip()
+    name = re.sub(r'[^\w]', '_', name)
+    name = re.sub(r'_+', '_', name).strip('_')
+    return name
+
+
+def _get_batch_csv_video_names(batch_name: str) -> set[str]:
+    """Read video names from a batch CSV file."""
+    csv_path = os.path.join(BATCHES_DIR, f"{batch_name}.csv")
+    if not os.path.exists(csv_path):
+        return set()
+    names = set()
+    with open(csv_path, "r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            vn = row.get("video_name", "").strip()
+            if vn:
+                names.add(_normalize_video_name(vn))
+    return names
+
+
+def verify_upload_on_cms(driver, batch_name: str, job_id: str) -> dict:
+    """
+    After uploading a batch, navigate to Upload History on the CMS,
+    find the entry by job ID, click View, scrape video names,
+    and verify they match the local batch CSV.
+
+    Returns dict with:
+      - verified: bool (True if videos match)
+      - cms_count: int (videos found on CMS)
+      - local_count: int (videos in CSV)
+      - match_count: int (overlapping video names)
+      - match_pct: float (percentage match)
+    """
+    _, _, _, By, WebDriverWait, EC, _, _, _ = _get_selenium()
+
+    result = {
+        "verified": False,
+        "cms_count": 0,
+        "local_count": 0,
+        "match_count": 0,
+        "match_pct": 0.0,
+    }
+
+    local_names = _get_batch_csv_video_names(batch_name)
+    result["local_count"] = len(local_names)
+    if not local_names:
+        log.warning(f"  [VERIFY] No video names in CSV for {batch_name} — skipping")
+        result["verified"] = True  # Can't verify, assume OK
+        return result
+
+    log.info(f"  [VERIFY] Navigating to Upload History to verify {batch_name}...")
+
+    try:
+        # Navigate to Upload History
+        driver.get(ADMIN_UPLOAD_HISTORY_URL)
+        time.sleep(3)
+
+        # Click "Upload History" tab
+        for el in driver.find_elements(By.CSS_SELECTOR, "button, a, span"):
+            if "upload history" in el.text.strip().lower():
+                try:
+                    el.click()
+                except Exception:
+                    pass
+                break
+        time.sleep(2)
+
+        # Find the row with our job ID and click View
+        clicked_view = False
+        rows = driver.find_elements(By.CSS_SELECTOR, "table tbody tr")
+        for row in rows:
+            cells = row.find_elements(By.CSS_SELECTOR, "td")
+            if len(cells) >= 1 and job_id in cells[0].text:
+                # Click View button in last cell
+                action_cell = cells[-1]
+                for btn in action_cell.find_elements(By.CSS_SELECTOR, "button, a"):
+                    if "view" in btn.text.strip().lower():
+                        driver.execute_script("arguments[0].click();", btn)
+                        time.sleep(3)
+                        clicked_view = True
+                        break
+                break
+
+        if not clicked_view:
+            log.warning(f"  [VERIFY] Could not find job {job_id[:20]}... in Upload History")
+            return result
+
+        # Scrape video names from the detail page
+        body = driver.execute_script(
+            "return document.body ? (document.body.innerText || '') : ''"
+        )
+
+        cms_video_names = set()
+        for line in body.split("\n"):
+            line = line.strip()
+            if not line or len(line) < 3 or len(line) > 200:
+                continue
+            # Video names have underscores, typically start with capital letter
+            if re.match(r'^[A-Z][a-z]+_[A-Z]', line) or re.match(r'^Kids_', line, re.I):
+                cms_video_names.add(_normalize_video_name(line))
+            elif "_" in line and not line.startswith("http") and not line.startswith("/"):
+                llow = line.lower()
+                skip_words = ("batch", "upload", "cms", "http", "babybillion",
+                              "video_id", "content", "log out", "ms bubble",
+                              "video upload", "processed", "submit", "reject")
+                if not any(x in llow for x in skip_words):
+                    cms_video_names.add(_normalize_video_name(line))
+
+        result["cms_count"] = len(cms_video_names)
+
+        # Compare
+        overlap = len(cms_video_names & local_names)
+        total = max(len(cms_video_names), len(local_names))
+        pct = (overlap / total * 100) if total else 0
+
+        result["match_count"] = overlap
+        result["match_pct"] = pct
+        result["verified"] = pct >= 50  # At least 50% match
+
+        if result["verified"]:
+            log.info(f"  [VERIFY] ✅ {batch_name} VERIFIED — {overlap}/{total} videos matched ({pct:.0f}%)")
+        else:
+            log.error(f"  [VERIFY] ❌ {batch_name} FAILED — only {overlap}/{total} videos matched ({pct:.0f}%)")
+
+    except Exception as e:
+        log.error(f"  [VERIFY] Error during verification: {e}")
+        # Don't fail the upload just because verification had an error
+
+    return result
+
+
 def run_all_and_submit(batch_names: list[str], headless: bool = False,
                        on_result: callable = None) -> dict[str, dict]:
     """
@@ -702,7 +841,26 @@ def run_all_and_submit(batch_names: list[str], headless: bool = False,
                 approved = click_submit_for_approval(driver)
                 if approved:
                     log.info(f"  [OK] {batch_name} submitted for approval!")
-                    results[batch_name] = {"job_id": job_id, "status": "submitted"}
+
+                    # STEP 3: Verify on CMS Upload History
+                    log.info(f"  [STEP 3] Verifying upload on CMS...")
+                    verify_result = verify_upload_on_cms(driver, batch_name, job_id)
+
+                    if verify_result["verified"]:
+                        results[batch_name] = {
+                            "job_id": job_id,
+                            "status": "submitted",
+                            "verified": True,
+                            "verify_pct": verify_result["match_pct"],
+                        }
+                    else:
+                        log.error(f"  [VERIFY FAIL] {batch_name} — CMS verification failed!")
+                        results[batch_name] = {
+                            "job_id": job_id,
+                            "status": "approval_failed",
+                            "verified": False,
+                            "verify_pct": verify_result["match_pct"],
+                        }
                 else:
                     log.error(f"  [FAIL] {batch_name} uploaded but approval failed!")
                     results[batch_name] = {"job_id": job_id, "status": "approval_failed"}
