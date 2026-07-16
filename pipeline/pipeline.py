@@ -999,19 +999,6 @@ def main():
             page_id    = rec.get("page_id", pid)
             lang_suffix = rec.get("lang_suffix", "")
 
-            # Re-tag video name if not already tagged
-            if vname and "___pg_" not in vname:
-                short_pid = page_id.replace("-", "")
-                if lang_suffix:
-                    tagged = f"{vname}___pg_{short_pid}{lang_suffix}"
-                else:
-                    # Old single-link entries: no language suffix
-                    tagged = f"{vname}___pg_{short_pid}"
-                log.info(f"  [RETAG] {vname} → {tagged}")
-                vname = tagged
-                # Update state.json so future runs use the tagged name
-                sm.upsert(pid, video_name=vname, lang_suffix=lang_suffix)
-
             all_videos.append({
                 "page_id":     page_id,
                 "video_name":  vname,

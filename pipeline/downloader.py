@@ -153,23 +153,56 @@ def download_video(page_id: str, video_name: str, drive_link: str) -> str | None
 
 # ── Direct file download ───────────────────────────────────────────────────────
 
+def _download_via_curl(file_id: str, out_path: str) -> str | None:
+    """Fallback: download from Google Drive using curl with confirm=t."""
+    import subprocess as sp
+    url = f"https://drive.google.com/uc?export=download&id={file_id}&confirm=t"
+    log.info(f"  [CURL] Trying curl fallback for file ID: {file_id[:20]}...")
+    try:
+        result = sp.run(
+            ["curl", "-sL", "-o", out_path, url],
+            timeout=600,
+            capture_output=True,
+        )
+        if result.returncode == 0 and os.path.isfile(out_path) and os.path.getsize(out_path) > 10_000:
+            size_mb = os.path.getsize(out_path) / (1024 * 1024)
+            log.info(f"  [OK] curl downloaded: {os.path.basename(out_path)} ({size_mb:.1f} MB)")
+            return out_path
+        else:
+            # Check if we got an HTML error page instead of the actual file
+            if os.path.isfile(out_path) and os.path.getsize(out_path) < 10_000:
+                os.remove(out_path)
+            log.warning(f"  [CURL] curl download failed or file too small")
+            return None
+    except Exception as e:
+        log.warning(f"  [CURL] curl error: {e}")
+        return None
+
+
 def _download_file(drive_link: str, out_path: str) -> str | None:
-    """Download a direct Google Drive file link."""
+    """Download a direct Google Drive file link. Tries gdown first, then curl."""
     file_id = _extract_file_id(drive_link)
     if not file_id:
         log.error(f"  Could not extract file ID from: {drive_link}")
         return None
 
-    url    = f"https://drive.google.com/uc?id={file_id}"
-    result = gdown.download(url, out_path, quiet=False)
+    # Try gdown first
+    url = f"https://drive.google.com/uc?id={file_id}"
+    try:
+        result = gdown.download(url, out_path, quiet=False, use_cookies=True)
+        if result and os.path.isfile(result) and os.path.getsize(result) > 10_000:
+            size_mb = os.path.getsize(result) / 1024 / 1024
+            log.info(f"  [OK] Downloaded: {os.path.basename(result)} ({size_mb:.1f} MB)")
+            return result
+    except Exception as e:
+        log.warning(f"  [WARN] gdown failed: {e}")
 
-    if result and os.path.isfile(result) and os.path.getsize(result) > 10_000:
-        size_mb = os.path.getsize(result) / 1024 / 1024
-        log.info(f"  [OK] Downloaded: {os.path.basename(result)} ({size_mb:.1f} MB)")
-        return result
+    # Clean up failed gdown attempt
+    if os.path.isfile(out_path) and os.path.getsize(out_path) < 10_000:
+        os.remove(out_path)
 
-    log.error(f"  [FAIL] gdown returned no usable file (result={result})")
-    return None
+    # Fallback: curl
+    return _download_via_curl(file_id, out_path)
 
 
 # ── Folder download (with render-subfolder priority) ──────────────────────────
@@ -201,21 +234,65 @@ def _download_from_folder(folder_link: str, safe_name: str, out_path: str) -> st
     log.info(f"     Downloading full folder -> {tmp_dir}")
     log.info(f"     Render subfolders recognised: {sorted(RENDER_FOLDER_NAMES)}")
 
+    gdown_error_msg = ""
     try:
         gdown.download_folder(
             url=f"https://drive.google.com/drive/folders/{folder_id}",
             output=tmp_dir,
             quiet=False,
-            use_cookies=False,
+            use_cookies=True,
         )
     except Exception as e:
-        # Partial downloads are still usable
-        log.warning(f"  [WARN]  gdown.download_folder raised: {e} -- continuing with partial download")
+        gdown_error_msg = str(e)
+        log.warning(f"  [WARN]  gdown.download_folder raised — continuing with fallback")
 
     # ── Walk the downloaded tree ───────────────────────────────────────────────
     all_mp4s    = _walk_mp4s(tmp_dir)
     render_mp4s = [p for p in all_mp4s if _is_in_render_folder(p, tmp_dir)]
     other_mp4s  = [p for p in all_mp4s if p not in render_mp4s]
+
+    # ── Curl fallback: if gdown got 0 MP4s, extract file ID and use curl ──────
+    if not all_mp4s:
+        log.info(f"  [CURL-FOLDER] gdown got 0 files — trying curl fallback...")
+
+        # Strategy 1: Extract file ID from gdown's error message
+        #   gdown outputs: "https://drive.google.com/uc?id=FILE_ID"
+        file_ids = set(re.findall(r'drive\.google\.com/uc\?id=([a-zA-Z0-9_-]{20,})', gdown_error_msg))
+
+        # Strategy 2: Use gdown to list folder contents (it lists even when download fails)
+        if not file_ids:
+            try:
+                import io
+                from contextlib import redirect_stdout
+                buf = io.StringIO()
+                # gdown prints "Processing file FILE_ID filename" to stdout
+                # We already saw this in the logs, so let's parse our own log
+                # Actually, use the Google Drive API v3 public endpoint
+                api_url = f"https://www.googleapis.com/drive/v3/files?q=%27{folder_id}%27+in+parents&key=AIzaSyBn5TxXVS_pDsRlnLHjRzpJg1UjCRL9bEE&fields=files(id,name)"
+                import requests as _req
+                resp = _req.get(api_url, timeout=15)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    for f in data.get("files", []):
+                        if f.get("name", "").lower().endswith(".mp4"):
+                            file_ids.add(f["id"])
+            except Exception:
+                pass
+
+        if file_ids:
+            log.info(f"  [CURL-FOLDER] Found {len(file_ids)} file ID(s) to try")
+            for fid in file_ids:
+                curl_out = os.path.join(tmp_dir, f"{fid}.mp4")
+                result = _download_via_curl(fid, curl_out)
+                if result and os.path.isfile(result) and os.path.getsize(result) > 10_000:
+                    log.info(f"  [CURL-FOLDER] ✅ Downloaded file {fid[:20]}...")
+
+            # Re-scan for MP4s
+            all_mp4s = _walk_mp4s(tmp_dir)
+            render_mp4s = [p for p in all_mp4s if _is_in_render_folder(p, tmp_dir)]
+            other_mp4s = [p for p in all_mp4s if p not in render_mp4s]
+        else:
+            log.warning(f"  [CURL-FOLDER] Could not extract any file IDs")
 
     _log_found(tmp_dir, all_mp4s, render_mp4s)
 
