@@ -12,6 +12,8 @@ venv/
 .env
 credentials.py
 pipeline/credentials.py
+slack_notifier/credentials.py
+slack_notifier/logs/
 
 # ── Runtime data ──────────────────────────────────────────
 state.json
