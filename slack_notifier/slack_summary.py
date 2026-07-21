@@ -18,8 +18,11 @@ import json
 import logging
 import argparse
 import requests
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 from collections import Counter
+
+# IST timezone (UTC+5:30) — ensures correct "today" even on UTC servers
+IST = timezone(timedelta(hours=5, minutes=30))
 
 # ── Load credentials ──────────────────────────────────────────────────────────
 try:
@@ -207,7 +210,7 @@ def _compute_for_lang(pages: list[dict], lang_key: str) -> dict:
     lang_key is 'has_hindi' or 'has_english'.
     Only counts pages where that language link is present.
     """
-    today = date.today()
+    today = datetime.now(IST).date()
     week_start = today - timedelta(days=today.weekday())
     month_start = today.replace(day=1)
 
@@ -257,7 +260,7 @@ def _compute_for_lang(pages: list[dict], lang_key: str) -> dict:
 
 def compute_summary(pages: list[dict]) -> dict:
     """Compute summary numbers overall and per-language."""
-    today = date.today()
+    today = datetime.now(IST).date()
     week_start = today - timedelta(days=today.weekday())
     month_start = today.replace(day=1)
 
@@ -332,7 +335,7 @@ def _format_lang_section(lang_name: str, lang_data: dict, weekly_goal: int) -> s
 
 def format_slack_message(summary: dict) -> dict:
     """Build a Slack Block Kit message payload."""
-    today_str = date.today().strftime("%d %B %Y")
+    today_str = datetime.now(IST).date().strftime("%d %B %Y")
 
     hindi_section = _format_lang_section("Hindi", summary["hindi"], summary["weekly_goal"])
     english_section = _format_lang_section("English", summary["english"], summary["weekly_goal"])
@@ -417,7 +420,7 @@ def _format_lang_plain(lang_name: str, lang_data: dict, weekly_goal: int) -> lis
 
 def format_plain_text(summary: dict) -> str:
     """Format the summary as plain text for --dry-run output."""
-    today_str = date.today().strftime("%d %B %Y")
+    today_str = datetime.now(IST).date().strftime("%d %B %Y")
 
     lines = [
         f"{'=' * 50}",
