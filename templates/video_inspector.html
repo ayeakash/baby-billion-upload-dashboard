@@ -273,7 +273,7 @@
             background: var(--surface-hover);
         }
 
-        /* Copyable Video ID Code Badge */
+        /* Copyable Video ID Badge */
         .copy-id-badge {
             display: inline-flex;
             align-items: center;
@@ -302,11 +302,36 @@
             opacity: 0.7;
         }
 
-        .title-text {
-            color: var(--text);
+        /* Copyable Title Badge */
+        .copy-title-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
             font-weight: 500;
-            max-width: 280px;
+            color: #e0e7ff;
+            background: rgba(99, 102, 241, 0.08);
+            border: 1px solid rgba(99, 102, 241, 0.22);
+            padding: 5px 9px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            user-select: none;
+            max-width: 320px;
             word-break: break-word;
+        }
+
+        .copy-title-badge:hover {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: rgba(99, 102, 241, 0.4);
+            color: #fff;
+        }
+
+        .copy-title-badge svg {
+            width: 13px;
+            height: 13px;
+            opacity: 0.7;
+            flex-shrink: 0;
         }
 
         .tag-lang {
@@ -475,7 +500,7 @@
                             <tr>
                                 <th style="width: 35px;">#</th>
                                 <th>Video ID (Click to Copy)</th>
-                                <th>Title</th>
+                                <th>Title (Click to Copy)</th>
                                 <th>Language</th>
                                 <th>Visibility</th>
                                 <th>Age Groups</th>
@@ -507,9 +532,21 @@
             setTimeout(() => { t.style.display = 'none'; }, 2500);
         }
 
-        function copyId(idStr, el) {
+        function copyId(el) {
+            const idStr = typeof el === 'string' ? el : (el.getAttribute('data-copy-id') || el.innerText.trim());
+            if (!idStr) return;
             navigator.clipboard.writeText(idStr).then(() => {
-                showToast(`Copied ${idStr}`);
+                showToast(`Copied ID: ${idStr}`);
+            }).catch(err => {
+                console.error("Copy failed:", err);
+            });
+        }
+
+        function copyTitle(el) {
+            const titleText = typeof el === 'string' ? el : (el.getAttribute('data-copy-title') || el.innerText.trim());
+            if (!titleText || titleText === 'N/A' || titleText === 'Not Found') return;
+            navigator.clipboard.writeText(titleText).then(() => {
+                showToast(`Copied Title: ${titleText}`);
             }).catch(err => {
                 console.error("Copy failed:", err);
             });
@@ -648,20 +685,26 @@
                     : `<span style="color: var(--muted); font-size: 11px;">None</span>`;
 
                 const langClass = (item.language || '').trim();
-
                 const visStatus = item.visibility_status || 'Unknown';
                 const visBadgeHtml = `<span class="vis-badge ${visStatus}">${visStatus}</span>`;
+
+                const titleVal = item.title || 'N/A';
 
                 return `
                     <tr>
                         <td style="color: var(--muted);">${idx + 1}</td>
                         <td>
-                            <div class="copy-id-badge" onclick="copyId('${item.video_id}', this)" title="Click to copy Video ID">
+                            <div class="copy-id-badge" data-copy-id="${escapeHtml(item.video_id)}" onclick="copyId(this)" title="Click to copy Video ID">
                                 <span>${item.video_id}</span>
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
                             </div>
                         </td>
-                        <td class="title-text">${escapeHtml(item.title || 'N/A')}</td>
+                        <td>
+                            <div class="copy-title-badge" data-copy-title="${escapeHtml(titleVal)}" onclick="copyTitle(this)" title="Click to copy Title">
+                                <span>${escapeHtml(titleVal)}</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                            </div>
+                        </td>
                         <td>
                             <span class="tag-lang ${langClass}">${escapeHtml(item.language || 'N/A')}</span>
                         </td>
@@ -679,7 +722,7 @@
         }
 
         function escapeHtml(str) {
-            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         }
 
         // On Page Load: Start completely clean from scratch
