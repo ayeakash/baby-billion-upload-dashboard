@@ -85,7 +85,7 @@
         /* ── Main Container ───────────────────────────────────────────────── */
         main {
             flex: 1;
-            max-width: 1200px;
+            max-width: 1240px;
             width: 100%;
             margin: 0 auto;
             padding: 32px 24px;
@@ -305,7 +305,7 @@
         .title-text {
             color: var(--text);
             font-weight: 500;
-            max-width: 300px;
+            max-width: 280px;
             word-break: break-word;
         }
 
@@ -329,6 +329,35 @@
             background: rgba(236, 72, 153, 0.12);
         }
 
+        /* Visibility Status Badges (Active vs Hidden) */
+        .vis-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .vis-badge.Active {
+            background: rgba(16, 185, 129, 0.12);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.25);
+        }
+
+        .vis-badge.Hidden {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .vis-badge.Unknown {
+            background: rgba(156, 163, 175, 0.12);
+            color: #9ca3af;
+            border: 1px solid rgba(156, 163, 175, 0.25);
+        }
+
         .chip-stack {
             display: flex;
             gap: 4px;
@@ -340,19 +369,10 @@
             font-size: 11px;
             font-family: 'JetBrains Mono', monospace;
             font-weight: 600;
-            background: rgba(16, 185, 129, 0.12);
-            color: #34d399;
-            border: 1px solid rgba(16, 185, 129, 0.25);
+            background: rgba(99, 102, 241, 0.12);
+            color: #a5b4fc;
+            border: 1px solid rgba(99, 102, 241, 0.25);
         }
-
-        .status-text {
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        .status-text.SUCCESS { color: var(--green); }
-        .status-text.NOT_FOUND { color: var(--amber); }
-        .status-text.ERROR { color: var(--red); }
 
         .empty-msg {
             padding: 40px;
@@ -453,16 +473,17 @@
                     <table>
                         <thead>
                             <tr>
-                                <th style="width: 40px;">#</th>
+                                <th style="width: 35px;">#</th>
                                 <th>Video ID (Click to Copy)</th>
                                 <th>Title</th>
                                 <th>Language</th>
+                                <th>Visibility</th>
                                 <th>Age Groups</th>
                             </tr>
                         </thead>
                         <tbody id="resultsTbody">
                             <tr>
-                                <td colspan="5" class="empty-msg">
+                                <td colspan="6" class="empty-msg">
                                     Paste Video IDs on the left and click <strong>Inspect</strong>.
                                 </td>
                             </tr>
@@ -503,7 +524,7 @@
             document.getElementById('statNotFound').innerText = '0';
             document.getElementById('progressWrap').style.display = 'none';
             renderTable([]);
-            
+
             try {
                 await fetch('/api/video-inspector/reset', { method: 'POST' });
             } catch(e){}
@@ -613,7 +634,7 @@
             if (!results || results.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="5" class="empty-msg">
+                        <td colspan="6" class="empty-msg">
                             Paste Video IDs on the left and click <strong>Inspect</strong>.
                         </td>
                     </tr>
@@ -628,6 +649,9 @@
 
                 const langClass = (item.language || '').trim();
 
+                const visStatus = item.visibility_status || 'Unknown';
+                const visBadgeHtml = `<span class="vis-badge ${visStatus}">${visStatus}</span>`;
+
                 return `
                     <tr>
                         <td style="color: var(--muted);">${idx + 1}</td>
@@ -640,6 +664,9 @@
                         <td class="title-text">${escapeHtml(item.title || 'N/A')}</td>
                         <td>
                             <span class="tag-lang ${langClass}">${escapeHtml(item.language || 'N/A')}</span>
+                        </td>
+                        <td>
+                            ${visBadgeHtml}
                         </td>
                         <td>
                             <div class="chip-stack">${ageChips}</div>

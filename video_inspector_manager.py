@@ -4,6 +4,7 @@ video_inspector_manager.py
 Clean, minimalistic backend manager for inspecting CMS Video Library details:
 - Title
 - Language
+- Visibility Status ("Active" vs "Hidden")
 - Selected Age Groups ("0-3", "3-6", "6+")
 """
 
@@ -96,6 +97,7 @@ def inspect_single_video(driver, video_id: str) -> Dict[str, Any]:
                     "status": "ERROR",
                     "title": "N/A",
                     "language": "N/A",
+                    "visibility_status": "Unknown",
                     "age_groups": [],
                     "message": "Search input not found"
                 }
@@ -116,10 +118,12 @@ def inspect_single_video(driver, video_id: str) -> Dict[str, Any]:
         # Find matching row and Edit button
         rows = driver.find_elements("css selector", "table tbody tr")
         edit_btn = None
+        matched_row = None
 
         for row in rows:
             row_text = row.text.strip()
             if video_id.lower() in row_text.lower() or len(rows) == 1:
+                matched_row = row
                 buttons = row.find_elements("css selector", "button")
                 for btn in buttons:
                     if btn.text.strip().lower() == "edit":
@@ -128,15 +132,29 @@ def inspect_single_video(driver, video_id: str) -> Dict[str, Any]:
             if edit_btn:
                 break
 
-        if not edit_btn:
+        if not edit_btn or not matched_row:
             return {
                 "video_id": video_id,
                 "status": "NOT_FOUND",
                 "title": "Not Found",
                 "language": "N/A",
+                "visibility_status": "Unknown",
                 "age_groups": [],
                 "message": "Video ID not found in CMS search"
             }
+
+        # Extract visibility status (Active vs Hidden) from the row
+        visibility_status = driver.execute_script("""
+            const row = arguments[0];
+            const cells = Array.from(row.querySelectorAll('td'));
+            for (const cell of cells) {
+                const txt = cell.innerText.trim();
+                if (txt === 'Active' || txt === 'Hidden') {
+                    return txt;
+                }
+            }
+            return row.innerText.includes('Hidden') ? 'Hidden' : 'Active';
+        """, matched_row)
 
         # Click Edit button to open modal
         driver.execute_script("arguments[0].click();", edit_btn)
@@ -190,6 +208,7 @@ def inspect_single_video(driver, video_id: str) -> Dict[str, Any]:
                 "status": "ERROR",
                 "title": "N/A",
                 "language": "N/A",
+                "visibility_status": visibility_status,
                 "age_groups": [],
                 "message": "Failed to open edit modal"
             }
@@ -199,6 +218,7 @@ def inspect_single_video(driver, video_id: str) -> Dict[str, Any]:
             "status": "SUCCESS",
             "title": modal_info["title"] or "Untitled",
             "language": modal_info["language"] or "Unknown",
+            "visibility_status": visibility_status,
             "age_groups": modal_info["age_groups"],
             "message": "Inspected successfully"
         }
@@ -209,6 +229,7 @@ def inspect_single_video(driver, video_id: str) -> Dict[str, Any]:
             "status": "ERROR",
             "title": "N/A",
             "language": "N/A",
+            "visibility_status": "Unknown",
             "age_groups": [],
             "message": f"Exception: {str(e)}"
         }
