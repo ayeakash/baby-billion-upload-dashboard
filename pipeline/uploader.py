@@ -234,7 +234,7 @@ return JSON.stringify(indicators);
             for pattern in (
                 "invalid csv", "invalid file", "file not accepted",
                 "upload failed", "error occurred", "something went wrong",
-                "not accepted", "rejected", "validation error",
+                "not accepted", "batch rejected", "validation error",
                 "please try again", "unsupported format",
             ):
                 if pattern in body_lower:

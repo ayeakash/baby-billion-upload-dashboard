@@ -1430,6 +1430,48 @@ def reject_one_review(page_id):
     except Exception as e:
         return jsonify({"ok": False, "message": str(e)})
 
+# ── CMS Video Inspector ──────────────────────────────────────────────────────
+import video_inspector_manager as inspector_mgr
+
+@app.route("/video-inspector")
+def video_inspector_page():
+    return render_template("video_inspector.html")
+
+@app.route("/api/video-inspector/start", methods=["POST"])
+def api_start_video_inspector():
+    data = request.get_json() or {}
+    video_ids = data.get("video_ids", [])
+
+    if not video_ids:
+        return jsonify({"ok": False, "error": "No video IDs provided."}), 400
+
+    # Reset previous results when starting new inspection
+    inspector_mgr.reset_inspector_state()
+
+    success, msg = inspector_mgr.start_inspection(
+        video_ids=video_ids,
+        headless=True
+    )
+
+    if not success:
+        return jsonify({"ok": False, "error": msg}), 400
+
+    return jsonify({"ok": True, "message": msg})
+
+@app.route("/api/video-inspector/status")
+def api_video_inspector_status():
+    return jsonify(inspector_mgr.get_inspector_status())
+
+@app.route("/api/video-inspector/reset", methods=["POST"])
+def api_video_inspector_reset():
+    inspector_mgr.reset_inspector_state()
+    return jsonify({"ok": True, "message": "Inspector state reset."})
+
+@app.route("/api/video-inspector/stop", methods=["POST"])
+def api_video_inspector_stop():
+    inspector_mgr.stop_inspection()
+    return jsonify({"ok": True, "message": "Stop request sent."})
+
 # ── YouTube Channel Manager ──────────────────────────────────────────────────
 import yt_channel_manager as yt_mgr
 
