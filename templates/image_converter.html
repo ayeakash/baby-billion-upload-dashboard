@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Converter — BabyBillion Pipeline</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0d0d11;
+            --surface: #161619;
+            --surface-high: #1c1b20;
+            --surface-highest: #27262b;
+            --text: #e6e3e8;
+            --muted: #aaa7af;
+            --outline: #3e3e43;
+            --primary: #a8b8ff;
+            --primary-dark: #162454;
+            --success: #7edba5;
+            --error: #ffb4ab;
+            --radius: 16px;
+        }
+        * { box-sizing: border-box; }
+        body { margin: 0; min-height: 100vh; background: var(--bg); color: var(--text); font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+        button, input { font: inherit; }
+        .topbar { height: 64px; padding: 0 22px; border-bottom: 1px solid rgba(168,184,255,.09); background: rgba(22,21,27,.94); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; backdrop-filter: blur(18px); }
+        .topbar-left { display: flex; align-items: center; gap: 12px; }
+        .brand { display: flex; align-items: center; gap: 12px; color: var(--text); text-decoration: none; }
+        .back { width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--outline); display: grid; place-items: center; color: var(--primary); font-size: 19px; }
+        .brand strong { display: block; font-size: 14px; }
+        .brand small { display: block; color: var(--muted); margin-top: 2px; font-size: 11px; font-weight: 400; }
+        .local { display: flex; align-items: center; gap: 8px; color: var(--success); font: 500 10px/1 JetBrains Mono, monospace; text-transform: uppercase; }
+        .local::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--success); box-shadow: 0 0 0 4px rgba(126,219,165,.08); }
+        main { width: min(1040px, calc(100% - 32px)); margin: 48px auto; }
+        .heading { margin-bottom: 24px; }
+        .heading h1 { font-size: clamp(30px, 4vw, 46px); letter-spacing: -.045em; margin: 0; }
+        .heading p { color: var(--muted); font-size: 14px; margin: 10px 0 0; }
+        .card { background: var(--surface); border: 1px solid var(--outline); border-radius: 22px; overflow: hidden; box-shadow: 0 14px 40px rgba(0,0,0,.22); }
+        .drop { min-height: 390px; margin: 14px; border: 1px dashed #55535a; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; background: radial-gradient(circle at 50% 40%, rgba(168,184,255,.07), transparent 38%); transition: border-color .2s, background .2s; }
+        .drop.dragging { border-color: var(--primary); background-color: rgba(168,184,255,.05); }
+        .drop input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+        .upload-mark { width: 58px; height: 58px; border-radius: 18px; display: grid; place-items: center; background: var(--surface-highest); border: 1px solid var(--outline); color: var(--primary); font-size: 27px; margin-bottom: 20px; }
+        .drop h2 { font-size: 20px; margin: 0 0 8px; }
+        .drop p { margin: 0; color: var(--muted); font-size: 13px; }
+        .choose { margin-top: 20px; padding: 10px 18px; border: 0; border-radius: 100px; background: var(--primary); color: var(--primary-dark); font-weight: 650; cursor: pointer; }
+        .specs { margin-top: 18px; color: #77757d; font: 500 10px/1 JetBrains Mono, monospace; text-transform: uppercase; letter-spacing: .04em; }
+        .editor { display: none; grid-template-columns: 1.05fr .95fr; min-height: 520px; }
+        .editor.visible { display: grid; }
+        .preview-panel { padding: 22px; background: #111115; border-right: 1px solid var(--outline); display: flex; flex-direction: column; }
+        .panel-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; font: 500 10px/1 JetBrains Mono, monospace; text-transform: uppercase; color: var(--muted); }
+        .replace { border: 0; background: none; color: var(--primary); cursor: pointer; padding: 0; }
+        .stage { flex: 1; min-height: 360px; display: flex; align-items: center; justify-content: center; padding: 24px; border-radius: 12px; overflow: hidden; background-color: #202024; background-image: linear-gradient(45deg,#29282d 25%,transparent 25%),linear-gradient(-45deg,#29282d 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#29282d 75%),linear-gradient(-45deg,transparent 75%,#29282d 75%); background-size: 18px 18px; background-position: 0 0,0 9px,9px -9px,-9px 0; }
+        .stage img { max-width: 100%; max-height: 390px; object-fit: contain; box-shadow: 0 8px 24px rgba(0,0,0,.4); }
+        .file-info { display: flex; justify-content: space-between; align-items: end; gap: 14px; padding-top: 14px; color: var(--muted); font: 500 10px/1.5 JetBrains Mono, monospace; }
+        .file-info div { min-width: 0; }
+        .file-info strong { display: block; color: var(--text); font-family: Inter, sans-serif; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 260px; }
+        .file-info > span { white-space: nowrap; }
+        .settings { padding: 34px 36px 26px; }
+        .section-title { font-size: 13px; font-weight: 650; margin: 0 0 16px; }
+        .dimensions { display: grid; grid-template-columns: 1fr 36px 1fr; align-items: end; gap: 9px; }
+        label { color: var(--muted); font: 500 10px/1 JetBrains Mono, monospace; text-transform: uppercase; letter-spacing: .04em; }
+        .number-wrap { position: relative; margin-top: 8px; }
+        .number-wrap input { width: 100%; height: 52px; border-radius: 10px; border: 1px solid var(--outline); background: var(--surface-high); color: var(--text); padding: 0 40px 0 13px; font: 600 18px/1 Inter, sans-serif; outline: none; }
+        .number-wrap input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(168,184,255,.09); }
+        .number-wrap span { position: absolute; right: 12px; bottom: 20px; color: #77757d; }
+        .lock { height: 34px; margin-bottom: 9px; border: 1px solid var(--outline); border-radius: 9px; background: var(--surface-high); color: var(--muted); cursor: pointer; }
+        .lock.active { background: var(--primary); border-color: var(--primary); color: var(--primary-dark); }
+        .ratio { display: flex; align-items: center; gap: 8px; border: 0; background: none; color: var(--muted); font-size: 12px; padding: 12px 0 0; cursor: pointer; }
+        .check { width: 17px; height: 17px; border: 1px solid var(--outline); border-radius: 5px; display: grid; place-items: center; font-size: 10px; }
+        .ratio.active .check { background: var(--primary); border-color: var(--primary); color: var(--primary-dark); }
+        .divider { height: 1px; background: var(--outline); margin: 25px 0; }
+        .formats { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+        .format { text-align: left; padding: 12px; min-height: 64px; border: 1px solid var(--outline); border-radius: 10px; background: var(--surface-high); color: var(--text); cursor: pointer; }
+        .format.selected { border-color: var(--primary); background: rgba(168,184,255,.09); box-shadow: inset 0 0 0 1px var(--primary); }
+        .format strong, .format span { display: block; }
+        .format strong { font-size: 12px; }
+        .format span { color: var(--muted); margin-top: 6px; font: 400 9px/1 JetBrains Mono, monospace; text-transform: uppercase; }
+        .quality { display: grid; grid-template-columns: 1fr auto; gap: 7px; margin-top: 18px; }
+        .quality strong { color: var(--text); }
+        .quality input { grid-column: 1/-1; width: 100%; accent-color: var(--primary); }
+        .error { display: none; color: var(--error); font-size: 12px; margin: 14px 0 0; }
+        .error.visible { display: block; }
+        .download { width: 100%; height: 52px; margin-top: 20px; border: 0; border-radius: 100px; background: var(--primary); color: var(--primary-dark); font-weight: 700; cursor: pointer; }
+        .download:hover:not(:disabled), .choose:hover { filter: brightness(1.08); }
+        .download:disabled { opacity: .5; cursor: wait; }
+        .note { text-align: center; margin: 12px 0 0; color: #77757d; font: 500 9px/1 JetBrains Mono, monospace; text-transform: uppercase; }
+        @media (max-width: 760px) {
+            .topbar { padding: 0 14px; }
+            .local { font-size: 0; }
+            .local::after { content: 'Local'; font-size: 9px; }
+            main { width: calc(100% - 20px); margin-top: 28px; }
+            .editor.visible { grid-template-columns: 1fr; }
+            .preview-panel { border-right: 0; border-bottom: 1px solid var(--outline); }
+            .stage { min-height: 270px; }
+            .settings { padding: 28px 20px 24px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="topbar">
+        <div class="topbar-left">
+            {% set nav_active = 'images' %}{% include "_nav.html" %}
+            <a class="brand" href="/">
+                <span class="back" aria-hidden="true">←</span>
+                <span><strong>Image Converter</strong><small>BabyBillion Pipeline</small></span>
+            </a>
+        </div>
+        <span class="local">Processed on this device</span>
+    </header>
+
+    <main>
+        <div class="heading">
+            <h1>Image Converter</h1>
+            <p>Resize PNG or JPG files and export them as WebP, JPG, or PNG.</p>
+        </div>
+
+        <section class="card" aria-label="Image converter">
+            <div class="drop" id="dropZone">
+                <input id="fileInput" type="file" accept="image/png,image/jpeg">
+                <div class="upload-mark" aria-hidden="true">↥</div>
+                <h2>Drop an image here</h2>
+                <p>PNG or JPG, up to 25 MB</p>
+                <button class="choose" id="chooseButton" type="button">Choose image</button>
+                <span class="specs">Nothing is uploaded to a server</span>
+                <p class="error" id="uploadError" role="alert"></p>
+            </div>
+
+            <div class="editor" id="editor">
+                <div class="preview-panel">
+                    <div class="panel-top"><span>Preview</span><button class="replace" id="replaceButton" type="button">Replace image</button></div>
+                    <div class="stage"><img id="previewImage" alt="Selected image preview"></div>
+                    <div class="file-info">
+                        <div><strong id="fileName"></strong><span id="fileSize"></span></div>
+                        <span id="originalSize"></span>
+                    </div>
+                </div>
+
+                <div class="settings">
+                    <h2 class="section-title">New dimensions</h2>
+                    <div class="dimensions">
+                        <label>Width<div class="number-wrap"><input id="widthInput" type="number" min="1" max="10000" inputmode="numeric"><span>PX</span></div></label>
+                        <button class="lock active" id="lockButton" type="button" aria-label="Unlock aspect ratio">↔</button>
+                        <label>Height<div class="number-wrap"><input id="heightInput" type="number" min="1" max="10000" inputmode="numeric"><span>PX</span></div></label>
+                    </div>
+                    <button class="ratio active" id="ratioButton" type="button"><span class="check">✓</span>Keep aspect ratio</button>
+
+                    <div class="divider"></div>
+                    <h2 class="section-title">Output format</h2>
+                    <div class="formats" id="formats">
+                        <button class="format selected" type="button" data-mime="image/webp" data-ext="webp"><strong>WebP</strong><span>Smallest</span></button>
+                        <button class="format" type="button" data-mime="image/jpeg" data-ext="jpg"><strong>JPG</strong><span>Compatible</span></button>
+                        <button class="format" type="button" data-mime="image/png" data-ext="png"><strong>PNG</strong><span>Lossless</span></button>
+                    </div>
+                    <label class="quality" id="qualityControl">Quality <strong id="qualityValue">86%</strong><input id="qualityInput" type="range" min="40" max="100" value="86"></label>
+                    <p class="error" id="convertError" role="alert"></p>
+                    <button class="download" id="downloadButton" type="button">Resize &amp; download</button>
+                    <p class="note">Conversion happens in your browser</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const state = { file: null, url: '', width: 0, height: 0, locked: true, mime: 'image/webp', ext: 'webp' };
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const editor = document.getElementById('editor');
+        const previewImage = document.getElementById('previewImage');
+        const widthInput = document.getElementById('widthInput');
+        const heightInput = document.getElementById('heightInput');
+        const lockButton = document.getElementById('lockButton');
+        const ratioButton = document.getElementById('ratioButton');
+        const qualityControl = document.getElementById('qualityControl');
+        const qualityInput = document.getElementById('qualityInput');
+        const qualityValue = document.getElementById('qualityValue');
+        const uploadError = document.getElementById('uploadError');
+        const convertError = document.getElementById('convertError');
+
+        const prettyBytes = bytes => bytes < 1024 ? `${bytes} B` : bytes < 1048576 ? `${(bytes / 1024).toFixed(1)} KB` : `${(bytes / 1048576).toFixed(1)} MB`;
+        const showError = (element, message) => { element.textContent = message; element.classList.toggle('visible', Boolean(message)); };
+
+        function loadFile(file) {
+            if (!file) return;
+            if (!['image/png', 'image/jpeg'].includes(file.type)) return showError(uploadError, 'Choose a PNG or JPG image.');
+            if (file.size > 25 * 1024 * 1024) return showError(uploadError, 'Choose an image smaller than 25 MB.');
+            showError(uploadError, '');
+            if (state.url) URL.revokeObjectURL(state.url);
+            const url = URL.createObjectURL(file);
+            const image = new Image();
+            image.onload = () => {
+                state.file = file; state.url = url; state.width = image.naturalWidth; state.height = image.naturalHeight;
+                previewImage.src = url;
+                widthInput.value = image.naturalWidth;
+                heightInput.value = image.naturalHeight;
+                document.getElementById('fileName').textContent = file.name;
+                document.getElementById('fileSize').textContent = prettyBytes(file.size);
+                document.getElementById('originalSize').textContent = `${image.naturalWidth} × ${image.naturalHeight} px`;
+                dropZone.style.display = 'none'; editor.classList.add('visible');
+            };
+            image.onerror = () => { URL.revokeObjectURL(url); showError(uploadError, 'This image could not be opened.'); };
+            image.src = url;
+        }
+
+        function reset() {
+            if (state.url) URL.revokeObjectURL(state.url);
+            state.file = null; state.url = ''; fileInput.value = ''; previewImage.removeAttribute('src');
+            editor.classList.remove('visible'); dropZone.style.display = ''; showError(convertError, '');
+        }
+
+        function setLocked(value) {
+            state.locked = value;
+            lockButton.classList.toggle('active', value);
+            ratioButton.classList.toggle('active', value);
+            ratioButton.querySelector('.check').textContent = value ? '✓' : '';
+            lockButton.textContent = value ? '↔' : '×';
+            lockButton.setAttribute('aria-label', value ? 'Unlock aspect ratio' : 'Lock aspect ratio');
+        }
+
+        document.getElementById('chooseButton').addEventListener('click', () => fileInput.click());
+        document.getElementById('replaceButton').addEventListener('click', reset);
+        fileInput.addEventListener('change', event => loadFile(event.target.files[0]));
+        ['dragenter', 'dragover'].forEach(type => dropZone.addEventListener(type, event => { event.preventDefault(); dropZone.classList.add('dragging'); }));
+        ['dragleave', 'drop'].forEach(type => dropZone.addEventListener(type, event => { event.preventDefault(); dropZone.classList.remove('dragging'); }));
+        dropZone.addEventListener('drop', event => loadFile(event.dataTransfer.files[0]));
+        lockButton.addEventListener('click', () => setLocked(!state.locked));
+        ratioButton.addEventListener('click', () => setLocked(!state.locked));
+        widthInput.addEventListener('input', () => { if (state.locked && Number(widthInput.value) > 0) heightInput.value = Math.max(1, Math.round(Number(widthInput.value) * state.height / state.width)); });
+        heightInput.addEventListener('input', () => { if (state.locked && Number(heightInput.value) > 0) widthInput.value = Math.max(1, Math.round(Number(heightInput.value) * state.width / state.height)); });
+        qualityInput.addEventListener('input', () => qualityValue.textContent = `${qualityInput.value}%`);
+        document.querySelectorAll('.format').forEach(button => button.addEventListener('click', () => {
+            document.querySelectorAll('.format').forEach(item => item.classList.remove('selected'));
+            button.classList.add('selected'); state.mime = button.dataset.mime; state.ext = button.dataset.ext;
+            qualityControl.style.display = state.mime === 'image/png' ? 'none' : 'grid';
+        }));
+
+        document.getElementById('downloadButton').addEventListener('click', async event => {
+            const width = Number(widthInput.value), height = Number(heightInput.value);
+            if (!state.file || !state.url) return;
+            if (!Number.isInteger(width) || !Number.isInteger(height) || width < 1 || height < 1 || width > 10000 || height > 10000) return showError(convertError, 'Use whole-number dimensions between 1 and 10,000 pixels.');
+            showError(convertError, ''); event.currentTarget.disabled = true; event.currentTarget.textContent = 'Converting…';
+            try {
+                const image = new Image();
+                await new Promise((resolve, reject) => { image.onload = resolve; image.onerror = reject; image.src = state.url; });
+                const canvas = document.createElement('canvas'); canvas.width = width; canvas.height = height;
+                const context = canvas.getContext('2d');
+                context.imageSmoothingEnabled = true; context.imageSmoothingQuality = 'high';
+                if (state.mime === 'image/jpeg') { context.fillStyle = '#fff'; context.fillRect(0, 0, width, height); }
+                context.drawImage(image, 0, 0, width, height);
+                const blob = await new Promise(resolve => canvas.toBlob(resolve, state.mime, Number(qualityInput.value) / 100));
+                if (!blob) throw new Error('Conversion failed');
+                const url = URL.createObjectURL(blob), link = document.createElement('a');
+                link.href = url; link.download = `${state.file.name.replace(/\.[^.]+$/, '')}-${width}x${height}.${state.ext}`; link.click();
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+            } catch (_) { showError(convertError, 'The image could not be converted. Try another file.'); }
+            finally { event.currentTarget.disabled = false; event.currentTarget.textContent = 'Resize & download'; }
+        });
+
+        window.addEventListener('beforeunload', () => { if (state.url) URL.revokeObjectURL(state.url); });
+    </script>
+</body>
+</html>

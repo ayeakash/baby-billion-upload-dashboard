@@ -37,21 +37,7 @@
         .topbar .sub { font-size: 0.65rem; color: var(--outline); }
         .topbar-right { display: flex; gap: 0.5rem; align-items: center; }
 
-        /* NAV */
-        .nav-menu-wrapper { position: relative; }
-        .nav-btn { width: 32px; height: 32px; border-radius: 7px; background: var(--surface-high); border: 1px solid var(--outline-dim); color: var(--on-surface-dim); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-        .nav-btn:hover { background: var(--surface-highest); border-color: var(--outline); }
-        .nav-btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
-        .nav-dd { display: none; position: absolute; top: calc(100% + 5px); left: 0; z-index: 999; background: var(--surface-high); border: 1px solid var(--outline-dim); border-radius: var(--r-md); min-width: 210px; box-shadow: var(--shadow-3); overflow: hidden; animation: ddIn 0.12s ease; }
-        .nav-dd.open { display: block; }
-        @keyframes ddIn { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; } }
-        .nav-dd-head { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--outline-dim); font-size: 0.62rem; font-weight: 600; color: var(--outline); text-transform: uppercase; letter-spacing: 0.06em; }
-        .nav-dd a { display: flex; align-items: center; gap: 8px; padding: 0.55rem 0.75rem; color: var(--on-surface); text-decoration: none; font-size: 0.78rem; font-weight: 500; transition: background 0.15s; }
-        .nav-dd a:hover { background: rgba(168,184,255,0.06); }
-        .nav-dd a svg { width: 14px; height: 14px; stroke: var(--primary); fill: none; stroke-width: 2; flex-shrink: 0; }
-        .nav-dd a .nd { font-size: 0.62rem; color: var(--outline); font-weight: 400; }
-        .nav-dd a.active { background: rgba(168,184,255,0.08); border-left: 2px solid var(--primary); }
-        .nav-dd-sep { height: 1px; background: var(--outline-dim); }
+        /* NAV — shared hamburger lives in templates/_nav.html */
 
         /* ═══ LAYOUT ═══ */
         .container { max-width: 1240px; margin: 0 auto; padding: 1.25rem 1.5rem; }
@@ -221,17 +207,7 @@
 <body>
     <div class="topbar">
         <div class="topbar-left">
-            <div class="nav-menu-wrapper">
-                <button class="nav-btn" onclick="toggleNav()" title="Navigation">
-                    <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-                </button>
-                <div class="nav-dd" id="navDd">
-                    <div class="nav-dd-head">Navigate</div>
-                    <a href="/"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg><div>Dashboard<br><span class="nd">Batch management & uploads</span></div></a>
-                    <div class="nav-dd-sep"></div>
-                    <a href="/channels" class="active"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg><div>YouTube Channels<br><span class="nd">Track, download & upload</span></div></a>
-                </div>
-            </div>
+            {% set nav_active = 'channels' %}{% include "_nav.html" %}
             <div class="topbar-icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
             <div><h1>YouTube Channels</h1><span class="sub">Download, batch & upload videos from tracked channels</span></div>
         </div>
@@ -302,10 +278,6 @@
         return (await fetch(url, o)).json();
     };
     const esc = s => { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; };
-
-    // ═══ NAV ═══
-    function toggleNav() { document.getElementById('navDd').classList.toggle('open'); }
-    document.addEventListener('click', e => { const w = document.querySelector('.nav-menu-wrapper'); const d = document.getElementById('navDd'); if (d && w && !w.contains(e.target)) d.classList.remove('open'); });
 
     // ═══ TOAST ═══
     let _tid = 0;

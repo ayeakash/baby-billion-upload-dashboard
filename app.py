@@ -103,6 +103,11 @@ except Exception as e:
 def index():
     return render_template("index.html")
 
+@app.route("/image-converter")
+def image_converter():
+    """Local, browser-only image resizing and format conversion tool."""
+    return render_template("image_converter.html")
+
 @app.route("/api/batches")
 def get_batches():
     # Scan on request to pick up any changes from background runs

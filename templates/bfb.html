@@ -35,20 +35,7 @@
         .topbar h1 { font-size: 0.92rem; font-weight: 600; }
         .topbar .sub { font-size: 0.65rem; color: var(--outline); }
 
-        /* NAV */
-        .nav-menu-wrapper { position: relative; }
-        .nav-btn { width: 32px; height: 32px; border-radius: 7px; background: var(--surface-high); border: 1px solid var(--outline-dim); color: var(--on-surface-dim); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-        .nav-btn:hover { background: var(--surface-highest); border-color: var(--outline); }
-        .nav-btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
-        .nav-dd { display: none; position: absolute; top: calc(100% + 5px); left: 0; z-index: 999; background: var(--surface-high); border: 1px solid var(--outline-dim); border-radius: var(--r-md); min-width: 210px; box-shadow: var(--shadow-3); overflow: hidden; animation: ddIn 0.12s ease; }
-        .nav-dd.open { display: block; }
-        @keyframes ddIn { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; } }
-        .nav-dd-head { padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--outline-dim); font-size: 0.62rem; font-weight: 600; color: var(--outline); text-transform: uppercase; letter-spacing: 0.06em; }
-        .nav-dd a { display: flex; align-items: center; gap: 8px; padding: 0.55rem 0.75rem; color: var(--on-surface); text-decoration: none; font-size: 0.78rem; font-weight: 500; transition: background 0.15s; }
-        .nav-dd a:hover { background: rgba(168,184,255,0.06); }
-        .nav-dd a svg { width: 14px; height: 14px; stroke: var(--primary); fill: none; stroke-width: 2; flex-shrink: 0; }
-        .nav-dd a .nd { font-size: 0.62rem; color: var(--outline); font-weight: 400; }
-        .nav-dd a.active { background: rgba(224,184,229,0.08); border-left: 2px solid var(--tertiary); }
+        /* NAV — shared hamburger lives in templates/_nav.html */
 
         /* ═══ LAYOUT ═══ */
         .container { max-width: 1240px; margin: 0 auto; padding: 1.25rem 1.5rem; }
@@ -171,26 +158,7 @@
     <!-- TOPBAR -->
     <header class="topbar">
         <div class="topbar-left">
-            <div class="nav-menu-wrapper">
-                <button class="nav-btn" onclick="document.getElementById('navDd').classList.toggle('open')" title="Navigate">
-                    <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-                </button>
-                <div class="nav-dd" id="navDd">
-                    <div class="nav-dd-head">Navigate</div>
-                    <a href="/">
-                        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-                        <div>Dashboard<div class="nd">Batch management & uploads</div></div>
-                    </a>
-                    <a href="/bfb" class="active">
-                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
-                        <div>BFB Pipeline<div class="nd">Bottle-Fed Billionaires</div></div>
-                    </a>
-                    <a href="/channels">
-                        <svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-                        <div>YouTube Channels<div class="nd">Track, download & upload</div></div>
-                    </a>
-                </div>
-            </div>
+            {% set nav_active = 'bfb' %}{% include "_nav.html" %}
             <div class="topbar-icon">🍼</div>
             <div>
                 <h1>BFB Pipeline</h1>
@@ -221,14 +189,6 @@
     </div>
 
     <div class="toast-wrap" id="toastWrap"></div>
-
-    <!-- Close nav on outside click -->
-    <script>
-    document.addEventListener('click', e => {
-        const nav = document.getElementById('navDd');
-        if (nav.classList.contains('open') && !e.target.closest('.nav-menu-wrapper')) nav.classList.remove('open');
-    });
-    </script>
 
     <script>
     // ═══ STATE ═══

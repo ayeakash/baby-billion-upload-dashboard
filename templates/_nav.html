@@ -1,0 +1,129 @@
+{#
+  Shared hamburger navigation — every page links to every other page.
+  Usage (inside the page's topbar/header, as the first item):
+      {% set nav_active = 'dashboard' %}{% include "_nav.html" %}
+  Valid nav_active values: dashboard, bfb, channels, inspector, images.
+  Self-contained: own palette, own class prefix (bbnav-), own script.
+#}
+<style>
+    .bbnav { position: relative; flex: 0 0 auto; }
+    .bbnav-btn {
+        width: 34px; height: 34px; padding: 0;
+        border-radius: 9px;
+        background: rgba(168,184,255,0.06);
+        border: 1px solid rgba(255,255,255,0.10);
+        color: #CAC8CE;
+        cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        transition: background .18s, border-color .18s, color .18s;
+    }
+    .bbnav-btn:hover { background: rgba(168,184,255,0.14); border-color: rgba(168,184,255,0.35); color: #E6E3E8; }
+    .bbnav-btn:focus-visible { outline: 2px solid #A8B8FF; outline-offset: 2px; }
+    .bbnav-btn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+
+    .bbnav-menu {
+        position: absolute;
+        top: calc(100% + 8px); left: 0;
+        z-index: 1000;
+        width: 268px;
+        padding: 6px;
+        background: #1C1B20;
+        border: 1px solid rgba(255,255,255,0.10);
+        border-radius: 14px;
+        box-shadow: 0 12px 32px 6px rgba(0,0,0,0.45);
+        display: none;
+    }
+    .bbnav-menu.open { display: block; animation: bbnavIn .14s ease-out; }
+    @keyframes bbnavIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
+
+    .bbnav-head {
+        padding: 7px 10px 9px;
+        font: 600 10px/1 Inter, system-ui, sans-serif;
+        letter-spacing: .09em; text-transform: uppercase;
+        color: #7E7C84;
+    }
+    .bbnav-menu a {
+        display: flex; align-items: center; gap: 11px;
+        padding: 9px 10px;
+        border-radius: 10px;
+        text-decoration: none;
+        color: #E6E3E8;
+        font: 500 13px/1.25 Inter, system-ui, sans-serif;
+    }
+    .bbnav-menu a + a { margin-top: 2px; }
+    .bbnav-menu a:hover { background: rgba(168,184,255,0.10); }
+    .bbnav-menu a:focus-visible { outline: 2px solid #A8B8FF; outline-offset: -2px; }
+    .bbnav-menu a svg {
+        width: 17px; height: 17px; flex: 0 0 17px;
+        fill: none; stroke: #A8B8FF; stroke-width: 1.9;
+        stroke-linecap: round; stroke-linejoin: round;
+    }
+    .bbnav-menu a .bbnav-desc {
+        display: block; margin-top: 3px;
+        font: 400 10.5px/1.3 Inter, system-ui, sans-serif;
+        color: #918F96;
+    }
+    .bbnav-menu a[aria-current="page"] { background: rgba(168,184,255,0.13); color: #D6DEFF; }
+    .bbnav-menu a[aria-current="page"] svg { stroke: #D6DEFF; }
+</style>
+
+<div class="bbnav">
+    <button type="button" class="bbnav-btn" id="bbnavBtn" aria-haspopup="true" aria-expanded="false" aria-controls="bbnavMenu" title="Navigate" aria-label="Navigate">
+        <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <nav class="bbnav-menu" id="bbnavMenu" aria-label="Pages">
+        <div class="bbnav-head">Navigate</div>
+
+        <a href="/" {% if nav_active == 'dashboard' %}aria-current="page"{% endif %}>
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+            <span>Dashboard<span class="bbnav-desc">Batch management &amp; uploads</span></span>
+        </a>
+
+        <a href="/bfb" {% if nav_active == 'bfb' %}aria-current="page"{% endif %}>
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9.5" x2="9.01" y2="9.5"/><line x1="15" y1="9.5" x2="15.01" y2="9.5"/></svg>
+            <span>BFB Pipeline<span class="bbnav-desc">Bottle-Fed Billionaires uploads</span></span>
+        </a>
+
+        <a href="/channels" {% if nav_active == 'channels' %}aria-current="page"{% endif %}>
+            <svg viewBox="0 0 24 24"><rect x="1.5" y="4.5" width="15" height="15" rx="2"/><polygon points="22.5 6.5 16.5 12 22.5 17.5 22.5 6.5"/></svg>
+            <span>YouTube Channels<span class="bbnav-desc">Track, download &amp; upload</span></span>
+        </a>
+
+        <a href="/video-inspector" {% if nav_active == 'inspector' %}aria-current="page"{% endif %}>
+            <svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><line x1="15.5" y1="15.5" x2="21" y2="21"/></svg>
+            <span>Video Inspector<span class="bbnav-desc">Title, language &amp; age groups</span></span>
+        </a>
+
+        <a href="/image-converter" {% if nav_active == 'images' %}aria-current="page"{% endif %}>
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            <span>Image Converter<span class="bbnav-desc">Resize &amp; convert PNG or JPG</span></span>
+        </a>
+    </nav>
+</div>
+
+<script>
+    (function () {
+        const wrap = document.querySelector('.bbnav');
+        const btn = document.getElementById('bbnavBtn');
+        const menu = document.getElementById('bbnavMenu');
+        if (!wrap || !btn || !menu) return;
+
+        function setOpen(open) {
+            menu.classList.toggle('open', open);
+            btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        }
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            setOpen(!menu.classList.contains('open'));
+        });
+        document.addEventListener('click', (e) => {
+            if (!wrap.contains(e.target)) setOpen(false);
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && menu.classList.contains('open')) {
+                setOpen(false);
+                btn.focus();
+            }
+        });
+    })();
+</script>
