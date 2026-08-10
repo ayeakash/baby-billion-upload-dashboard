@@ -1,0 +1,59 @@
+Image Filename,CMS Category Name,Match Score,Status
+"ABC","Learn Your ABC",100%,MATCH
+"about_india","About India",100%,MATCH
+"action_words","Try These Actions",100%,MATCH
+"aladdin","Aladdin",100%,MATCH
+"animals","NO MATCH",74%,NO MATCH
+"birds","NO MATCH",50%,NO MATCH
+"body_parts","Know Body Parts",80%,MATCH
+"clothes","Clothes",100%,MATCH
+"colors","Learn Color names",100%,MATCH
+"community_helpers","What Do They Do",100%,MATCH
+"countries","Visit New Countries",100%,MATCH
+"emotions","Understand Your Feelings",100%,MATCH
+"english","Learn New Words",100%,MATCH
+"english_speaking","NO MATCH",65%,NO MATCH
+"farm_animals","Meet Farm Animals",83%,MATCH
+"festivals","Celebrate With Everyone",100%,MATCH
+"food_items","Choose Healthy Foods",100%,MATCH
+"fractions","Fractions",100%,MATCH
+"fruits","Name Your Fruits",100%,MATCH
+"good_habits","Practice Good Habits",100%,MATCH
+"greater_and_lesser","Greater & Lesser",100%,MATCH
+"hanuman","Hanuman",100%,MATCH
+"hindi_basics","NO MATCH",72%,NO MATCH
+"home_items","Find Things Around",100%,MATCH
+"knowledge","Knowledge",100%,MATCH
+"krishna","Krishna",100%,MATCH
+"mishka_and_momo","Mishka And Momo",100%,MATCH
+"ms_isha","Shapes With Ms Isha",100%,MATCH
+"ms_nidhi","Pronounce With Ms Nidhi",100%,MATCH
+"ms_pranika","Maths With Ms Pranika",100%,MATCH
+"my_body","Know Body Parts",100%,MATCH
+"my_family","Meet Your Family",100%,MATCH
+"nature","NO MATCH",57%,NO MATCH
+"opposites","Learn Opposite Words",100%,MATCH
+"panchatantra","Panchatantra",100%,MATCH
+"places_to_go","Let's Go Outside",100%,MATCH
+"plants","Watch Plants Grow",100%,MATCH
+"prepositions","Prepositions",100%,MATCH
+"professions","What Do They Do",100%,MATCH
+"safety","Safety",100%,MATCH
+"science","NO MATCH",61%,NO MATCH
+"seasons","NO MATCH",67%,NO MATCH
+"shivji","Shivji",100%,MATCH
+"sight_words","Read Simple Words",100%,MATCH
+"simple_sentences","Start With Sentences",100%,MATCH
+"sindbad","Sindbad",100%,MATCH
+"space","Visit Outer Space",100%,MATCH
+"sports","Explore Different Sports",100%,MATCH
+"technology","Knowledge",100%,MATCH
+"tenali","Tenali",100%,MATCH
+"time","Time",100%,MATCH
+"toys","Find Favorite Toys",100%,MATCH
+"varnmala","Varnmala",100%,MATCH
+"vegetables","Name Your Veggies",100%,MATCH
+"vehicles","Spot Moving Vehicles",100%,MATCH
+"vyanjan","NO MATCH",57%,NO MATCH
+"wild_animals","Jungle Animals",100%,MATCH
+"words","NO MATCH",71%,NO MATCH

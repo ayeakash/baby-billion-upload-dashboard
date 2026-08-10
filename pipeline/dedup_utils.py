@@ -73,15 +73,15 @@ def normalize_video_key(video_name: str, age_group: str) -> tuple[str, str]:
     return (normalize_name(video_name), normalize_age(age_group))
 
 
-def build_uploaded_keys_from_state(state_all: dict) -> set[tuple[str, str]]:
+def build_uploaded_keys_from_state(state_all: dict) -> set[tuple[str, str, str]]:
     """
-    Scan state.json and return a set of (normalized_name, normalized_age)
+    Scan state.json and return a set of (normalized_name, normalized_age, lang_suffix)
     for all videos with pipeline_status == 'uploaded'.
 
-    Also includes drive_link file/folder IDs as an extra dedup layer
-    when available.
+    IMPORTANT: lang_suffix allows Hindi and English versions of the same video
+    to be tracked separately — uploading both versions is allowed.
     """
-    keys: set[tuple[str, str]] = set()
+    keys: set[tuple[str, str, str]] = set()
     for _pid, rec in state_all.items():
         if not isinstance(rec, dict):
             continue
@@ -89,7 +89,8 @@ def build_uploaded_keys_from_state(state_all: dict) -> set[tuple[str, str]]:
             continue
         name = rec.get("video_name", "")
         age = rec.get("age_group", "")
+        lang_suffix = rec.get("lang_suffix", "")  # Include language suffix
         key = normalize_video_key(name, age)
         if key[0]:  # only add if name is non-empty
-            keys.add(key)
+            keys.add((key[0], key[1], lang_suffix))
     return keys

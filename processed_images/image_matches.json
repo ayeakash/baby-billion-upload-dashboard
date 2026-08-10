@@ -1,0 +1,468 @@
+{
+  "playlists": {
+    "alphabets": {
+      "key": "alphabets",
+      "display_name": "ABC Learning",
+      "score": 1.0
+    },
+    "animals": {
+      "key": "animals",
+      "display_name": "Animals",
+      "score": 1.0
+    },
+    "around_us": {
+      "key": "around_us",
+      "display_name": "Around Us",
+      "score": 1.0
+    },
+    "curious_kids": {
+      "key": "curious_kids",
+      "display_name": "Curious Kids",
+      "score": 1.0
+    },
+    "english": {
+      "key": "english",
+      "display_name": "English Basics",
+      "score": 1.0
+    },
+    "geography": {
+      "key": "geography",
+      "display_name": "Geography",
+      "score": 1.0
+    },
+    "hindi_basics": {
+      "key": "hindi_basics",
+      "display_name": "Hindi Basics",
+      "score": 1.0
+    },
+    "manners": {
+      "key": "manners",
+      "display_name": "Talk & Manners",
+      "score": 1.0
+    },
+    "math": {
+      "key": "maths",
+      "display_name": "Maths",
+      "score": 0.8888888888888888
+    },
+    "nature": {
+      "key": "nature",
+      "display_name": "Nature",
+      "score": 1.0
+    },
+    "numbers": {
+      "key": "numbers",
+      "display_name": "Numbers & Easy Math",
+      "score": 1.0
+    },
+    "our_world": {
+      "key": "our_world",
+      "display_name": "Our World",
+      "score": 1.0
+    },
+    "rhymes": {
+      "key": "rhymes",
+      "display_name": "Rhymes & Music",
+      "score": 1.0
+    },
+    "science": {
+      "key": "science",
+      "display_name": "Science",
+      "score": 1.0
+    },
+    "stories": {
+      "key": "stories",
+      "display_name": "Stories",
+      "score": 1.0
+    }
+  },
+  "characters": {
+    "alladin": {
+      "key": "alladin",
+      "display_name": "Alladin",
+      "score": 1.0
+    },
+    "arjun": {
+      "key": "arjun",
+      "display_name": "Arjun",
+      "score": 1.0
+    },
+    "golu": {
+      "key": "golu",
+      "display_name": "Golu",
+      "score": 1.0
+    },
+    "guddi": {
+      "key": "guddi",
+      "display_name": "Guddi",
+      "score": 1.0
+    },
+    "hanuman": {
+      "key": "hanuman",
+      "display_name": "Hanuman",
+      "score": 1.0
+    },
+    "jay": {
+      "key": "jay",
+      "display_name": "Jay",
+      "score": 1.0
+    },
+    "krishna": {
+      "key": "krishna",
+      "display_name": "Krishna",
+      "score": 1.0
+    },
+    "meera": {
+      "key": "meera",
+      "display_name": "Meera",
+      "score": 1.0
+    },
+    "mia": {
+      "key": "mia",
+      "display_name": "Mia",
+      "score": 1.0
+    },
+    "mishka": {
+      "key": "mishka",
+      "display_name": "Mishka",
+      "score": 1.0
+    },
+    "priya": {
+      "key": "priya",
+      "display_name": "Priya",
+      "score": 1.0
+    },
+    "ria": {
+      "key": "ria",
+      "display_name": "Ria",
+      "score": 1.0
+    },
+    "shivji": {
+      "key": "shivji",
+      "display_name": "Shivji",
+      "score": 1.0
+    },
+    "sindbad": {
+      "key": "sindbad",
+      "display_name": "Sindbad",
+      "score": 1.0
+    },
+    "tara": {
+      "key": "tara",
+      "display_name": "Tara",
+      "score": 1.0
+    },
+    "teja": {
+      "key": "teja",
+      "display_name": "Teja",
+      "score": 1.0
+    },
+    "tenali": {
+      "key": "tenali",
+      "display_name": "Tenali",
+      "score": 1.0
+    },
+    "veer": {
+      "key": "veer",
+      "display_name": "Veer",
+      "score": 1.0
+    },
+    "zoya": {
+      "key": "zoya",
+      "display_name": "Zoya",
+      "score": 1.0
+    }
+  },
+  "categories": {
+    "ABC": {
+      "key": "ABC",
+      "display_name": "Learn Your ABC",
+      "score": 1.0
+    },
+    "about_india": {
+      "key": "about_india",
+      "display_name": "About India",
+      "score": 1.0
+    },
+    "action_words": {
+      "key": "action_words",
+      "display_name": "Try These Actions",
+      "score": 1.0
+    },
+    "aladdin": {
+      "key": "aladdin",
+      "display_name": "Aladdin",
+      "score": 1.0
+    },
+    "animals": {
+      "key": null,
+      "display_name": null,
+      "score": 0.7368421052631579
+    },
+    "birds": {
+      "key": null,
+      "display_name": null,
+      "score": 0.5
+    },
+    "body_parts": {
+      "key": "know_body_parts",
+      "display_name": "Know Body Parts",
+      "score": 0.8
+    },
+    "clothes": {
+      "key": "clothes",
+      "display_name": "Clothes",
+      "score": 1.0
+    },
+    "colors": {
+      "key": "colors",
+      "display_name": "Learn Color names",
+      "score": 1.0
+    },
+    "community_helpers": {
+      "key": "community_helpers",
+      "display_name": "What Do They Do",
+      "score": 1.0
+    },
+    "countries": {
+      "key": "countries",
+      "display_name": "Visit New Countries",
+      "score": 1.0
+    },
+    "emotions": {
+      "key": "emotions",
+      "display_name": "Understand Your Feelings",
+      "score": 1.0
+    },
+    "english": {
+      "key": "english",
+      "display_name": "Learn New Words",
+      "score": 1.0
+    },
+    "english_speaking": {
+      "key": null,
+      "display_name": null,
+      "score": 0.6451612903225806
+    },
+    "farm_animals": {
+      "key": "meet_farm_animals",
+      "display_name": "Meet Farm Animals",
+      "score": 0.8275862068965517
+    },
+    "festivals": {
+      "key": "festivals",
+      "display_name": "Celebrate With Everyone",
+      "score": 1.0
+    },
+    "food_items": {
+      "key": "food_items",
+      "display_name": "Choose Healthy Foods",
+      "score": 1.0
+    },
+    "fractions": {
+      "key": "fractions",
+      "display_name": "Fractions",
+      "score": 1.0
+    },
+    "fruits": {
+      "key": "fruits",
+      "display_name": "Name Your Fruits",
+      "score": 1.0
+    },
+    "good_habits": {
+      "key": "good_habits",
+      "display_name": "Practice Good Habits",
+      "score": 1.0
+    },
+    "greater_and_lesser": {
+      "key": "greater_and_lesser",
+      "display_name": "Greater & Lesser",
+      "score": 1.0
+    },
+    "hanuman": {
+      "key": "hanuman",
+      "display_name": "Hanuman",
+      "score": 1.0
+    },
+    "hindi_basics": {
+      "key": null,
+      "display_name": null,
+      "score": 0.72
+    },
+    "home_items": {
+      "key": "home_items",
+      "display_name": "Find Things Around",
+      "score": 1.0
+    },
+    "knowledge": {
+      "key": "knowledge",
+      "display_name": "Knowledge",
+      "score": 1.0
+    },
+    "krishna": {
+      "key": "krishna",
+      "display_name": "Krishna",
+      "score": 1.0
+    },
+    "mishka_and_momo": {
+      "key": "mishka_and_momo",
+      "display_name": "Mishka And Momo",
+      "score": 1.0
+    },
+    "ms_isha": {
+      "key": "ms_isha",
+      "display_name": "Shapes With Ms Isha",
+      "score": 1.0
+    },
+    "ms_nidhi": {
+      "key": "ms_nidhi",
+      "display_name": "Pronounce With Ms Nidhi",
+      "score": 1.0
+    },
+    "ms_pranika": {
+      "key": "ms_pranika",
+      "display_name": "Maths With Ms Pranika",
+      "score": 1.0
+    },
+    "my_body": {
+      "key": "my_body",
+      "display_name": "Know Body Parts",
+      "score": 1.0
+    },
+    "my_family": {
+      "key": "my_family",
+      "display_name": "Meet Your Family",
+      "score": 1.0
+    },
+    "nature": {
+      "key": null,
+      "display_name": null,
+      "score": 0.5714285714285714
+    },
+    "opposites": {
+      "key": "opposites",
+      "display_name": "Learn Opposite Words",
+      "score": 1.0
+    },
+    "panchatantra": {
+      "key": "panchatantra",
+      "display_name": "Panchatantra",
+      "score": 1.0
+    },
+    "places_to_go": {
+      "key": "places_to_go",
+      "display_name": "Let's Go Outside",
+      "score": 1.0
+    },
+    "plants": {
+      "key": "plants",
+      "display_name": "Watch Plants Grow",
+      "score": 1.0
+    },
+    "prepositions": {
+      "key": "prepositions",
+      "display_name": "Prepositions",
+      "score": 1.0
+    },
+    "professions": {
+      "key": "professions",
+      "display_name": "What Do They Do",
+      "score": 1.0
+    },
+    "safety": {
+      "key": "safety",
+      "display_name": "Safety",
+      "score": 1.0
+    },
+    "science": {
+      "key": null,
+      "display_name": null,
+      "score": 0.6086956521739131
+    },
+    "seasons": {
+      "key": null,
+      "display_name": null,
+      "score": 0.6666666666666666
+    },
+    "shivji": {
+      "key": "shivji",
+      "display_name": "Shivji",
+      "score": 1.0
+    },
+    "sight_words": {
+      "key": "sight_words",
+      "display_name": "Read Simple Words",
+      "score": 1.0
+    },
+    "simple_sentences": {
+      "key": "simple_sentences",
+      "display_name": "Start With Sentences",
+      "score": 1.0
+    },
+    "sindbad": {
+      "key": "sindbad",
+      "display_name": "Sindbad",
+      "score": 1.0
+    },
+    "space": {
+      "key": "space",
+      "display_name": "Visit Outer Space",
+      "score": 1.0
+    },
+    "sports": {
+      "key": "sports",
+      "display_name": "Explore Different Sports",
+      "score": 1.0
+    },
+    "technology": {
+      "key": "technology",
+      "display_name": "Knowledge",
+      "score": 1.0
+    },
+    "tenali": {
+      "key": "tenali",
+      "display_name": "Tenali",
+      "score": 1.0
+    },
+    "time": {
+      "key": "time",
+      "display_name": "Time",
+      "score": 1.0
+    },
+    "toys": {
+      "key": "toys",
+      "display_name": "Find Favorite Toys",
+      "score": 1.0
+    },
+    "varnmala": {
+      "key": "varnmala",
+      "display_name": "Varnmala",
+      "score": 1.0
+    },
+    "vegetables": {
+      "key": "vegetables",
+      "display_name": "Name Your Veggies",
+      "score": 1.0
+    },
+    "vehicles": {
+      "key": "vehicles",
+      "display_name": "Spot Moving Vehicles",
+      "score": 1.0
+    },
+    "vyanjan": {
+      "key": null,
+      "display_name": null,
+      "score": 0.5714285714285714
+    },
+    "wild_animals": {
+      "key": "wild_animals",
+      "display_name": "Jungle Animals",
+      "score": 1.0
+    },
+    "words": {
+      "key": null,
+      "display_name": null,
+      "score": 0.7142857142857143
+    }
+  }
+}

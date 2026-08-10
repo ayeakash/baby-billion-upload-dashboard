@@ -2,7 +2,7 @@
   Shared hamburger navigation — every page links to every other page.
   Usage (inside the page's topbar/header, as the first item):
       {% set nav_active = 'dashboard' %}{% include "_nav.html" %}
-  Valid nav_active values: dashboard, bfb, channels, inspector, images.
+  Valid nav_active values: dashboard, bfb, channels, inspector, images, mapping.
   Self-contained: own palette, own class prefix (bbnav-), own script.
 #}
 <style>
@@ -97,6 +97,11 @@
         <a href="/image-converter" {% if nav_active == 'images' %}aria-current="page"{% endif %}>
             <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
             <span>Image Converter<span class="bbnav-desc">Resize &amp; convert PNG or JPG</span></span>
+        </a>
+
+        <a href="/mapping" {% if nav_active == 'mapping' %}aria-current="page"{% endif %}>
+            <svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 0 0-2 2v4m0 0a2 2 0 0 0 2 2h4m-4-2h2"/><path d="M19 3h4a2 2 0 0 1 2 2v4m0 0a2 2 0 0 1-2 2h-4m4-2h-2"/></svg>
+            <span>Playlist Mapping<span class="bbnav-desc">CMS playlists &amp; categories</span></span>
         </a>
     </nav>
 </div>

@@ -85,6 +85,36 @@ def health():
         "time": datetime.now().isoformat(),
     })
 
+@app.route("/api/playlists-mapping")
+def get_playlists_mapping():
+    """Get playlists and categories from cache file or fetch from CMS if needed."""
+    import json
+
+    cache_file = os.path.join(os.path.dirname(__file__), ".playlists_cache.json")
+
+    playlists = []
+    cached = False
+
+    # Try to load from cache first
+    if os.path.isfile(cache_file):
+        try:
+            with open(cache_file, 'r', encoding='utf-8') as f:
+                playlists = json.load(f)
+                cached = True
+                log.info(f"Loaded {len(playlists)} playlists from cache")
+        except Exception as e:
+            log.warning(f"Failed to load cache file: {e}")
+            playlists = []
+
+    if not playlists:
+        log.info("Cache empty or missing. Consider running: python scrape_cms_playlists.py")
+
+    return jsonify({
+        "playlists": playlists,
+        "cached": cached,
+        "count": len(playlists)
+    })
+
 # Disable browser caching so HTML/JS changes are always picked up
 @app.after_request
 def add_no_cache_headers(response):
@@ -107,6 +137,11 @@ def index():
 def image_converter():
     """Local, browser-only image resizing and format conversion tool."""
     return render_template("image_converter.html")
+
+@app.route("/mapping")
+def mapping():
+    """Display playlists and categories from CMS."""
+    return render_template("mapping.html")
 
 @app.route("/api/batches")
 def get_batches():

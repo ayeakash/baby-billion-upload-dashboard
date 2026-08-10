@@ -1,0 +1,76 @@
+================================================================================
+ALL UPDATED CATEGORIES (with 1:1 ratio)
+================================================================================
+
+CATEGORIES WITH MATCHES (49):
+--------------------------------------------------------------------------------
+ 1. Learn Your ABC                           (file: ABC)
+ 2. About India                              (file: about_india)
+ 3. Try These Actions                        (file: action_words)
+ 4. Aladdin                                  (file: aladdin)
+ 5. Know Body Parts                          (file: body_parts)
+ 6. Clothes                                  (file: clothes)
+ 7. Learn Color names                        (file: colors)
+ 8. What Do They Do                          (file: community_helpers)
+ 9. Visit New Countries                      (file: countries)
+10. Understand Your Feelings                 (file: emotions)
+11. Learn New Words                          (file: english)
+12. Meet Farm Animals                        (file: farm_animals)
+13. Celebrate With Everyone                  (file: festivals)
+14. Choose Healthy Foods                     (file: food_items)
+15. Fractions                                (file: fractions)
+16. Name Your Fruits                         (file: fruits)
+17. Practice Good Habits                     (file: good_habits)
+18. Greater & Lesser                         (file: greater_and_lesser)
+19. Hanuman                                  (file: hanuman)
+20. Find Things Around                       (file: home_items)
+21. Knowledge                                (file: knowledge)
+22. Krishna                                  (file: krishna)
+23. Mishka And Momo                          (file: mishka_and_momo)
+24. Shapes With Ms Isha                      (file: ms_isha)
+25. Pronounce With Ms Nidhi                  (file: ms_nidhi)
+26. Maths With Ms Pranika                    (file: ms_pranika)
+27. Know Body Parts                          (file: my_body)
+28. Meet Your Family                         (file: my_family)
+29. Learn Opposite Words                     (file: opposites)
+30. Panchatantra                             (file: panchatantra)
+31. Let's Go Outside                         (file: places_to_go)
+32. Watch Plants Grow                        (file: plants)
+33. Prepositions                             (file: prepositions)
+34. What Do They Do                          (file: professions)
+35. Safety                                   (file: safety)
+36. Shivji                                   (file: shivji)
+37. Read Simple Words                        (file: sight_words)
+38. Start With Sentences                     (file: simple_sentences)
+39. Sindbad                                  (file: sindbad)
+40. Visit Outer Space                        (file: space)
+41. Explore Different Sports                 (file: sports)
+42. Knowledge                                (file: technology)
+43. Tenali                                   (file: tenali)
+44. Time                                     (file: time)
+45. Find Favorite Toys                       (file: toys)
+46. Varnmala                                 (file: varnmala)
+47. Name Your Veggies                        (file: vegetables)
+48. Spot Moving Vehicles                     (file: vehicles)
+49. Jungle Animals                           (file: wild_animals)
+
+
+IMAGE FILES WITHOUT MATCHES:
+--------------------------------------------------------------------------------
+ 5. animals
+ 6. birds
+14. english_speaking
+23. hindi_basics
+33. nature
+41. science
+42. seasons
+56. vyanjan
+58. words
+
+================================================================================
+SUMMARY
+================================================================================
+Total category images processed: 58
+Categories with matches:         49
+Images without matches:          9
+================================================================================

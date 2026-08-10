@@ -123,11 +123,15 @@ from dedup_utils import normalize_video_key, build_uploaded_keys_from_state
 uploaded_keys = build_uploaded_keys_from_state(sm.get_all())
 safe_to_batch = []
 for v in videos_to_batch:
-    key = normalize_video_key(v.get("video_name", ""), v.get("age_group", ""))
+    key = (
+        normalize_video_key(v.get("video_name", ""), v.get("age_group", ""))[0],
+        normalize_video_key(v.get("video_name", ""), v.get("age_group", ""))[1],
+        v.get("lang_suffix", ""),  # Include language suffix
+    )
     if key in uploaded_keys:
         log.warning(
             f"  [DUPE-UPLOAD] Skipping '{v['video_name']}' "
-            f"(age={v.get('age_group','?')}) — already uploaded in a prior run"
+            f"(age={v.get('age_group','?')}, lang={v.get('lang_suffix','')}) — already uploaded in a prior run"
         )
         continue
     safe_to_batch.append(v)

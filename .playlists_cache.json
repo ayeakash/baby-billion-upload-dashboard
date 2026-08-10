@@ -1,0 +1,451 @@
+[
+  {
+    "id": "top-10-in-india",
+    "title": "Top 10 in India",
+    "playlist_id": "b40c8139-48f8-45e7-88d5-7643b1af2b5c",
+    "edit_url": "",
+    "categories": [
+      {"id": "what-do-they-do", "category_id": "18ae1c51-e0c5-4df1-94f6-30f5e6732dd3", "title": "What Do They Do"},
+      {"id": "choose-healthy-foods", "category_id": "5bc39ba0-a18b-42a9-9176-736112991697", "title": "Choose Healthy Foods"},
+      {"id": "find-favorite-toys", "category_id": "259e1ebe-d005-41f2-a3f8-810078f51c98", "title": "Find Favorite Toys"},
+      {"id": "learn-new-words", "category_id": "4e8e2dbf-bad4-4a56-8365-251a1cfc4a10", "title": "Learn New Words"},
+      {"id": "meet-your-family", "category_id": "24429faf-f706-4456-a1a0-d8b55cc55f9d", "title": "Meet Your Family"},
+      {"id": "celebrate-with-everyone", "category_id": "655a5081-8ce4-4cfc-b36d-d5d0d1a06c1e", "title": "Celebrate With Everyone"},
+      {"id": "explore-nature-around", "category_id": "eb5f90b5-3650-49b9-95b6-d4e3a89c0662", "title": "Explore Nature Around"},
+      {"id": "lets-go-outside", "category_id": "e4dd4a24-f512-4d74-8bad-596b71c5369f", "title": "Let's Go Outside"},
+      {"id": "speak-simple-hindi", "category_id": "de5577e3-4806-4284-9cab-9e7ecf907095", "title": "Speak Simple Hindi"},
+      {"id": "try-these-actions", "category_id": "cdd3ba69-c04a-402a-a061-05e0f816a161", "title": "Try These Actions"}
+    ]
+  },
+  {
+    "id": "little-heroes",
+    "title": "Little Heroes",
+    "playlist_id": "4d07a0b9-4010-47fd-85e2-e7e1078e13a4",
+    "edit_url": "",
+    "categories": [
+      {"id": "tenali", "category_id": "84bc8243-ab21-4807-893a-dbbb1c38fa6e", "title": "Tenali"},
+      {"id": "guddi", "category_id": "af99ff89-08e4-4860-8a21-1148f1ebd229", "title": "Guddi"},
+      {"id": "shivji", "category_id": "d86f0151-4079-464c-8a1c-a31828a909ac", "title": "Shivji"},
+      {"id": "mia", "category_id": "9eeedeb2-c1bb-409f-b1f8-81d05e91c895", "title": "Mia"},
+      {"id": "tara", "category_id": "2be7945e-2a47-4df6-baca-3e1e776577fc", "title": "Tara"},
+      {"id": "riya", "category_id": "a2a20f3e-eebc-4c9c-a2c5-d0178c512bff", "title": "Riya"},
+      {"id": "jai", "category_id": "5fa3c43e-73db-41b5-b1cb-c7ba51e1d592", "title": "Jai"},
+      {"id": "zoya", "category_id": "116b89fc-a1c1-4600-9f0f-e1504f293761", "title": "Zoya"},
+      {"id": "teja", "category_id": "74605e8d-3973-450f-abb1-1c5e34ea9366", "title": "Teja"},
+      {"id": "veer", "category_id": "6c490fe2-4e43-41c1-bc60-6e8837e9989c", "title": "Veer"},
+      {"id": "priya", "category_id": "059aef79-3761-4c99-9dbb-affd44583b9c", "title": "Priya"},
+      {"id": "arjun", "category_id": "8b3a14f7-15dd-4a90-a819-dd45adf53a71", "title": "Arjun"}
+    ]
+  },
+  {
+    "id": "direct-from-classroom",
+    "title": "Direct From Classroom",
+    "playlist_id": "97786ebf-f922-4cfc-8b8a-1e1fb234ad13",
+    "edit_url": "",
+    "categories": [
+      {"id": "shapes-with-ms-isha", "category_id": "12c7177a-793a-43c6-877a-13d1cc949182", "title": "Shapes With Ms Isha"},
+      {"id": "pronounce-with-ms-nidhi", "category_id": "586639a8-3efa-4c76-8d59-fc96d9f55747", "title": "Pronounce With Ms Nidhi"},
+      {"id": "maths-with-ms-pranika", "category_id": "ab1d0cc0-d6d2-4a02-a398-2ece8b03a5e7", "title": "Maths With Ms Pranika"}
+    ]
+  },
+  {
+    "id": "family-people",
+    "title": "Family & People",
+    "playlist_id": "bdb92043-7397-4334-9d75-f5287934c9fd",
+    "edit_url": "",
+    "categories": [
+      {"id": "family-people", "category_id": "2c34e4dd-9617-4632-a64c-28b24d38c434", "title": "Family & People"}
+    ]
+  },
+  {
+    "id": "food",
+    "title": "Food",
+    "playlist_id": "294f4020-28f4-43be-9021-55a987ec495e",
+    "edit_url": "",
+    "categories": [
+      {"id": "name-your-fruits", "category_id": "2c830c25-38e8-4d38-a3c3-cc9a3ff96b5f", "title": "Name Your Fruits"},
+      {"id": "name-your-veggies", "category_id": "c3d15541-8760-45ff-b253-1647ca61bf37", "title": "Name Your Veggies"},
+      {"id": "choose-healthy-foods", "category_id": "5bc39ba0-a18b-42a9-9176-736112991697", "title": "Choose Healthy Foods"}
+    ]
+  },
+  {
+    "id": "curious-kids",
+    "title": "Curious Kids",
+    "playlist_id": "ff774cd3-c345-4413-a701-c1cb3a683e84",
+    "edit_url": "",
+    "categories": [
+      {"id": "science-made-fun", "category_id": "b7ef253a-6fb1-4247-ad59-99c4c945c8ec", "title": "Science Made Fun"},
+      {"id": "explore-nature-around", "category_id": "eb5f90b5-3650-49b9-95b6-d4e3a89c0662", "title": "Explore Nature Around"},
+      {"id": "visit-outer-space", "category_id": "41f1f46f-18fc-4610-a538-2860e362964b", "title": "Visit Outer Space"}
+    ]
+  },
+  {
+    "id": "good-habits",
+    "title": "Good Habits",
+    "playlist_id": "ba7b4441-e86b-43ae-a23b-37e20ad4c24f",
+    "edit_url": "",
+    "categories": [
+      {"id": "practice-good-habits", "category_id": "06f625da-1202-4c8a-8b16-e624b97476d1", "title": "Practice Good Habits"},
+      {"id": "understand-your-feelings", "category_id": "90ff5296-5b99-4ddf-8bdf-ac55f6f7b6c2", "title": "Understand Your Feelings"},
+      {"id": "stay-safe-everyday", "category_id": "c3533a50-aeac-4a7c-9f5c-e82d64be5e32", "title": "Stay Safe Everyday"},
+      {"id": "what-do-they-do", "category_id": "3dc35861-75e5-4d11-a33d-d263d159f041", "title": "What Do They Do"}
+    ]
+  },
+  {
+    "id": "stories",
+    "title": "Stories",
+    "playlist_id": "de62efe5-f744-41bf-b5ae-12173e5cedf1",
+    "edit_url": "",
+    "categories": [
+      {"id": "shivji", "category_id": "d86f0151-4079-464c-8a1c-a31828a909ac", "title": "Shivji"},
+      {"id": "english-stories", "category_id": "8c6fb929-3c96-4d66-b900-b23df6c6f6fc", "title": "English Stories"},
+      {"id": "krishna", "category_id": "da72a3dc-2774-4532-a9e0-d588a70422c0", "title": "Krishna"},
+      {"id": "panchatantra", "category_id": "04f9d2b6-7ec7-4cf3-a02c-5feb787e5151", "title": "Panchatantra"},
+      {"id": "sindbad", "category_id": "4ace6f2c-4f34-485f-8e78-650c5859bbbd", "title": "Sindbad"},
+      {"id": "hanuman", "category_id": "020823db-7e6a-4116-a6b0-200d95707793", "title": "Hanuman"},
+      {"id": "aladdin", "category_id": "c1f9f476-38ba-4a5b-aa15-8b7d53332b56", "title": "Aladdin"},
+      {"id": "tenali", "category_id": "84bc8243-ab21-4807-893a-dbbb1c38fa6e", "title": "Tenali"},
+      {"id": "mishka-and-momo", "category_id": "8bcf284f-7416-48f7-92ce-d4e815210197", "title": "Mishka And Momo"},
+      {"id": "hindi-stories", "category_id": "dfc77d75-4b9c-4e1d-aa48-47542154a6b4", "title": "Hindi Stories"},
+      {"id": "akbar-and-birbal", "category_id": "6e458823-1209-4a8e-87b3-cef97e9c3e23", "title": "Akbar And Birbal"}
+    ]
+  },
+  {
+    "id": "nature",
+    "title": "Nature",
+    "playlist_id": "55165be0-64a0-437d-adaf-6986156a9a22",
+    "edit_url": "",
+    "categories": [
+      {"id": "meet-cute-animals", "category_id": "79156051-e033-423a-b7de-a68fe1342a75", "title": "Meet Cute Animals"},
+      {"id": "watch-plants-grow", "category_id": "f476a63c-f5d0-4454-afee-eb96182ff983", "title": "Watch Plants Grow"},
+      {"id": "why-seasons-change", "category_id": "ed57a6ae-2009-4c19-9800-8826437fde62", "title": "Why Seasons Change"}
+    ]
+  },
+  {
+    "id": "kids-favorites",
+    "title": "Kids' Favorites",
+    "playlist_id": "96b82fa4-0ebc-48ac-be26-ff6a082826e3",
+    "edit_url": "",
+    "categories": [
+      {"id": "mishka-and-momo", "category_id": "8bcf284f-7416-48f7-92ce-d4e815210197", "title": "Mishka And Momo"},
+      {"id": "visit-outer-space", "category_id": "41f1f46f-18fc-4610-a538-2860e362964b", "title": "Visit Outer Space"},
+      {"id": "money", "category_id": "196088dd-3c9e-4930-8bfb-55110c194c2a", "title": "Money"},
+      {"id": "tenali", "category_id": "84bc8243-ab21-4807-893a-dbbb1c38fa6e", "title": "Tenali"},
+      {"id": "science-made-fun", "category_id": "b7ef253a-6fb1-4247-ad59-99c4c945c8ec", "title": "Science Made Fun"},
+      {"id": "hanuman", "category_id": "020823db-7e6a-4116-a6b0-200d95707793", "title": "Hanuman"},
+      {"id": "explore-nature-around", "category_id": "eb5f90b5-3650-49b9-95b6-d4e3a89c0662", "title": "Explore Nature Around"},
+      {"id": "krishna", "category_id": "da72a3dc-2774-4532-a9e0-d588a70422c0", "title": "Krishna"},
+      {"id": "panchatantra", "category_id": "04f9d2b6-7ec7-4cf3-a02c-5feb787e5151", "title": "Panchatantra"},
+      {"id": "sindbad", "category_id": "4ace6f2c-4f34-485f-8e78-650c5859bbbd", "title": "Sindbad"},
+      {"id": "aladdin", "category_id": "c1f9f476-38ba-4a5b-aa15-8b7d53332b56", "title": "Aladdin"}
+    ]
+  },
+  {
+    "id": "environment",
+    "title": "Environment",
+    "playlist_id": "6e13f139-3b54-4333-b9f5-3b5dd4f64cb1",
+    "edit_url": "",
+    "categories": [
+      {"id": "environment", "category_id": "43e630a2-3218-4525-ada4-64125fe01a29", "title": "Environment"}
+    ]
+  },
+  {
+    "id": "future-scientist",
+    "title": "Future Scientist",
+    "playlist_id": "aa528929-8349-4268-a173-bbb0309de626",
+    "edit_url": "",
+    "categories": [
+      {"id": "science-made-fun", "category_id": "b7ef253a-6fb1-4247-ad59-99c4c945c8ec", "title": "Science Made Fun"},
+      {"id": "visit-outer-space", "category_id": "41f1f46f-18fc-4610-a538-2860e362964b", "title": "Visit Outer Space"},
+      {"id": "explore-nature-around", "category_id": "eb5f90b5-3650-49b9-95b6-d4e3a89c0662", "title": "Explore Nature Around"},
+      {"id": "watch-plants-grow", "category_id": "f476a63c-f5d0-4454-afee-eb96182ff983", "title": "Watch Plants Grow"}
+    ]
+  },
+  {
+    "id": "science",
+    "title": "Science",
+    "playlist_id": "b2598923-e630-45df-bc0d-9d8ea9a3d109",
+    "edit_url": "",
+    "categories": [
+      {"id": "science-made-fun", "category_id": "b7ef253a-6fb1-4247-ad59-99c4c945c8ec", "title": "Science Made Fun"},
+      {"id": "visit-outer-space", "category_id": "41f1f46f-18fc-4610-a538-2860e362964b", "title": "Visit Outer Space"},
+      {"id": "know-body-parts", "category_id": "6d841cca-a54f-451a-90fc-aeffa145e274", "title": "Know Body Parts"}
+    ]
+  },
+  {
+    "id": "english-basics",
+    "title": "English Basics",
+    "playlist_id": "b9323d5e-bdd4-4fb1-af6d-3d6b2e9bdbd5",
+    "edit_url": "",
+    "categories": [
+      {"id": "learn-your-abc", "category_id": "1bf17868-9fb8-419a-b7d7-e9ba3b51a364", "title": "Learn Your ABC"},
+      {"id": "learn-new-words", "category_id": "4e8e2dbf-bad4-4a56-8365-251a1cfc4a10", "title": "Learn New Words"},
+      {"id": "sing-along-rhymes", "category_id": "c70be9c8-775f-42ab-93f7-12d3d166a0f6", "title": "Sing Along Rhymes"},
+      {"id": "try-these-actions", "category_id": "cdd3ba69-c04a-402a-a061-05e0f816a161", "title": "Try These Actions"}
+    ]
+  },
+  {
+    "id": "bright-future",
+    "title": "Bright Future",
+    "playlist_id": "da687101-c161-467d-901a-d6b5400fef8d",
+    "edit_url": "",
+    "categories": [
+      {"id": "speak-with-confidence", "category_id": "0eba9676-9d93-484f-8938-41e3ab588a7f", "title": "Speak With Confidence"},
+      {"id": "maths", "category_id": "52af40d6-e2ce-4c98-b69f-e1ab8cbafb34", "title": "Maths"},
+      {"id": "what-do-they-do", "category_id": "3dc35861-75e5-4d11-a33d-d263d159f041", "title": "What Do They Do"},
+      {"id": "practice-good-habits", "category_id": "06f625da-1202-4c8a-8b16-e624b97476d1", "title": "Practice Good Habits"}
+    ]
+  },
+  {
+    "id": "maths",
+    "title": "Maths",
+    "playlist_id": "41c01280-caa7-4087-8550-0ca0d499e6d3",
+    "edit_url": "",
+    "categories": [
+      {"id": "greater-lesser", "category_id": "98263b2e-41f3-413e-9a83-b64ef2016a53", "title": "Greater & Lesser"},
+      {"id": "play-with-patterns", "category_id": "4bd9c717-ad03-4075-b8ee-8d39a1d078b0", "title": "Play With Patterns"},
+      {"id": "spot-different-shapes", "category_id": "da4d2220-056e-483b-9fc0-8451577d4cc9", "title": "Spot Different Shapes"},
+      {"id": "place-your-numbers", "category_id": "9964bf6a-c340-4e3a-b7e6-9f3d435449d3", "title": "Place Your Numbers"},
+      {"id": "odd-even", "category_id": "89d543e7-bafc-45aa-a60c-ec21ba0baf76", "title": "Odd & Even"},
+      {"id": "add-with-fun", "category_id": "f86787db-e9ed-4093-9aa4-a1df05f1c772", "title": "Add With Fun"},
+      {"id": "subtract-with-fun", "category_id": "9a5470ca-9377-4780-8e16-07dafe876377", "title": "Subtract With Fun"},
+      {"id": "write-your-numbers", "category_id": "d7ca60f4-2e5a-40b8-b013-d9959f73df7c", "title": "Write Your Numbers"}
+    ]
+  },
+  {
+    "id": "around-us",
+    "title": "Around Us",
+    "playlist_id": "4fbad471-4b4e-479c-8153-299820a269d5",
+    "edit_url": "",
+    "categories": [
+      {"id": "find-things-around", "category_id": "aa154d92-77f0-4dd7-9c3f-d7e57bd9baf5", "title": "Find Things Around"},
+      {"id": "celebrate-with-everyone", "category_id": "655a5081-8ce4-4cfc-b36d-d5d0d1a06c1e", "title": "Celebrate With Everyone"},
+      {"id": "clothes", "category_id": "b5311a39-3a8b-4978-949e-0b1b818194cc", "title": "Clothes"},
+      {"id": "lets-go-outside", "category_id": "e4dd4a24-f512-4d74-8bad-596b71c5369f", "title": "Let's Go Outside"}
+    ]
+  },
+  {
+    "id": "animals-nature",
+    "title": "Animals & Nature",
+    "playlist_id": "93910637-cd82-4991-9f3d-7e6d524d41d6",
+    "edit_url": "",
+    "categories": [
+      {"id": "animals-nature", "category_id": "e38560ff-1312-4422-bfb4-9b4a05846102", "title": "Animals & Nature"}
+    ]
+  },
+  {
+    "id": "animals",
+    "title": "Animals",
+    "playlist_id": "28ecfa08-1286-453b-8b80-dfe1c54e07de",
+    "edit_url": "",
+    "categories": [
+      {"id": "meet-farm-animals", "category_id": "c06e196f-39fa-4dc0-a9ba-0f036f7bc248", "title": "Meet Farm Animals"},
+      {"id": "meet-ocean-animals", "category_id": "bd7c6e2d-c979-43ea-89eb-899d9aeb8b94", "title": "Meet Ocean Animals"},
+      {"id": "spot-colorful-birds", "category_id": "efdd9da9-9b29-45aa-8bc4-3ddbee54940d", "title": "Spot Colorful Birds"},
+      {"id": "meet-tiny-insects", "category_id": "40d567cd-95aa-469e-b7a8-da623f2579d8", "title": "Meet Tiny Insects"}
+    ]
+  },
+  {
+    "id": "colors-shapes",
+    "title": "Colors & Shapes",
+    "playlist_id": "50d9b18f-605d-42a3-a565-46b113e72bcc",
+    "edit_url": "",
+    "categories": [
+      {"id": "colors-shapes", "category_id": "35af4bd9-ee8f-4ce1-b662-b5dc7f52bea7", "title": "Colors & Shapes"}
+    ]
+  },
+  {
+    "id": "english-fluency",
+    "title": "English Fluency",
+    "playlist_id": "b15c02b6-191e-4e1c-9227-073eca44329b",
+    "edit_url": "",
+    "categories": [
+      {"id": "learn-your-abc", "category_id": "1bf17868-9fb8-419a-b7d7-e9ba3b51a364", "title": "Learn Your ABC"},
+      {"id": "sounds-words", "category_id": "b79bd45b-2c9c-4b7d-91a0-07c93a4dbea1", "title": "Sounds & Words"},
+      {"id": "learn-opposite-words", "category_id": "03776bdf-d177-47e6-abe5-d3215a0df920", "title": "Learn Opposite Words"},
+      {"id": "read-simple-words", "category_id": "bac6ace6-06bc-4f67-85bb-5f0b144d5a15", "title": "Read Simple Words"},
+      {"id": "learn-new-words", "category_id": "4e8e2dbf-bad4-4a56-8365-251a1cfc4a10", "title": "Learn New Words"},
+      {"id": "speak-it-right", "category_id": "181961d7-b484-40c7-b24c-9b3f335cc424", "title": "Speak It Right"},
+      {"id": "start-with-sentences", "category_id": "4c06fdb7-0fe2-4c21-aab0-f80f2fa1f650", "title": "Start With Sentences"},
+      {"id": "songs", "category_id": "6d83af72-03b0-41ff-b18b-1885042b851c", "title": "Songs"},
+      {"id": "speak-with-confidence", "category_id": "0eba9676-9d93-484f-8938-41e3ab588a7f", "title": "Speak With Confidence"},
+      {"id": "prepositions", "category_id": "5463715e-88ba-4459-9ac2-0316966024ee", "title": "Prepositions"}
+    ]
+  },
+  {
+    "id": "talk-manners",
+    "title": "Talk & Manners",
+    "playlist_id": "8e631948-5e2e-404f-af4e-dec589f1457a",
+    "edit_url": "",
+    "categories": [
+      {"id": "talk-manners", "category_id": "06c1cf76-bdd6-42e6-a124-c16b1c7d59f8", "title": "Talk & Manners"}
+    ]
+  },
+  {
+    "id": "learn-explore",
+    "title": "Learn & Explore",
+    "playlist_id": "01099dd0-7b63-4bbb-9c36-50828484988d",
+    "edit_url": "",
+    "categories": [
+      {"id": "numbers-easy-math", "category_id": "a6da8917-6412-4d12-b999-9ee4f9dae597", "title": "Numbers & Easy Math"},
+      {"id": "speak-with-confidence", "category_id": "0eba9676-9d93-484f-8938-41e3ab588a7f", "title": "Speak With Confidence"},
+      {"id": "learn-color-names", "category_id": "c23beb7b-23de-440c-9fb1-2990013f11a6", "title": "Learn Color names"},
+      {"id": "try-these-actions", "category_id": "cdd3ba69-c04a-402a-a061-05e0f816a161", "title": "Try These Actions"}
+    ]
+  },
+  {
+    "id": "abc-learning",
+    "title": "ABC Learning",
+    "playlist_id": "5dcf15b5-2090-441f-b822-f07408e254f8",
+    "edit_url": "",
+    "categories": [
+      {"id": "abc-learning", "category_id": "4ee8120f-815e-4bc8-bbb1-d8fa87cb88b9", "title": "ABC Learning"}
+    ]
+  },
+  {
+    "id": "vehicles-and-safety",
+    "title": "Vehicles and Safety",
+    "playlist_id": "5d83749d-9769-4e00-8256-20a792161229",
+    "edit_url": "",
+    "categories": [
+      {"id": "vehicles-and-safety", "category_id": "8e247557-0e10-4798-a644-c7138ec3859e", "title": "Vehicles and Safety"}
+    ]
+  },
+  {
+    "id": "hindi",
+    "title": "Hindi",
+    "playlist_id": "1dc9ce49-cc96-4927-b37d-9942e2c8fc80",
+    "edit_url": "",
+    "categories": [
+      {"id": "varnmala", "category_id": "fec06a4b-b277-4fe2-8fff-bb40451bf2d9", "title": "Varnmala"},
+      {"id": "vilom-shabd", "category_id": "a7bbbea0-47c5-44f1-8cc2-c8f7a81ae79e", "title": "Vilom Shabd"},
+      {"id": "paryayvachi-shabd", "category_id": "5bfccc14-89d5-4762-b8fa-b44d1dde07b7", "title": "Paryayvachi Shabd"}
+    ]
+  },
+  {
+    "id": "things-objects",
+    "title": "Things & Objects",
+    "playlist_id": "ad2d0f88-32b3-41a4-87fb-455deae229aa",
+    "edit_url": "",
+    "categories": [
+      {"id": "things-objects", "category_id": "73370283-66c0-4823-9e4c-57c13351b730", "title": "Things & Objects"}
+    ]
+  },
+  {
+    "id": "food-healthy-eating",
+    "title": "Food & Healthy Eating",
+    "playlist_id": "37941f55-c498-4084-94bb-427eda398815",
+    "edit_url": "",
+    "categories": [
+      {"id": "food-healthy-eating", "category_id": "58c8aa71-1beb-4474-9ee2-dae67b5f4e91", "title": "Food & Healthy eating"}
+    ]
+  },
+  {
+    "id": "hindi-basics",
+    "title": "Hindi Basics",
+    "playlist_id": "7ae68321-83eb-495d-84ed-3396e01b1e6b",
+    "edit_url": "",
+    "categories": [
+      {"id": "paryayvachi-shabd", "category_id": "5bfccc14-89d5-4762-b8fa-b44d1dde07b7", "title": "Paryayvachi Shabd"},
+      {"id": "vilom-shabd", "category_id": "a7bbbea0-47c5-44f1-8cc2-c8f7a81ae79e", "title": "Vilom Shabd"}
+    ]
+  },
+  {
+    "id": "numbers-easy-math",
+    "title": "Numbers & Easy Math",
+    "playlist_id": "3037891a-afdb-47e5-838f-6a68371e5fef",
+    "edit_url": "",
+    "categories": [
+      {"id": "numbers-easy-math", "category_id": "a6da8917-6412-4d12-b999-9ee4f9dae597", "title": "Numbers & Easy Math"}
+    ]
+  },
+  {
+    "id": "my-body-clean-habits",
+    "title": "My Body & Clean Habits",
+    "playlist_id": "5882896a-1715-467c-a18d-67683f4cbe12",
+    "edit_url": "",
+    "categories": [
+      {"id": "my-body-clean-habits", "category_id": "23f8ee1c-7072-4334-8639-db088392865f", "title": "My Body & Clean Habits"}
+    ]
+  },
+  {
+    "id": "our-world",
+    "title": "Our World",
+    "playlist_id": "d662077b-caf2-4db5-8781-5a523d94e5c2",
+    "edit_url": "",
+    "categories": [
+      {"id": "watch-plants-grow", "category_id": "f476a63c-f5d0-4454-afee-eb96182ff983", "title": "Watch Plants Grow"},
+      {"id": "explore-nature-around", "category_id": "eb5f90b5-3650-49b9-95b6-d4e3a89c0662", "title": "Explore Nature Around"},
+      {"id": "visit-outer-space", "category_id": "41f1f46f-18fc-4610-a538-2860e362964b", "title": "Visit Outer Space"},
+      {"id": "science-made-fun", "category_id": "b7ef253a-6fb1-4247-ad59-99c4c945c8ec", "title": "Science Made Fun"}
+    ]
+  },
+  {
+    "id": "space-adventures",
+    "title": "Space Adventures",
+    "playlist_id": "dc8d6b9f-f5f9-41e8-b52e-65f04350d32a",
+    "edit_url": "",
+    "categories": [
+      {"id": "visit-outer-space", "category_id": "41f1f46f-18fc-4610-a538-2860e362964b", "title": "Visit Outer Space"},
+      {"id": "science-made-fun", "category_id": "b7ef253a-6fb1-4247-ad59-99c4c945c8ec", "title": "Science Made Fun"},
+      {"id": "knowledge", "category_id": "740bdb79-3786-4936-8542-dc39eb54f9c8", "title": "Knowledge"}
+    ]
+  },
+  {
+    "id": "calendar-time",
+    "title": "Calendar & Time",
+    "playlist_id": "980842e4-6d86-4aaa-b8e3-ecbc511fddf1",
+    "edit_url": "",
+    "categories": [
+      {"id": "calendar-time", "category_id": "e3269f08-5ed0-4ab1-8f70-31ccc65f2718", "title": "Calendar & Time"}
+    ]
+  },
+  {
+    "id": "rhymes-music",
+    "title": "Rhymes & Music",
+    "playlist_id": "f57be488-5734-4242-91b0-b638961175a6",
+    "edit_url": "",
+    "categories": [
+      {"id": "sing-along-rhymes", "category_id": "c70be9c8-775f-42ab-93f7-12d3d166a0f6", "title": "Sing Along Rhymes"},
+      {"id": "listen-to-poems", "category_id": "e9506b94-bd53-40e4-91d5-28c7b0dfe308", "title": "Listen to Poems"}
+    ]
+  },
+  {
+    "id": "geography",
+    "title": "Geography",
+    "playlist_id": "42e44245-bd66-4568-acdb-67f32841442b",
+    "edit_url": "",
+    "categories": [
+      {"id": "explore-nature-around", "category_id": "eb5f90b5-3650-49b9-95b6-d4e3a89c0662", "title": "Explore Nature Around"},
+      {"id": "why-seasons-change", "category_id": "ed57a6ae-2009-4c19-9800-8826437fde62", "title": "Why Seasons Change"},
+      {"id": "about-india", "category_id": "2754f754-bfaf-4810-9852-60d5960a7a74", "title": "About India"},
+      {"id": "visit-new-countries", "category_id": "c075c52d-e87f-496c-8c35-2e12270859b8", "title": "Visit New Countries"}
+    ]
+  },
+  {
+    "id": "me-my-family",
+    "title": "Me & My Family",
+    "playlist_id": "6b8bc9d0-3e7c-4fa3-a361-3575e504ae66",
+    "edit_url": "",
+    "categories": [
+      {"id": "meet-your-family", "category_id": "24429faf-f706-4456-a1a0-d8b55cc55f9d", "title": "Meet Your Family"},
+      {"id": "know-body-parts", "category_id": "6d841cca-a54f-451a-90fc-aeffa145e274", "title": "Know Body Parts"},
+      {"id": "practice-good-habits", "category_id": "06f625da-1202-4c8a-8b16-e624b97476d1", "title": "Practice Good Habits"},
+      {"id": "understand-your-feelings", "category_id": "90ff5296-5b99-4ddf-8bdf-ac55f6f7b6c2", "title": "Understand Your Feelings"}
+    ]
+  },
+  {
+    "id": "ready-for-school",
+    "title": "Ready for School",
+    "playlist_id": "cdf5465e-7704-415b-84bb-de6bc0df3f36",
+    "edit_url": "",
+    "categories": [
+      {"id": "learn-your-abc", "category_id": "1bf17868-9fb8-419a-b7d7-e9ba3b51a364", "title": "Learn Your ABC"},
+      {"id": "sounds-words", "category_id": "b79bd45b-2c9c-4b7d-91a0-07c93a4dbea1", "title": "Sounds & Words"},
+      {"id": "speak-it-right", "category_id": "181961d7-b484-40c7-b24c-9b3f335cc424", "title": "Speak It Right"},
+      {"id": "greater-lesser", "category_id": "98263b2e-41f3-413e-9a83-b64ef2016a53", "title": "Greater & Lesser"},
+      {"id": "spot-different-shapes", "category_id": "da4d2220-056e-483b-9fc0-8451577d4cc9", "title": "Spot Different Shapes"},
+      {"id": "play-with-patterns", "category_id": "4bd9c717-ad03-4075-b8ee-8d39a1d078b0", "title": "Play With Patterns"}
+    ]
+  }
+]

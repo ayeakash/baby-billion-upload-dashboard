@@ -1,0 +1,59 @@
+
+====================================================================================================
+COMPLETE IMAGE TO CMS MAPPING
+====================================================================================================
+
+PLAYLISTS MAPPING:
+----------------------------------------------------------------------------------------------------
+Image Filename                 CMS Playlist Name                        Match %        
+----------------------------------------------------------------------------------------------------
+alphabets                      ABC Learning                               100%
+animals                        Animals                                    100%
+around_us                      Around Us                                  100%
+curious_kids                   Curious Kids                               100%
+english                        English Basics                             100%
+geography                      Geography                                  100%
+hindi_basics                   Hindi Basics                               100%
+manners                        Talk & Manners                             100%
+math                           Maths                                       89%
+nature                         Nature                                     100%
+numbers                        Numbers & Easy Math                        100%
+our_world                      Our World                                  100%
+rhymes                         Rhymes & Music                             100%
+science                        Science                                    100%
+stories                        Stories                                    100%
+
+
+CHARACTERS MAPPING:
+----------------------------------------------------------------------------------------------------
+Image Filename                 CMS Character Name                       Match %        
+----------------------------------------------------------------------------------------------------
+alladin                        Alladin                                    100%
+arjun                          Arjun                                      100%
+golu                           Golu                                       100%
+guddi                          Guddi                                      100%
+hanuman                        Hanuman                                    100%
+jay                            Jay                                        100%
+krishna                        Krishna                                    100%
+meera                          Meera                                      100%
+mia                            Mia                                        100%
+mishka                         Mishka                                     100%
+priya                          Priya                                      100%
+ria                            Ria                                        100%
+shivji                         Shivji                                     100%
+sindbad                        Sindbad                                    100%
+tara                           Tara                                       100%
+teja                           Teja                                       100%
+tenali                         Tenali                                     100%
+veer                           Veer                                       100%
+zoya                           Zoya                                       100%
+
+
+CATEGORIES MAPPING:
+----------------------------------------------------------------------------------------------------
+Image Filename                 CMS Category Name                        Match %        
+----------------------------------------------------------------------------------------------------
+ABC                            Learn Your ABC                             100%
+about_india                    About India                                100%
+action_words                   Try These Actions                          100%
+aladdin                        Aladdin                                    100%

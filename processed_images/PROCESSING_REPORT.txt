@@ -1,0 +1,114 @@
+================================================================================
+IMAGE PROCESSING REPORT
+================================================================================
+
+PLAYLISTS (1:1 Ratio)
+--------------------------------------------------------------------------------
+alphabets                      -> alphabets.webp                 (  38.0KB) [OK]
+animals                        -> animals.webp                   (  78.5KB) [OK]
+around_us                      -> around_us.webp                 (  67.6KB) [OK]
+curious_kids                   -> curious_kids.webp              (  69.6KB) [OK]
+english                        -> english.webp                   (  50.9KB) [OK]
+geography                      -> geography.webp                 (  60.4KB) [OK]
+hindi_basics                   -> hindi_basics.webp              (  45.0KB) [OK]
+manners                        -> manners.webp                   (  51.0KB) [OK]
+math                           -> math.webp                      (  48.4KB) [OK]
+nature                         -> nature.webp                    (  66.5KB) [OK]
+numbers                        -> numbers.webp                   (  39.7KB) [OK]
+our_world                      -> our_world.webp                 (  69.1KB) [OK]
+rhymes                         -> rhymes.webp                    (  52.0KB) [OK]
+science                        -> science.webp                   (  53.8KB) [OK]
+stories                        -> stories.webp                   (  56.6KB) [OK]
+
+================================================================================
+CHARACTERS (3:4 Ratio)
+--------------------------------------------------------------------------------
+alladin                        -> alladin.webp                   (  59.9KB) [OK]
+arjun                          -> arjun.webp                     (  49.1KB) [OK]
+golu                           -> golu.webp                      (  49.9KB) [OK]
+guddi                          -> guddi.webp                     (  46.1KB) [OK]
+hanuman                        -> hanuman.webp                   (  64.3KB) [OK]
+jay                            -> jay.webp                       (  51.2KB) [OK]
+krishna                        -> krishna.webp                   (  63.3KB) [OK]
+meera                          -> meera.webp                     (  49.3KB) [OK]
+mia                            -> mia.webp                       (  47.1KB) [OK]
+mishka                         -> mishka.webp                    (  44.7KB) [OK]
+priya                          -> priya.webp                     (  50.7KB) [OK]
+ria                            -> ria.webp                       (  46.7KB) [OK]
+shivji                         -> shivji.webp                    (  57.0KB) [OK]
+sindbad                        -> sindbad.webp                   (  54.9KB) [OK]
+tara                           -> tara.webp                      (  55.4KB) [OK]
+teja                           -> teja.webp                      (  47.3KB) [OK]
+tenali                         -> tenali.webp                    (  41.6KB) [OK]
+veer                           -> veer.webp                      (  50.1KB) [OK]
+zoya                           -> zoya.webp                      (  49.7KB) [OK]
+
+================================================================================
+CATEGORIES (3:4 Ratio)
+--------------------------------------------------------------------------------
+ABC                            -> ABC.webp                       (  40.9KB) [OK]
+about_india                    -> about_india.webp               (  47.2KB) [OK]
+action_words                   -> action_words.webp              (  52.6KB) [OK]
+aladdin                        -> aladdin.webp                   (  71.9KB) [OK]
+animals                        -> animals.webp                   (  55.7KB) [OK]
+birds                          -> birds.webp                     (  49.1KB) [OK]
+body_parts                     -> body_parts.webp                (  48.3KB) [OK]
+clothes                        -> clothes.webp                   (  47.3KB) [OK]
+colors                         -> colors.webp                    (  45.7KB) [OK]
+community_helpers              -> community_helpers.webp         (  48.0KB) [OK]
+countries                      -> countries.webp                 (  50.7KB) [OK]
+emotions                       -> emotions.webp                  (  36.8KB) [OK]
+english                        -> english.webp                   (  42.2KB) [OK]
+english_speaking               -> english_speaking.webp          (  56.6KB) [OK]
+farm_animals                   -> farm_animals.webp              (  68.3KB) [OK]
+festivals                      -> festivals.webp                 (  65.0KB) [OK]
+food_items                     -> food_items.webp                (  64.8KB) [OK]
+fractions                      -> fractions.webp                 (  29.5KB) [OK]
+fruits                         -> fruits.webp                    (  63.6KB) [OK]
+good_habits                    -> good_habits.webp               (  60.8KB) [OK]
+greater_and_lesser             -> greater_and_lesser.webp        (  50.5KB) [OK]
+hanuman                        -> hanuman.webp                   (  62.2KB) [OK]
+hindi_basics                   -> hindi_basics.webp              (  56.7KB) [OK]
+home_items                     -> home_items.webp                (  51.1KB) [OK]
+knowledge                      -> knowledge.webp                 (  40.1KB) [OK]
+krishna                        -> krishna.webp                   (  63.4KB) [OK]
+mishka_and_momo                -> mishka_and_momo.webp           (  52.9KB) [OK]
+ms_isha                        -> ms_isha.webp                   (  62.2KB) [OK]
+ms_nidhi                       -> ms_nidhi.webp                  (  59.0KB) [OK]
+ms_pranika                     -> ms_pranika.webp                (  64.6KB) [OK]
+my_body                        -> my_body.webp                   (  43.2KB) [OK]
+my_family                      -> my_family.webp                 (  68.1KB) [OK]
+nature                         -> nature.webp                    (  73.5KB) [OK]
+opposites                      -> opposites.webp                 (  57.2KB) [OK]
+panchatantra                   -> panchatantra.webp              (  71.7KB) [OK]
+places_to_go                   -> places_to_go.webp              (  63.8KB) [OK]
+plants                         -> plants.webp                    (  57.9KB) [OK]
+prepositions                   -> prepositions.webp              (  30.5KB) [OK]
+professions                    -> professions.webp               (  53.5KB) [OK]
+safety                         -> safety.webp                    (  54.9KB) [OK]
+science                        -> science.webp                   (  58.6KB) [OK]
+seasons                        -> seasons.webp                   (  85.0KB) [OK]
+shivji                         -> shivji.webp                    (  53.0KB) [OK]
+sight_words                    -> sight_words.webp               (  47.7KB) [OK]
+simple_sentences               -> simple_sentences.webp          (  46.8KB) [OK]
+sindbad                        -> sindbad.webp                   (  63.9KB) [OK]
+space                          -> space.webp                     (  50.3KB) [OK]
+sports                         -> sports.webp                    (  63.3KB) [OK]
+technology                     -> technology.webp                (  49.8KB) [OK]
+tenali                         -> tenali.webp                    (  48.0KB) [OK]
+time                           -> time.webp                      (  42.6KB) [OK]
+toys                           -> toys.webp                      (  59.8KB) [OK]
+varnmala                       -> varnmala.webp                  (  45.5KB) [OK]
+vegetables                     -> vegetables.webp                (  47.6KB) [OK]
+vehicles                       -> vehicles.webp                  (  56.6KB) [OK]
+vyanjan                        -> vyanjan.webp                   (  60.3KB) [OK]
+wild_animals                   -> wild_animals.webp              (  70.1KB) [OK]
+words                          -> words.webp                     (  51.7KB) [OK]
+
+================================================================================
+SUMMARY
+--------------------------------------------------------------------------------
+Total Playlists: 15
+Total Characters: 19
+Total Categories: 58
+Total Images: 92

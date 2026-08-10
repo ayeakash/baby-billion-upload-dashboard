@@ -230,22 +230,28 @@ def stage_fetch(dry_run: bool = False, date_filter: list[str] | None = None) -> 
             continue
         ready_videos.append(v)
 
-    # ── Guard 3: Deduplicate by normalised filename ───────────────────────────
+    # ── Guard 3: Deduplicate by normalised filename + language ─────────────────
     #    Two Notion pages with the same video name (e.g. "Calf (Baby Cow)" in
     #    both 0-3 and 3-6 age groups) produce the same MP4 filename, which
     #    causes batch CSV / zip collisions.  Keep only the first occurrence per
-    #    sanitised name+age combo; log duplicates so they can be investigated.
+    #    sanitised name+age combo per language; log duplicates so they can be investigated.
+    #    IMPORTANT: Hindi and English variants (same video, different lang_suffix)
+    #    must NOT be deduplicated — they are separate uploads.
 
-    seen_keys: dict[tuple, dict] = {}  # (norm_name, age) -> first video dict
+    seen_keys: dict[tuple, dict] = {}  # (norm_name, age, lang_suffix) -> first video dict
     deduped_videos = []
     skipped_dupes  = 0
     for v in ready_videos:
-        key = normalize_video_key(v["video_name"], v.get("age_group", ""))
+        key = (
+            normalize_video_key(v["video_name"], v.get("age_group", ""))[0],
+            normalize_video_key(v["video_name"], v.get("age_group", ""))[1],
+            v.get("lang_suffix", ""),  # include language suffix in dedup key
+        )
         if key in seen_keys:
             first = seen_keys[key]
             log.warning(
                 f"  [DUPE] Skipping duplicate video name '{v['video_name']}' "
-                f"(age={v.get('age_group','?')}, page={v['page_id'][:12]}…) "
+                f"(age={v.get('age_group','?')}, lang={v.get('lang_suffix','')}, page={v['page_id'][:12]}…) "
                 f"— already queued from page={first['page_id'][:12]}…"
             )
             skipped_dupes += 1
@@ -254,20 +260,25 @@ def stage_fetch(dry_run: bool = False, date_filter: list[str] | None = None) -> 
         deduped_videos.append(v)
 
     # ── Guard 4: Cross-check against ALL previously-uploaded videos ───────
-    #    Even if the page_id is new, the content (name+age) may already
+    #    Even if the page_id is new, the content (name+age+language) may already
     #    exist from a different Notion page that was uploaded in a prior run.
-    #    Uses the unified normalize_video_key() to guarantee consistent matching.
+    #    IMPORTANT: Hindi and English are checked separately so both can be uploaded.
     state_all = sm.get_all()
     uploaded_keys = build_uploaded_keys_from_state(state_all)
 
     safe_videos = []
     skipped_already_uploaded = 0
     for v in deduped_videos:
-        key = normalize_video_key(v["video_name"], v.get("age_group", ""))
+        # Include lang_suffix so Hindi and English versions aren't conflicting
+        key = (
+            normalize_video_key(v["video_name"], v.get("age_group", ""))[0],
+            normalize_video_key(v["video_name"], v.get("age_group", ""))[1],
+            v.get("lang_suffix", ""),  # separate Hindi and English uploads
+        )
         if key in uploaded_keys:
             log.warning(
                 f"  [DUPE-UPLOAD] Skipping '{v['video_name']}' "
-                f"(age={v.get('age_group','?')}, page={v['page_id'][:12]}…) "
+                f"(age={v.get('age_group','?')}, lang={v.get('lang_suffix','')}, page={v['page_id'][:12]}…) "
                 f"— content already uploaded in a prior run"
             )
             skipped_already_uploaded += 1

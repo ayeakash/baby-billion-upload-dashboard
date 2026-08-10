@@ -83,11 +83,15 @@ def main():
     uploaded_keys = build_uploaded_keys_from_state(sm.get_all())
     deduped = []
     for v in sane_videos:
-        key = normalize_video_key(v["video_name"], v.get("age_group", ""))
+        key = (
+            normalize_video_key(v["video_name"], v.get("age_group", ""))[0],
+            normalize_video_key(v["video_name"], v.get("age_group", ""))[1],
+            v.get("lang_suffix", ""),  # Include language suffix
+        )
         if key in uploaded_keys:
             log.warning(
                 f"  [DUPE-UPLOAD] Skipping '{v['video_name']}' "
-                f"(age={v.get('age_group','?')}) — already uploaded in a prior run"
+                f"(age={v.get('age_group','?')}, lang={v.get('lang_suffix','')}) — already uploaded in a prior run"
             )
             continue
         deduped.append(v)

@@ -1,0 +1,550 @@
+================================================================================
+IMAGE UPLOAD CHECKLIST FOR BABY BILLION CMS
+================================================================================
+
+INSTRUCTIONS:
+--------------------------------------------------------------------------------
+1. Go to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/playlists
+2. Click 'Edit' on each playlist
+3. Upload the image to BOTH thumbnail fields
+4. Save changes
+5. Repeat for categories
+
+================================================================================
+PLAYLISTS TO UPLOAD
+================================================================================
+
+Playlist: ABC Learning
+Image File: alphabets.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\playlists\alphabets.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/playlists
+
+Playlist: Animals
+Image File: animals.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\playlists\animals.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/playlists
+
+Playlist: Around Us
+Image File: around_us.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\playlists\around_us.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/playlists
+
+Playlist: Curious Kids
+Image File: curious_kids.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\playlists\curious_kids.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/playlists
+
+Playlist: English Basics
+Image File: english.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\playlists\english.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/playlists
+
+Playlist: Geography
+Image File: geography.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\playlists\geography.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/playlists
+
+Playlist: Hindi Basics
+Image File: hindi_basics.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\playlists\hindi_basics.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/playlists
+
+Playlist: Talk & Manners
+Image File: manners.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\playlists\manners.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/playlists
+
+Playlist: Maths
+Image File: math.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\playlists\math.webp
+Match Quality: 89%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/playlists
+
+Playlist: Nature
+Image File: nature.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\playlists\nature.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/playlists
+
+Playlist: Numbers & Easy Math
+Image File: numbers.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\playlists\numbers.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/playlists
+
+Playlist: Our World
+Image File: our_world.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\playlists\our_world.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/playlists
+
+Playlist: Rhymes & Music
+Image File: rhymes.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\playlists\rhymes.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/playlists
+
+Playlist: Science
+Image File: science.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\playlists\science.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/playlists
+
+Playlist: Stories
+Image File: stories.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\playlists\stories.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/playlists
+
+================================================================================
+CHARACTERS TO UPLOAD
+================================================================================
+
+Character: Alladin
+Image File: alladin.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\characters\alladin.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/playlists (if character is in playlist)
+
+Character: Arjun
+Image File: arjun.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\characters\arjun.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/playlists (if character is in playlist)
+
+Character: Golu
+Image File: golu.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\characters\golu.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/playlists (if character is in playlist)
+
+Character: Guddi
+Image File: guddi.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\characters\guddi.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/playlists (if character is in playlist)
+
+Character: Hanuman
+Image File: hanuman.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\characters\hanuman.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/playlists (if character is in playlist)
+
+Character: Jay
+Image File: jay.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\characters\jay.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/playlists (if character is in playlist)
+
+Character: Krishna
+Image File: krishna.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\characters\krishna.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/playlists (if character is in playlist)
+
+Character: Meera
+Image File: meera.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\characters\meera.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/playlists (if character is in playlist)
+
+Character: Mia
+Image File: mia.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\characters\mia.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/playlists (if character is in playlist)
+
+Character: Mishka
+Image File: mishka.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\characters\mishka.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/playlists (if character is in playlist)
+
+Character: Priya
+Image File: priya.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\characters\priya.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/playlists (if character is in playlist)
+
+Character: Ria
+Image File: ria.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\characters\ria.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/playlists (if character is in playlist)
+
+Character: Shivji
+Image File: shivji.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\characters\shivji.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/playlists (if character is in playlist)
+
+Character: Sindbad
+Image File: sindbad.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\characters\sindbad.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/playlists (if character is in playlist)
+
+Character: Tara
+Image File: tara.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\characters\tara.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/playlists (if character is in playlist)
+
+Character: Teja
+Image File: teja.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\characters\teja.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/playlists (if character is in playlist)
+
+Character: Tenali
+Image File: tenali.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\characters\tenali.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/playlists (if character is in playlist)
+
+Character: Veer
+Image File: veer.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\characters\veer.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/playlists (if character is in playlist)
+
+Character: Zoya
+Image File: zoya.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\characters\zoya.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/playlists (if character is in playlist)
+
+================================================================================
+CATEGORIES TO UPLOAD
+================================================================================
+
+Category: Learn Your ABC
+Image File: ABC.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\ABC.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: About India
+Image File: about_india.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\about_india.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Try These Actions
+Image File: action_words.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\action_words.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Aladdin
+Image File: aladdin.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\aladdin.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+[WARN] animals - NO MATCH FOUND
+
+[WARN] birds - NO MATCH FOUND
+
+Category: Know Body Parts
+Image File: body_parts.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\body_parts.webp
+Match Quality: 80%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Clothes
+Image File: clothes.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\clothes.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Learn Color names
+Image File: colors.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\colors.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: What Do They Do
+Image File: community_helpers.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\community_helpers.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Visit New Countries
+Image File: countries.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\countries.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Understand Your Feelings
+Image File: emotions.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\emotions.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Learn New Words
+Image File: english.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\english.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+[WARN] english_speaking - NO MATCH FOUND
+
+Category: Meet Farm Animals
+Image File: farm_animals.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\farm_animals.webp
+Match Quality: 83%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Celebrate With Everyone
+Image File: festivals.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\festivals.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Choose Healthy Foods
+Image File: food_items.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\food_items.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Fractions
+Image File: fractions.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\fractions.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Name Your Fruits
+Image File: fruits.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\fruits.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Practice Good Habits
+Image File: good_habits.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\good_habits.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Greater & Lesser
+Image File: greater_and_lesser.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\greater_and_lesser.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Hanuman
+Image File: hanuman.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\hanuman.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+[WARN] hindi_basics - NO MATCH FOUND
+
+Category: Find Things Around
+Image File: home_items.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\home_items.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Knowledge
+Image File: knowledge.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\knowledge.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Krishna
+Image File: krishna.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\krishna.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Mishka And Momo
+Image File: mishka_and_momo.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\mishka_and_momo.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Shapes With Ms Isha
+Image File: ms_isha.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\ms_isha.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Pronounce With Ms Nidhi
+Image File: ms_nidhi.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\ms_nidhi.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Maths With Ms Pranika
+Image File: ms_pranika.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\ms_pranika.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Know Body Parts
+Image File: my_body.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\my_body.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Meet Your Family
+Image File: my_family.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\my_family.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+[WARN] nature - NO MATCH FOUND
+
+Category: Learn Opposite Words
+Image File: opposites.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\opposites.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Panchatantra
+Image File: panchatantra.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\panchatantra.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Let's Go Outside
+Image File: places_to_go.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\places_to_go.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Watch Plants Grow
+Image File: plants.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\plants.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Prepositions
+Image File: prepositions.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\prepositions.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: What Do They Do
+Image File: professions.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\professions.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Safety
+Image File: safety.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\safety.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+[WARN] science - NO MATCH FOUND
+
+[WARN] seasons - NO MATCH FOUND
+
+Category: Shivji
+Image File: shivji.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\shivji.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Read Simple Words
+Image File: sight_words.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\sight_words.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Start With Sentences
+Image File: simple_sentences.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\simple_sentences.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Sindbad
+Image File: sindbad.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\sindbad.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Visit Outer Space
+Image File: space.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\space.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Explore Different Sports
+Image File: sports.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\sports.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Knowledge
+Image File: technology.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\technology.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Tenali
+Image File: tenali.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\tenali.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Time
+Image File: time.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\time.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Find Favorite Toys
+Image File: toys.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\toys.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Varnmala
+Image File: varnmala.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\varnmala.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Name Your Veggies
+Image File: vegetables.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\vegetables.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+Category: Spot Moving Vehicles
+Image File: vehicles.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\vehicles.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+[WARN] vyanjan - NO MATCH FOUND
+
+Category: Jungle Animals
+Image File: wild_animals.png
+Path: C:\Users\Aashitha\Downloads\baby-billion-upload-dashboard\processed_images\categories\wild_animals.webp
+Match Quality: 100%
+[ ] Upload to: https://cms-v1.d148rwrq639wa8.amplifyapp.com/dashboard/cms/categories
+
+[WARN] words - NO MATCH FOUND
+
+================================================================================
+SUMMARY
+================================================================================
+Playlists to upload: 15
+Characters to upload: 19
+Categories to upload: 49
+Total matched: 83
+
+[WARN] WARNING: 9 images could not be matched automatically!
+Review the unmatched images above and upload manually or update the mapping.

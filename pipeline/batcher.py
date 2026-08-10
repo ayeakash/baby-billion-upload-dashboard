@@ -168,20 +168,25 @@ def run(videos: list[dict]) -> list[str]:
         log.info("No videos left after deduplication.")
         return []
 
-    # ── Guard: reject content already uploaded (name+age match) ─────────────
+    # ── Guard: reject content already uploaded (name+age+language match) ──
     #    Safety net: even if a video slipped through fetch (e.g. --batch-only),
     #    refuse to batch content that already exists on the admin.
     #    Uses unified normalize_video_key() for consistent matching.
+    #    IMPORTANT: includes lang_suffix so Hindi and English can be batched separately.
     state_all = sm.get_all()
     uploaded_keys = build_uploaded_keys_from_state(state_all)
 
     safe = []
     for v in to_batch:
-        key = normalize_video_key(v.get("video_name", ""), v.get("age_group", ""))
+        key = (
+            normalize_video_key(v.get("video_name", ""), v.get("age_group", ""))[0],
+            normalize_video_key(v.get("video_name", ""), v.get("age_group", ""))[1],
+            v.get("lang_suffix", ""),  # Include language suffix
+        )
         if key in uploaded_keys:
             log.warning(
                 f"  [DUPE-UPLOAD] Skipping '{v['video_name']}' "
-                f"(age={v.get('age_group','?')}) -- already uploaded in a prior run"
+                f"(age={v.get('age_group','?')}, lang={v.get('lang_suffix','')}) -- already uploaded in a prior run"
             )
             sm.set_status(_state_key(v), "skipped_duplicate")
             continue
