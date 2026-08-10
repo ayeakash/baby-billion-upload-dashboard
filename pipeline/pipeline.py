@@ -363,7 +363,7 @@ def stage_download(videos: list[dict]) -> list[dict]:
 
         sm.set_status(_state_key(v), "downloading")
         local_file = downloader.download_video(
-            _state_key(v), v["video_name"], v["drive_link"]
+            v["page_id"], v["video_name"], v["drive_link"], v.get("lang_suffix", "")
         )
 
         if local_file:
@@ -575,7 +575,7 @@ def run_parallel_pipeline(all_videos: list[dict], headless: bool = False, skip_u
         max_dl_retries = 3
         lf = None
         for dl_attempt in range(1, max_dl_retries + 1):
-            lf = downloader.download_video(pid, v["video_name"], v["drive_link"])
+            lf = downloader.download_video(v["page_id"], v["video_name"], v["drive_link"], v.get("lang_suffix", ""))
             if lf:
                 break
             if dl_attempt < max_dl_retries:

@@ -54,7 +54,7 @@ sm.upsert(v["page_id"],
 
 # ── 2. Download ────────────────────────────────────────────────────────────────
 log.info("\n[2] Downloading ...")
-local_file = downloader.download_video(v["page_id"], v["video_name"], v["drive_link"])
+local_file = downloader.download_video(v["page_id"], v["video_name"], v["drive_link"], v.get("lang_suffix", ""))
 if not local_file:
     log.error("Download failed -- aborting test.")
     sys.exit(1)

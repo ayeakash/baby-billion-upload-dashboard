@@ -88,8 +88,9 @@ if need_download:
         pid  = item["page_id"]
         name = item["video_name"]
         link = item["drive_link"]
+        lang = item.get("lang_suffix", "")
         log.info(f"    Downloading: {name}")
-        local = downloader.download_video(pid, name, link)
+        local = downloader.download_video(pid, name, link, lang)
         if local:
             sm.mark_downloaded(pid, local)
             item["local_file"] = local

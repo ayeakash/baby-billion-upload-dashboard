@@ -124,14 +124,19 @@ def _log_found(tmp_dir: str, all_mp4s: list, render_mp4s: list) -> None:
 
 # ── Main public API ────────────────────────────────────────────────────────────
 
-def download_video(page_id: str, video_name: str, drive_link: str) -> str | None:
+def download_video(page_id: str, video_name: str, drive_link: str, lang_suffix: str = "") -> str | None:
     """
     Download a video from Google Drive to DOWNLOADS_DIR.
     Returns the absolute local file path on success, None on failure.
+
+    lang_suffix: optional language tag (___ln_Hi or ___ln_En) to differentiate
+                 Hindi and English variants of the same video.
     """
     os.makedirs(DOWNLOADS_DIR, exist_ok=True)
     safe_name = sanitize_filename(video_name)
-    out_path  = os.path.join(DOWNLOADS_DIR, f"{safe_name}.mp4")
+    # Include lang_suffix in filename so Hindi and English variants don't overwrite each other
+    filename = f"{safe_name}{lang_suffix}.mp4" if lang_suffix else f"{safe_name}.mp4"
+    out_path  = os.path.join(DOWNLOADS_DIR, filename)
 
     # Already downloaded?
     if os.path.isfile(out_path) and os.path.getsize(out_path) > 10_000:
