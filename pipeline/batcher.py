@@ -26,7 +26,7 @@ from config import (
     ADMIN_CSV_HEADER, ADMIN_CHANNEL_NAME, ADMIN_CONTENT_TYPE, AGE_GROUP_MAP,
 )
 import state_manager as sm
-from category_mapper import get_category_fields, is_valid_category, _normalize_age
+from category_mapper import get_category_fields, is_valid_category, _normalize_age, get_valid_exact_names
 from dedup_utils import normalize_video_key, build_uploaded_keys_from_state
 
 log = logging.getLogger(__name__)
@@ -218,7 +218,7 @@ def run(videos: list[dict]) -> list[str]:
     #    This keeps CMS uploads clean — one category per batch.
     category_buckets: dict[str, list[list[dict]]] = {}
     for group in sorted_groups:
-        cat = group[0].get("categories_name", "") or group[0].get("category", "") or "Unknown"
+        cat = group[0].get("category", "") or "Unknown"
         category_buckets.setdefault(cat, []).append(group)
 
     # ── Greedy bin-packing per category (page groups are atomic) ──────────
@@ -297,25 +297,17 @@ def run(videos: list[dict]) -> list[str]:
             age        = _normalize_age(v.get("age_group", ""))
             notion_cat = v.get("category", "")
 
-            # Resolve comma-separated multi-categories individually
-            if "," in notion_cat:
-                parts = [p.strip() for p in notion_cat.split(",") if p.strip()]
-                parents, cats = [], []
-                for p in parts:
-                    par, cat = get_category_fields(age, p)
-                    if par and par not in parents:
-                        parents.append(par)
-                    cats.append((par, cat))
-                # Filter out parent-only entries (where cat == parent, e.g., "Animals" -> ("Animals","Animals"))
-                # These are just the parent category repeated — the real playlist is the child
-                child_cats = [cat for par, cat in cats if cat != par]
-                if not child_cats:
-                    # All entries are parents — keep them all
-                    child_cats = [cat for par, cat in cats]
-                parent_cat = ", ".join(parents)
-                exact_cat  = ", ".join(child_cats)
-            else:
-                parent_cat, exact_cat = get_category_fields(age, notion_cat)
+            # Get category mapping - handles comma-separated categories by picking ONE
+            parent_cat, exact_cat = get_category_fields(age, notion_cat)
+
+            # Validate that exact_cat is a known category for this age group
+            valid_names = get_valid_exact_names(age)
+            if exact_cat not in valid_names:
+                log.warning(
+                    f"  [WARN] Category '{exact_cat}' (mapped from '{notion_cat}', age={age}) "
+                    f"not found in category mapping! This may cause upload failures. "
+                    f"Valid options: {sorted(list(valid_names))[:5]}..."
+                )
 
             if orig_stem != video_name:
                 log.info(f"    video_name: '{orig_stem}' -> '{video_name}'")

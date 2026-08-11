@@ -330,3 +330,14 @@ def list_all(age_group: str | None = None) -> list[tuple]:
             continue
         results.append((age, parent, exact))
     return results
+
+
+def get_valid_exact_names(age_group: str) -> set[str]:
+    """Return all valid exact category names for a given age group."""
+    _load()
+    age = _normalize_age(age_group)
+    valid_names = set()
+    for (lk_age, lk_cat), (parent, exact) in _LOOKUP.items():
+        if lk_age == age and exact not in valid_names:
+            valid_names.add(exact)
+    return valid_names
