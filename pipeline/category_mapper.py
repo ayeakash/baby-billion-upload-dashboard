@@ -68,7 +68,7 @@ _AGE_ALIASES: dict[tuple[str, str], str] = {
     ("6+", "countries/geography"):"visit new countries",
     ("6+", "countries"):          "visit new countries",
     ("6+", "science"):            "science made fun",
-    ("6+", "space"):              "explore outer space",
+    ("6+", "space"):              "visit outer space",
     ("6+", "technology"):         "how gadgets work",
     ("6+", "my body"):            "know body parts",
     ("6+", "animals"):            "meet amazing animals",
