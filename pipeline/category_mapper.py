@@ -80,6 +80,7 @@ _AGE_ALIASES: dict[tuple[str, str], str] = {
     ("6+", "community helpers"):  "what do they do",
     ("6+", "sports"):             "explore different sports",
     ("6+", "knowledge"):          "amazing facts inside",
+    ("6+", "my family"):          "meet your family",
 
     # ── 3-6 ───────────────────────────────────────────────────────────────────
     ("3-6", "opposites"):         "learn opposite words",
@@ -125,6 +126,7 @@ _AGE_ALIASES: dict[tuple[str, str], str] = {
     ("3-6", "paryayavachi shabd"):"paryayvachi shabd",
     ("3-6", "home items"):        "find things around",
     ("3-6", "festivals"):         "celebrate with everyone",
+    ("3-6", "my family"):         "meet your family",
 
     # ── 0-3 ───────────────────────────────────────────────────────────────────
     ("0-3", "abc"):               "learn your abc",
