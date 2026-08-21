@@ -35,12 +35,12 @@ Age,Parent Category,Playlist Name
 3-6,Animals,Birds
 3-6,Animals,Insects
 3-6,Animals,Dinosaur
-3-6,Stories,Hindi Stories
-3-6,Stories,English Stories
+3-6,Daily New Episodes,Hindi Stories
+3-6,Daily New Episodes,English Stories
 3-6,Good Habits,Build Good Habits
 3-6,Good Habits,Know Body Parts
 3-6,Learn & Explore,Learn Color Names
-3-6,Kids' Favorites,Spot Moving Vehicles
+3-6,YouTube pe yeh nahi milta,Spot Moving Vehicles
 3-6,Food,What's On Plate
 3-6,Food,Name Tasty Fruits
 3-6,Food,Know Your Vegetables
@@ -49,7 +49,7 @@ Age,Parent Category,Playlist Name
 3-6,,Art & Craft
 3-6,,Home items
 3-6,Good Habits,Stay Safe Everyday
-3-6,Kids' Favorites,Discover Fun Toys
+3-6,YouTube pe yeh nahi milta,Discover Fun Toys
 3-6,,Seasons
 3-6,Future Scientist,Science Made Fun
 3-6,,Miscellaneous
@@ -57,7 +57,6 @@ Age,Parent Category,Playlist Name
 3-6,Good Habits,Understand Your Feelings
 3-6,Future Scientist,Watch Plants Grow
 3-6,Maths,Time
-
 3-6,Me & My Family,My Family
 3-6,Future Scientist,Explore Nature Around
 3-6,Future Scientist,Visit Outer Space
@@ -72,26 +71,26 @@ Age,Parent Category,Playlist Name
 3-6,Learn & Explore,Numbers & Easy Math
 3-6,Bright Future,Practice Good Habits
 3-6,Bright Future,What Do They Do
-3-6,Kids' Favorites,Sing Along Rhymes
-3-6,Kids' Favorites,Meet Cute Animals
-3-6,Kids' Favorites,Spot Moving Vehicles
+3-6,YouTube pe yeh nahi milta,Sing Along Rhymes
+3-6,YouTube pe yeh nahi milta,Meet Cute Animals
+3-6,YouTube pe yeh nahi milta,Spot Moving Vehicles
 3-6,English Fluency,Learn Opposite Words
 3-6,English Fluency,Learn New Words
 3-6,English Fluency,Try These Actions
 3-6,Good Habits,How Are You
 0-3,English Basics,Learn Your ABC
 0-3,Maths,Count With Confidence
-0-3,Kids' Favorites,Learn Color Names
+0-3,YouTube pe yeh nahi milta,Learn Color Names
 0-3,Hindi Basics,Speak Simple Hindi
 0-3,Rhymes & Music,Sing Along Rhymes
 0-3,Hindi Basics,Listen To Poems
-0-3,Kids' Favorites,Practice Good Habits
+0-3,YouTube pe yeh nahi milta,Practice Good Habits
 0-3,Our World,Meet Cute Animals
 0-3,Me & My Family,Know Body Parts
 0-3,Food,Name Your Fruits
 0-3,Food,Name Your Veggies
-0-3,Kids' Favorites,Spot Moving Vehicles
-0-3,Kids' Favorites,Find Favorite Toys
+0-3,YouTube pe yeh nahi milta,Spot Moving Vehicles
+0-3,YouTube pe yeh nahi milta,Find Favorite Toys
 0-3,Maths,Spot Different Shapes
 0-3,Animals,Spot Colorful Birds
 0-3,Around Us,Find Things Around
@@ -109,15 +108,13 @@ Age,Parent Category,Playlist Name
 0-3,English Basics,Try These Actions
 0-3,Around Us,What's Everyone Wearing
 0-3,Around Us,Celebrate With Everyone
-
 0-3,Rhymes & Music,Listen And Enjoy
 0-3,Around Us,Let's Go Outside
 0-3,Maths,Count In Hindi
-0-3,Kids' Favorites,What Do They Do
+0-3,YouTube pe yeh nahi milta,What Do They Do
 0-3,Maths,3D Shapes
 0-3,,Science
 0-3,Animals,Meet Farm Friends
-
 6+,English Fluency,Opposites
 6+,English Fluency,English Speaking
 6+,English Fluency,Prepositions
@@ -133,8 +130,8 @@ Age,Parent Category,Playlist Name
 6+,Maths,Fractions
 6+,Maths,Time
 6+,Maths,Money
-6+,Stories,Hindi Stories
-6+,Stories,English Stories
+6+,Daily New Episodes,Hindi Stories
+6+,Daily New Episodes,English Stories
 6+,Good Habits,Build Good Habits
 6+,Good Habits,What Do They Do
 6+,Science,Know Body Parts
@@ -147,7 +144,7 @@ Age,Parent Category,Playlist Name
 6+,Space Adventures,Explore Outer Space
 6+,Geography,Explore Nature Around
 6+,Nature,Why Seasons Change
-6+,Kids' Favorites,Explore Different Sports
+6+,YouTube pe yeh nahi milta,Explore Different Sports
 6+,Geography,Know Your India
 6+,Geography,Visit New Countries
 6+,Good Habits,Understand Your Feelings
@@ -190,21 +187,21 @@ Age,Parent Category,Playlist Name
 6+,Space Adventures,Knowledge
 3-6,Maths,Maths With Ms Pranika
 3-6,English Fluency,Pronounce With Ms Nidhi
-0-3,Stories,Aladdin
-0-3,Stories,Hanuman
-0-3,Stories,Sindbad
-0-3,Stories,Tenali
-0-3,Stories,Panchatantra
-0-3,Stories,Krishna
-3-6,Stories,Aladdin
-3-6,Stories,Hanuman
-3-6,Stories,Sindbad
-3-6,Stories,Tenali
-3-6,Stories,Panchatantra
-3-6,Stories,Krishna
-6+,Stories,Aladdin
-6+,Stories,Hanuman
-6+,Stories,Sindbad
-6+,Stories,Tenali
-6+,Stories,Panchatantra
-6+,Stories,Krishna
+0-3,Daily New Episodes,Aladdin
+0-3,Daily New Episodes,Hanuman
+0-3,Daily New Episodes,Sindbad
+0-3,Daily New Episodes,Tenali
+0-3,Daily New Episodes,Panchatantra
+0-3,Daily New Episodes,Krishna
+3-6,Daily New Episodes,Aladdin
+3-6,Daily New Episodes,Hanuman
+3-6,Daily New Episodes,Sindbad
+3-6,Daily New Episodes,Tenali
+3-6,Daily New Episodes,Panchatantra
+3-6,Daily New Episodes,Krishna
+6+,Daily New Episodes,Aladdin
+6+,Daily New Episodes,Hanuman
+6+,Daily New Episodes,Sindbad
+6+,Daily New Episodes,Tenali
+6+,Daily New Episodes,Panchatantra
+6+,Daily New Episodes,Krishna

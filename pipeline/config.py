@@ -25,6 +25,11 @@ NOTION_DATABASE_ID = _get("NOTION_DATABASE_ID")
 BB_USERNAME        = _get("BB_USERNAME")
 BB_PASSWORD        = _get("BB_PASSWORD")
 
+# Video Review console — a DIFFERENT login from the uploader account above
+# (the uploader account cannot reach /dashboard/cms/video-review).
+REVIEW_USERNAME    = _get("REVIEW_USERNAME")
+REVIEW_PASSWORD    = _get("REVIEW_PASSWORD")
+
 # ── Notion column/property names (match exactly what's in your board) ──────────
 PROP_VIDEO_NAME      = "Video Name"
 PROP_AGE_GROUP       = "Age Group"

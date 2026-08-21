@@ -12,6 +12,11 @@ venv/
 .env
 credentials.py
 pipeline/credentials.py
+yt_auto_uploader/credentials.py
+yt_auto_uploader/downloads/
+yt_auto_uploader/batches/
+yt_auto_uploader/registries/
+yt_auto_uploader/logs/
 slack_notifier/credentials.py
 slack_notifier/logs/
 
@@ -20,6 +25,12 @@ state.json
 state.json.bak_*
 notion_unsynced.json
 batches.json
+# Rebuilt from batches.json + upload_history.jsonl by `batch_ledger.py sync`
+batch_ledger.csv
+# Per-run batch-id lists fed to review_approver.py --file
+*batch_ids.txt
+verify_remaining.txt
+*.bak
 
 # ── Downloads & batches (large media files) ───────────────
 downloads/

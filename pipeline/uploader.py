@@ -913,6 +913,18 @@ def run_all_and_submit(batch_names: list[str], headless: bool = False,
                     log.error("  [FATAL] Driver unresponsive — stopping")
                     break
 
+        # ── Final flush for the LAST batch ─────────────────────────────────────
+        # Non-last batches get a second submit attempt: the [CLEAR] step at the
+        # start of the next batch's upload_batch() re-clicks 'Submit Batch for
+        # Approval' if the prior submit didn't register. The last batch has no
+        # follow-up, so a dropped click would leave it unsubmitted forever.
+        # Flush any lingering pending batch here so the last one is submitted too.
+        if not abort_event.is_set():
+            try:
+                _flush_last_pending_submit(driver, results, on_result)
+            except Exception as e:
+                log.warning(f"  [FLUSH] Final submit flush error: {e}")
+
     except KeyboardInterrupt:
         log.info("Interrupted by user.")
     finally:
@@ -920,6 +932,44 @@ def run_all_and_submit(batch_names: list[str], headless: bool = False,
         active_driver = None
 
     return results
+
+
+def _flush_last_pending_submit(driver, results=None, on_result=None):
+    """Ensure the final batch's 'Submit Batch for Approval' actually registered.
+
+    If the last batch's submit click was dropped, its Processed-Results screen
+    is still lingering on the upload page (fewer than 2 file inputs). Detect
+    that and click 'Submit Batch for Approval' once more — the same rescue that
+    non-last batches get automatically from the next batch's [CLEAR] step.
+    """
+    _, _, _, By, _, _, _, _, _ = _get_selenium()
+    try:
+        driver.get(ADMIN_UPLOAD_URL)
+        time.sleep(3)
+    except Exception:
+        return
+    file_inputs = driver.find_elements(By.CSS_SELECTOR, "input[type='file']")
+    if len(file_inputs) >= 2:
+        return  # clean upload form → nothing pending; last batch already submitted
+
+    for btn in driver.find_elements(By.CSS_SELECTOR, "button"):
+        txt = btn.text.strip().lower()
+        if "submit" in txt and "approval" in txt:
+            log.warning("  [FLUSH] Last batch was still pending — clicking 'Submit Batch for Approval' to finish it.")
+            driver.execute_script("arguments[0].click();", btn)
+            time.sleep(4)
+            # Mark the most recent approval_failed batch as submitted, if any
+            if results and on_result:
+                for bn in reversed(list(results.keys())):
+                    if results[bn].get("status") == "approval_failed":
+                        results[bn]["status"] = "submitted"
+                        results[bn]["flushed"] = True
+                        try:
+                            on_result(bn, results[bn])
+                        except Exception:
+                            pass
+                        break
+            return
 
 
 def _safe_quit_driver(driver, timeout=5):
